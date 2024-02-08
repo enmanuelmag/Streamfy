@@ -1,8 +1,8 @@
-import { TextInput, Container } from '@mantine/core'
-import { useInputState } from '@mantine/hooks'
+import { TextInput, Container } from '@mantine/core';
+import { useInputState } from '@mantine/hooks';
 
 const App = () => {
-  const [stringValue, setStringValue] = useInputState('')
+  const [stringValue, setStringValue] = useInputState('');
 
   return (
     <Container size="sm">
@@ -13,7 +13,7 @@ const App = () => {
         onChange={setStringValue}
       />
     </Container>
-  )
-}
+  );
+};
 
-export { App }
+export { App };

@@ -1,8 +1,7 @@
-// Require the necessary discord.js classes
 import { Client, Events, GatewayIntentBits } from 'discord.js'
 import dotenv from 'dotenv'
 
-dotenv.config({ path: '../env/.env' })
+dotenv.config({ path: '../../env/.env' })
 
 const BOT_TOKEN = process.env.VITE_DISCORD_BOT_TOKEN
 
