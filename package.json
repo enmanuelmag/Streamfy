@@ -1,84 +1,26 @@
 {
-  "name": "streamfy",
-  "description": "Next Generation Boilerplate for React/Typescript, built on top of Vite ⚡️",
-  "private": false,
-  "version": "1.9",
-  "type": "module",
-  "main": "src/main.tsx",
-  "license": "MIT",
-  "author": "Enmanuel Magallanes <enmanuelmag@cardor.dev>",
-  "homepage": "https://github.com/enmanuelmag/Streamfy#readme",
-  "repository": "github:enmanuelmag/Streamfy.git",
-  "bugs": "https://github.com/enmanuelmag/Streamfy/issues",
+  "name": "@workspaces/root",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "packages/**"
+  ],
   "scripts": {
-    "dev": "vite --host",
-    "start": "vite --host",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "test": "vitest",
-    "treemap": "vite-bundle-visualizer --open --template=treemap --output='./dist/treemap.html'",
-    "prune": "rm -rf node_modules yarn.lock package-lock.json pnpm-lock.yaml bun.lockb dist coverage build dev-dist",
-    "preupdate": "npm cache clean --force",
-    "update": "ncu --interactive --format group --install never",
-    "postupdate": "npm install",
-    "upgrade": "npm run prune && npm run update",
-    "test:watch": "vitest --watch",
-    "test:coverage": "vitest --watch --coverage",
-    "test:ui": "vitest --watch --coverage --ui",
     "lint": "eslint src --no-inline-config --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
     "lint:css": "stylelint **/*.css --aei --color",
-    "prettier:fix": "npm run prettier -- --write",
-    "format": "npm run prettier && npm run lint",
-    "format:fix": "npm run prettier:fix && npm run lint:fix",
     "lint-staged": "lint-staged && tsc",
-    "prepare": "husky",
-    "commit": "commit",
-    "prettier": "prettier . --write",
-    "bot:build": "cd ./bot && npx tsc",
-    "bot:start": "cd ./bot &&  node dist/index.js",
-    "bot:dev": "cd ./bot && nodemon index.ts"
+    "pre:commit": "npx lerna exec --scope @packages/web -- npm run build && npx lerna exec --scope @packages/web -- npm run build"
   },
-  "dependencies": {
-    "@mantine/carousel": "^7.5.1",
-    "@mantine/charts": "^7.5.1",
-    "@mantine/core": "^7.5.1",
-    "@mantine/dates": "^7.5.1",
-    "@mantine/form": "^7.5.1",
-    "@mantine/hooks": "^7.5.1",
-    "@mantine/modals": "^7.5.1",
-    "@mantine/notifications": "^7.5.1",
-    "@mantine/nprogress": "^7.5.1",
-    "@mantine/spotlight": "^7.5.1",
-    "@tabler/icons-react": "^2.47.0",
-    "@tanstack/react-query": "^5.18.1",
-    "dayjs": "^1.11.10",
-    "embla-carousel-react": "^7.1.0",
-    "react": "^18.x",
-    "react-dom": "^18.x",
-    "react-router-dom": "^6.22.0",
-    "recharts": "^2.11.0",
-    "zod": "^3.22.4",
-    "zustand": "^4.5.0"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "lerna": "^8.1.2",
     "@commitlint/cli": "^18.x",
     "@commitlint/config-conventional": "^18.x",
     "@commitlint/prompt-cli": "^18.x",
     "@commitlint/types": "^18.x",
-    "@testing-library/jest-dom": "^6.x",
-    "@testing-library/react": "^14.x",
-    "@testing-library/user-event": "^14.x",
-    "@types/node": "^20.x",
-    "@types/react": "^18.x",
-    "@types/react-dom": "^18.x",
-    "@typescript-eslint/eslint-plugin": "^6.x",
-    "@typescript-eslint/parser": "^6.x",
-    "@vitejs/plugin-react-swc": "^3.x",
-    "@vitest/coverage-v8": "^1.x",
-    "@vitest/ui": "^1.x",
-    "c8": "^9.x",
     "cross-env": "^7.0.3",
+    "lint-staged": "^15.x",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-import": "^2.x",
@@ -87,54 +29,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.x",
     "eslint-plugin-react-refresh": "^0.x",
-    "happy-dom": "^13.x",
     "husky": "^9.x",
-    "lint-staged": "^15.x",
-    "msw": "^2.x",
-    "npm-check-updates": "^16.x",
-    "postcss": "^8.4.35",
-    "postcss-preset-mantine": "^1.13.0",
-    "postcss-simple-vars": "^7.0.1",
-    "prettier": "3.1.0",
-    "sass": "^1.70.0",
-    "stylelint": "^16.x",
-    "stylelint-config-standard": "^36.x",
-    "typescript": "^5.x",
-    "vite": "^5.x",
-    "vite-bundle-visualizer": "^1.x",
-    "vite-plugin-compression2": "^0.x",
-    "vite-plugin-qrcode": "^0.x",
-    "vitest": "^1.x",
-    "web-vitals": "^3.x"
-  },
-  "msw": {
-    "workerDirectory": "public"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "prettier --write",
-      "eslint --fix"
-    ]
-  },
-  "keywords": [
-    "react",
-    "boilerplate",
-    "vite",
-    "bundle",
-    "typescript",
-    "starter",
-    "template"
-  ]
+    "prettier": "3.1.0"
+  }
 }
