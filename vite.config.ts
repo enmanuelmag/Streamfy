@@ -9,7 +9,16 @@ import { qrcode } from 'vite-plugin-qrcode'
 export default defineConfig({
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src'),
+      '@src': resolve(__dirname, './src'),
+      '@api': resolve(__dirname, './src/api'),
+      '@assets': resolve(__dirname, './src/assets'),
+      '@components': resolve(__dirname, './src/components'),
+      '@constants': resolve(__dirname, './src/constants'),
+      '@hooks': resolve(__dirname, './src/hooks'),
+      '@shared': resolve(__dirname, './src/shared'),
+      '@types': resolve(__dirname, './src/types'),
+      '@utils': resolve(__dirname, './src/utils'),
+      '@app': resolve(__dirname, './src/app'),
     },
   },
   envDir: './env/',
@@ -31,12 +40,12 @@ export default defineConfig({
     },
     host: true, // needed for the Docker Container port mapping to work
     strictPort: true,
-    port: 3000, // you can replace this port with any port
+    port: 3500, // you can replace this port with any port
   },
   preview: {
     host: true, // needed for the Docker Container port mapping to work
     strictPort: true,
-    port: 3000, // you can replace this port with any port
+    port: 3500, // you can replace this port with any port
   },
   test: {
     globals: true,

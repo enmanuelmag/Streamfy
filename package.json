@@ -34,7 +34,10 @@
     "lint-staged": "lint-staged && tsc",
     "prepare": "husky",
     "commit": "commit",
-    "prettier": "prettier . --write"
+    "prettier": "prettier . --write",
+    "bot:build": "cd ./bot && npx tsc",
+    "bot:start": "cd ./bot &&  node dist/index.js",
+    "bot:dev": "cd ./bot && nodemon index.ts"
   },
   "dependencies": {
     "@mantine/carousel": "^7.5.1",
@@ -89,7 +92,7 @@
     "lint-staged": "^15.x",
     "msw": "^2.x",
     "npm-check-updates": "^16.x",
-    "postcss": "^8.4.34",
+    "postcss": "^8.4.35",
     "postcss-preset-mantine": "^1.13.0",
     "postcss-simple-vars": "^7.0.1",
     "prettier": "3.1.0",

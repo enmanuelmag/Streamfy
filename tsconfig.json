@@ -13,7 +13,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "allowJs": false,
-    "esModuleInterop": false,
+    "esModuleInterop": true,
     "jsx": "react-jsx",
 
     /* Linting */
@@ -27,7 +27,15 @@
     /* Absolute import */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@src/*": ["src/*"],
+      "@api/*": ["src/api/*"],
+      "@components/*": ["src/components/*"],
+      "@constants/*": ["src/constants/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@shared/*": ["src/shared/*"],
+      "@styles/*": ["src/styles/*"],
+      "@utils/*": ["src/utils/*"],
+      "@app/*": ["src/app/*"]
     },
     "types": ["vite/client", "vitest/globals"]
   },
