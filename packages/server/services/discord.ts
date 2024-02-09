@@ -13,7 +13,7 @@ class DiscordClient {
       throw new Error('No bot token provided')
     }
     this.#client = new Client({ intents: [GatewayIntentBits.Guilds] })
-    this.#client.login(process.env.DISCORD_TOKEN)
+    this.#client.login(BOT_TOKEN)
     this.#client.once(Events.ClientReady, (readyClient) =>
       Logger.info(`Ready! Logged in as ${readyClient.user.tag}`),
     )

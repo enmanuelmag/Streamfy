@@ -2,7 +2,7 @@
 class LoggerImpl {
   private getPrefix() {
     return {
-      text: '%c[CLIPFY]',
+      text: '%c[Streamfy]',
       css: 'color:#ef9234;',
     }
   }

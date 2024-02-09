@@ -1,5 +1,7 @@
-import express from 'express'
 import dotenv from 'dotenv'
+dotenv.config({ path: '../../env/.env' })
+
+import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
 import helmet from 'helmet'
@@ -7,8 +9,6 @@ import helmet from 'helmet'
 import { Logger } from '../utils/log'
 
 import LaughLoss from './controllers/laughLoss'
-
-dotenv.config({ path: '../../env/.env' })
 
 const PORT = process.env.VITE_EXPRESS_PORT
 
