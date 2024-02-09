@@ -3,8 +3,8 @@ dotenv.config({ path: '../../env/.env' })
 
 import express from 'express'
 import morgan from 'morgan'
-import cors from 'cors'
 import helmet from 'helmet'
+import cors from 'cors'
 
 import { Logger } from '@global/utils/log'
 
@@ -30,6 +30,4 @@ app.get('/', (req, res) => {
 
 app.use('/laughLoss', LaughLoss)
 
-app.listen(PORT, () => {
-  Logger.info(`Server is listening on: http://localhost:${PORT}`)
-})
+app.listen(PORT, () => Logger.info(`Server is listening on: http://localhost:${PORT}`))
