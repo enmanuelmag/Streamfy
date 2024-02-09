@@ -10,7 +10,13 @@
     "lint:fix": "npm run lint -- --fix",
     "lint:css": "stylelint **/*.css --aei --color",
     "lint-staged": "lint-staged && tsc",
-    "pre:commit": "npx lerna exec --scope @packages/web -- npm run build && npx lerna exec --scope @packages/web -- npm run build"
+    "pre:commit": "npx lerna exec --scope @packages/web -- npm run build && npx lerna exec --scope @packages/web -- npm run build",
+    "server:dev": "npx lerna exec --scope @packages/server -- npm run dev",
+    "server:build": "npx lerna exec --scope @packages/server -- npm run build",
+    "server:start": "npx lerna exec --scope @packages/server -- npm run start",
+    "web:dev": "npx lerna exec --scope @packages/web -- npm run dev",
+    "web:build": "npx lerna exec --scope @packages/web -- npm run build",
+    "web:start": "npx lerna exec --scope @packages/web -- npm run start"
   },
   "dependencies": {},
   "devDependencies": {
