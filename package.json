@@ -3,7 +3,9 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "packages/**"
+    "packages/**",
+    "global/*",
+    "global/**"
   ],
   "scripts": {
     "lint": "eslint src --no-inline-config --report-unused-disable-directives --max-warnings 0",

@@ -1,7 +1,7 @@
 import express from 'express'
 
 import * as LaughLoss from '../models/laughLoss'
-import { Response } from '../utils/response'
+import { Response } from '@global/utils/response'
 
 const router = express.Router()
 

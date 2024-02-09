@@ -6,7 +6,7 @@ import morgan from 'morgan'
 import cors from 'cors'
 import helmet from 'helmet'
 
-import { Logger } from '../utils/log'
+import { Logger } from '@global/utils/log'
 
 import LaughLoss from './controllers/laughLoss'
 
