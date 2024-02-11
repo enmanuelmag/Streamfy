@@ -7,6 +7,7 @@ import {
   browserLocalPersistence,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  browserPopupRedirectResolver,
 } from 'firebase/auth'
 
 // import {
@@ -49,8 +50,10 @@ export default class FirebaseDS extends DataDS {
     //this.db = getFirestore(this.app)
     this.auth = initializeAuth(this.app, {
       persistence: browserLocalPersistence,
+      popupRedirectResolver: browserPopupRedirectResolver,
     })
     this.provider = new GoogleAuthProvider()
+    console.log(ConfigCredentials.firebaseProviders)
     this.provider.setCustomParameters(ConfigCredentials.firebaseProviders)
   }
 
