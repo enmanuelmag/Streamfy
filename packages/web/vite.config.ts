@@ -18,10 +18,10 @@ export default defineConfig({
       '@shared': resolve(__dirname, './src/shared'),
       '@types': resolve(__dirname, './src/types'),
       '@utils': resolve(__dirname, './src/utils'),
-      '@app': resolve(__dirname, './src/app'),
+      '@pages': resolve(__dirname, './src/pages'),
     },
   },
-  envDir: './env/',
+  envDir: resolve(__dirname, '..', '..', 'global', 'env'),
   plugins: [
     react(),
     qrcode(),
