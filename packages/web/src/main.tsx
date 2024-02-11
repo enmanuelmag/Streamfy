@@ -1,17 +1,27 @@
 import { StrictMode } from 'react'
-import { MantineProvider } from '@mantine/core'
 import { createRoot } from 'react-dom/client'
+import { MantineProvider, createTheme } from '@mantine/core'
+import { ModalsProvider } from '@mantine/modals'
+import { Notifications } from '@mantine/notifications'
 
-import { App } from '@app/index'
+import { App } from '@pages/App'
 
 import './index.css'
 import '@mantine/core/styles.css'
 import '@mantine/dates/styles.css'
 import '@mantine/notifications/styles.css'
 
+const theme = createTheme({
+  primaryColor: 'violet',
+  fontFamily: 'Open Sans, sans-serif',
+})
+
 const AppWrapper = () => (
-  <MantineProvider>
-    <App />
+  <MantineProvider defaultColorScheme="auto" theme={theme}>
+    <ModalsProvider>
+      <Notifications />
+      <App />
+    </ModalsProvider>
   </MantineProvider>
 )
 
