@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { MantineProvider, createTheme } from '@mantine/core'
-import { ModalsProvider } from '@mantine/modals'
+//import { ModalsProvider } from '@mantine/modals'
 import { Notifications } from '@mantine/notifications'
 
 import { App } from '@pages/App'
@@ -18,10 +18,8 @@ const theme = createTheme({
 
 const AppWrapper = () => (
   <MantineProvider defaultColorScheme="auto" theme={theme}>
-    <ModalsProvider>
-      <Notifications />
-      <App />
-    </ModalsProvider>
+    <Notifications />
+    <App />
   </MantineProvider>
 )
 

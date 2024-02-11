@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   useQuery,
   QueryClient,
@@ -5,17 +6,18 @@ import {
   MutationCache,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import React from 'react'
+import { Center, Flex, Loader, Text, useMantineColorScheme } from '@mantine/core'
 import { Route, Routes, BrowserRouter, useLocation, useNavigate } from 'react-router-dom'
+
+import { DataRepo } from '@src/db'
+import { UserType } from '@global/types/src/user'
 
 import { ROUTES } from '@constants/routes'
 
 import Login from '@pages/auth/login'
+import Drawer from '@components/drawer'
 import Register from '@pages/auth/register'
 import Home from '@pages/private/home'
-import { DataRepo } from '@src/db'
-import { UserType } from '@global/types/src/user'
-import { Center, Flex, Loader, Text, useMantineColorScheme } from '@mantine/core'
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache(),
@@ -29,7 +31,9 @@ const App = () => {
         <Routes>
           <Route element={<Login />} path={ROUTES.LOGIN} />
           <Route element={<Register />} path={ROUTES.REGISTER} />
-          <Route element={<Home />} path={ROUTES.HOME} />
+          <Route element={<Drawer />}>
+            <Route element={<Home />} path={ROUTES.HOME} />
+          </Route>
           <Route element={<Root />} path="/" />
         </Routes>
       </BrowserRouter>
