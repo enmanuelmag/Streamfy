@@ -1,9 +1,9 @@
 import { Client, Events, GatewayIntentBits } from 'discord.js'
 
-import { Logger } from '@global/utils/log'
+import { Logger } from '@global/utils/src/log'
 
 class DiscordClient {
-  #client: Client
+  private client: Client
   private static instance: DiscordClient
 
   private constructor() {
@@ -12,9 +12,9 @@ class DiscordClient {
     if (!BOT_TOKEN) {
       throw new Error('No bot token provided')
     }
-    this.#client = new Client({ intents: [GatewayIntentBits.Guilds] })
-    this.#client.login(BOT_TOKEN)
-    this.#client.once(Events.ClientReady, (readyClient) =>
+    this.client = new Client({ intents: [GatewayIntentBits.Guilds] })
+    this.client.login(BOT_TOKEN)
+    this.client.once(Events.ClientReady, (readyClient) =>
       Logger.info(`Ready! Logged in as ${readyClient.user.tag}`),
     )
   }
@@ -23,7 +23,7 @@ class DiscordClient {
     if (!this.instance) {
       this.instance = new DiscordClient()
     }
-    return this.instance.#client
+    return this.instance.client
   }
 }
 

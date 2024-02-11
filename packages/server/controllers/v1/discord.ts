@@ -1,10 +1,11 @@
 import express from 'express'
-import * as LaughLoss from '../models/laughLoss'
 
-import { Response } from '@global/utils/response'
-import { GetChannelsParamsSchema, GetMessagesParamsSchema } from '@global/types/laughLoss'
+import { Response } from '@global/utils/src/response'
+import { GetChannelsParamsSchema, GetMessagesParamsSchema } from '@global/types/src/discord'
 
-import { validate } from '../middlewares/validation'
+import * as Discord from '../../models/v1/discord'
+
+import { validate } from '../../middlewares/validation'
 
 const router = express.Router()
 
@@ -16,7 +17,7 @@ router.post(
   }),
   async (req, res) => {
     try {
-      const messages = await LaughLoss.getMessages(req.body)
+      const messages = await Discord.getMessages(req.body)
       return res.send(Response(200, 'Messages retrieved', messages))
     } catch (error) {
       if (error instanceof Error) {
@@ -35,7 +36,7 @@ router.post(
   }),
   async (req, res) => {
     try {
-      const channels = await LaughLoss.getChannels(req.body)
+      const channels = await Discord.getChannels(req.body)
       return res.json(Response(200, 'Channels retrieved', channels))
     } catch (error) {
       if (error instanceof Error) {

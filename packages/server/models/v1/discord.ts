@@ -1,14 +1,14 @@
 import type { TextChannel } from 'discord.js'
-
-import {
+import type {
+  ChannelResponseType,
   GetChannelsParamsType,
   GetMessagesParamsType,
   MessageResponseType,
-} from '@global/types/laughLoss'
+} from '@global/types/src/discord'
 
-import DiscordClient from '../services/discord'
+import DiscordClient from '../../services/discord'
 
-import { Logger } from '@global/utils/log'
+import { Logger } from '@global/utils/src/log'
 
 const Discord = DiscordClient.getInstance()
 
@@ -54,14 +54,23 @@ export const getMessages = async (
   }))
 }
 
-export const getChannels = async (params: GetChannelsParamsType) => {
+export const getChannels = async (
+  params: GetChannelsParamsType,
+): Promise<ChannelResponseType[]> => {
   Logger.info('Getting channels')
 
-  const channels = Discord.channels.cache.filter((channel) => channel.type === params.channelType)
+  const channels = Discord.channels.cache
+    .filter((channel) => channel.type === params.channelType)
+    .toJSON() as TextChannel[]
 
-  Logger.info('Got channels', channels.size)
+  Logger.info('Got channels', channels.length)
 
-  return channels
+  return channels.map((channel) => ({
+    id: channel.id,
+    name: channel.name,
+    type: channel.type,
+    url: channel.url,
+  }))
 }
 
 // Internal methods
