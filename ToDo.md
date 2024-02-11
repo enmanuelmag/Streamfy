@@ -1,3 +1,3 @@
 # ToDo
 
-1. Define types on a global level
+1. Add filter be guild (server of the streamer)
