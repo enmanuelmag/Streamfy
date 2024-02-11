@@ -54,3 +54,12 @@ export const GetChannelsParamsSchema = zod.object({
 })
 
 export type GetChannelsParamsType = zod.infer<typeof GetChannelsParamsSchema>
+
+export const ChannelResponseSchema = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  type: zod.number(),
+  url: zod.string(),
+})
+
+export type ChannelResponseType = zod.infer<typeof ChannelResponseSchema>
