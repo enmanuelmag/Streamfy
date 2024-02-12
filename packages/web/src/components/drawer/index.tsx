@@ -2,8 +2,8 @@ import React from 'react'
 import { useDisclosure } from '@mantine/hooks'
 import { IconLogout } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { AppShell, Burger, Button, Drawer, Loader, Flex, Text } from '@mantine/core'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { AppShell, Burger, Button, Drawer, Loader, Flex, Text, Title } from '@mantine/core'
 
 import { useStoreBase } from '@src/store'
 import { ROUTES } from '@src/constants/routes'
@@ -77,7 +77,14 @@ export default function Protected() {
         <div className="cd-h-full cd-flex cd-justify-start cd-items-center cd-pl-4">
           <Burger opened={opened} onClick={open} />
           <div className="cd-ml-4">
-            <Text>{user.email}</Text>
+            <Link to={ROUTES.HOME}>
+              <Title className="cd-title-form" order={2}>
+                Stream
+                <Text inherit c="violet" component="span">
+                  fy
+                </Text>
+              </Title>
+            </Link>
           </div>
         </div>
       </AppShell.Header>

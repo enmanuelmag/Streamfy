@@ -53,7 +53,6 @@ export default class FirebaseDS extends DataDS {
       popupRedirectResolver: browserPopupRedirectResolver,
     })
     this.provider = new GoogleAuthProvider()
-    console.log(ConfigCredentials.firebaseProviders)
     this.provider.setCustomParameters(ConfigCredentials.firebaseProviders)
   }
 

@@ -6,7 +6,7 @@ import {
   MutationCache,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import { Center, Flex, Loader, Text, useMantineColorScheme } from '@mantine/core'
+import { Text, useMantineColorScheme } from '@mantine/core'
 import { Route, Routes, BrowserRouter, useLocation, useNavigate } from 'react-router-dom'
 
 import { DataRepo } from '@src/db'
@@ -21,6 +21,7 @@ import Register from '@pages/auth/register'
 //Private
 import Home from '@pages/private/home'
 import LaughLoss from '@pages/private/laughLoss'
+import Loading from '@src/components/shared/loading'
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache(),
@@ -71,17 +72,16 @@ function Root() {
   }, [userQuery.isPending, userQuery.data, userQuery.isSuccess, userQuery.isError])
 
   return (
-    <Center h="100vh" w="100vw">
-      <Flex align="center" direction="column" justify="center">
-        <Loader size="xl" />
+    <Loading
+      text={
         <Text fz="lg" mt={4}>
           Loading your{' '}
-          <Text span c="purple.500" fz="lg">
-            Clips
+          <Text span c="violet" fz="lg">
+            Activities
           </Text>
         </Text>
-      </Flex>
-    </Center>
+      }
+    />
   )
 }
 
