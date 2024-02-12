@@ -35,7 +35,8 @@
       "@shared/*": ["src/shared/*"],
       "@styles/*": ["src/styles/*"],
       "@utils/*": ["src/utils/*"],
-      "@pages/*": ["src/pages/*"]
+      "@pages/*": ["src/pages/*"],
+      "@assets/*": ["src/assets/*"]
     },
     "types": ["vite/client", "vitest/globals"]
   },

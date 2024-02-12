@@ -32,7 +32,7 @@ export default class ServerDS extends DiscordDS {
         Logger.error('Error from server getting messages', response.data.message)
         throw new Error(response.data.message)
       }
-
+      Logger.info('Got messages', response.data.data[0].attachments[0])
       return response.data.data
     } catch (error) {
       Logger.error('Error getting messages', error)

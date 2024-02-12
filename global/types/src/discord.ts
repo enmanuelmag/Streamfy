@@ -32,6 +32,7 @@ export const MessageResponseSchema = zod.object({
   attachments: zod.array(
     zod.object({
       id: zod.string(),
+      attachment: zod.string(),
       description: zod.string().nullable(),
       contentType: zod.string().nullable(),
       size: zod.number(),

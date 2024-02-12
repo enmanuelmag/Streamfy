@@ -49,10 +49,10 @@ export default function Register() {
   })
 
   return (
-    <Center className="w-screen h-screen">
-      <Paper withBorder className="w-1/4 max-w-[400px]" p="xl" radius="md" shadow="xs">
+    <Center className="cd-w-screen cd-h-screen">
+      <Paper withBorder className="cd-w-1/4 cd-max-w-[400px]" p="xl" radius="md" shadow="xs">
         <div>
-          <Title className="title-form" order={2}>
+          <Title className="cd-title-form" order={2}>
             Securi
             <Text inherit c="violet.500" component="span">
               fy
@@ -80,14 +80,14 @@ export default function Register() {
             placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
             type="password"
           />
-          <div className="pt-4">
+          <div className="cd-pt-4">
             <Button fullWidth loading={registerMutation.isPending} type="submit">
               Registrarse
             </Button>
           </div>
         </form>
         <Divider my="xl" />
-        <Text className="text-center" size="sm">
+        <Text className="cd-text-center" size="sm">
           Ya tiene una cuenta? <Anchor href={ROUTES.REGISTER}>Iniciar sesión</Anchor>
         </Text>
       </Paper>

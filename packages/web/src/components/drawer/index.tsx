@@ -27,6 +27,7 @@ export default function Protected() {
     if ([ROUTES.LOGIN, ROUTES.REGISTER].includes(location.pathname)) return
 
     if (userQuery.isSuccess && !userQuery.data) {
+      console.log('sin usuario 2')
       navigate(ROUTES.LOGIN)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -73,14 +74,14 @@ export default function Protected() {
         </Flex>
       </Drawer>
       <AppShell.Header>
-        <div className="h-full flex justify-start items-center pl-4">
+        <div className="cd-h-full cd-flex cd-justify-start cd-items-center cd-pl-4">
           <Burger opened={opened} onClick={open} />
-          <div className="ml-4">
+          <div className="cd-ml-4">
             <Text>{user.email}</Text>
           </div>
         </div>
       </AppShell.Header>
-      <AppShell.Main className="w-full">
+      <AppShell.Main className="cd-w-full cd-h-full cd-absolute">
         <Outlet />
       </AppShell.Main>
     </AppShell>

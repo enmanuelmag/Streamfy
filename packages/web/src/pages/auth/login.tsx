@@ -54,16 +54,16 @@ export default function Login() {
   })
 
   return (
-    <Center className="w-screen h-screen">
+    <Center className="cd-w-screen cd-h-screen">
       <Paper
         withBorder
-        className="min-w-[350px] md:w-1/4 max-w-[400px]"
+        className="cd-min-w-[350px] md:cd-w-1/4 cd-max-w-[400px]"
         p="xl"
         radius="md"
         shadow="xs"
       >
         <div>
-          <Title className="title-form" order={2}>
+          <Title className="cd-title-form" order={2}>
             Stream
             <Text inherit c="violet" component="span">
               fy
@@ -84,7 +84,7 @@ export default function Login() {
             placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
             type="password"
           />
-          <div className="pt-4">
+          <div className="cd-pt-4">
             <Button
               fullWidth
               loading={

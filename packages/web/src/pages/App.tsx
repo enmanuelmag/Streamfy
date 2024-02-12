@@ -17,7 +17,10 @@ import { ROUTES } from '@constants/routes'
 import Login from '@pages/auth/login'
 import Drawer from '@components/drawer'
 import Register from '@pages/auth/register'
+
+//Private
 import Home from '@pages/private/home'
+import LaughLoss from '@pages/private/laughLoss'
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache(),
@@ -25,6 +28,10 @@ export const queryClient = new QueryClient({
 })
 
 const App = () => {
+  useMantineColorScheme({
+    keepTransitions: true,
+  })
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -33,6 +40,7 @@ const App = () => {
           <Route element={<Register />} path={ROUTES.REGISTER} />
           <Route element={<Drawer />}>
             <Route element={<Home />} path={ROUTES.HOME} />
+            <Route element={<LaughLoss />} path={ROUTES.LAUGH_LOSS} />
           </Route>
           <Route element={<Root />} path="/" />
         </Routes>
@@ -45,10 +53,6 @@ function Root() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  useMantineColorScheme({
-    keepTransitions: true,
-  })
-
   const userQuery = useQuery<UserType | null, Error>({
     queryKey: ['user'],
     queryFn: async () => await DataRepo.getUser(),
@@ -58,6 +62,7 @@ function Root() {
     if ([ROUTES.LOGIN, ROUTES.REGISTER].includes(location.pathname)) return
 
     if (userQuery.isSuccess && !userQuery.data) {
+      console.log('sin usuario')
       navigate(ROUTES.LOGIN)
     } else if (userQuery.isSuccess && userQuery.data) {
       navigate(ROUTES.HOME)

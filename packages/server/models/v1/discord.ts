@@ -38,20 +38,35 @@ export const getMessages = async (
     messages.forEach((message) => message.content),
   )
 
-  return messages.map((message) => ({
-    id: message.id,
-    author: {
-      id: message.author.id,
-      username: message.author.username,
-      globalName: message.author.globalName,
-      discriminator: message.author.discriminator,
-      accentColor: message.author.accentColor,
-      avatar: message.author.avatarURL(),
-    },
-    content: message.content,
-    timestamp: message.createdTimestamp,
-    attachments: message.attachments.toJSON(),
-  }))
+  const values = messages.map(
+    (message) =>
+      ({
+        id: message.id,
+        author: {
+          id: message.author.id,
+          username: message.author.username,
+          globalName: message.author.globalName,
+          discriminator: message.author.discriminator,
+          accentColor: message.author.accentColor,
+          avatar: message.author.avatarURL(),
+        },
+        content: message.content,
+        timestamp: message.createdTimestamp,
+        attachments: message.attachments.map((data) => {
+          return {
+            id: data.id,
+            description: data.description,
+            contentType: data.contentType,
+            size: data.size,
+            url: data.url,
+            height: data.height,
+            width: data.width,
+          }
+        }),
+      }) as MessageResponseType,
+  )
+  Logger.info('Returning messages', values)
+  return values
 }
 
 export const getChannels = async (

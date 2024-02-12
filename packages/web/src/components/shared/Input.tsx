@@ -70,6 +70,6 @@ export default function Input({ name, label, component, ...rest }: InputProps) {
       />
     )
   }
-  const className = rest.hidden || rest.className ? rest.className : 'pb-4'
+  const className = rest.hidden || rest.className ? rest.className : 'cd-pb-4'
   return <div className={className}>{input || <TextInput {...props} />}</div>
 }

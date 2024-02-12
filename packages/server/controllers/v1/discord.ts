@@ -18,6 +18,7 @@ router.post(
   async (req, res) => {
     try {
       const messages = await Discord.getMessages(req.body)
+      console.log('Messages', messages)
       return res.send(Response(200, 'Messages retrieved', messages))
     } catch (error) {
       if (error instanceof Error) {
