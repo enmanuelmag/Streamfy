@@ -61,6 +61,7 @@
     "mantine-form-zod-resolver": "^1.1.0",
     "react": "^18.x",
     "react-dom": "^18.x",
+    "react-player": "^2.14.1",
     "react-router-dom": "^6.22.0",
     "recharts": "^2.11.0",
     "zod": "^3.22.4",

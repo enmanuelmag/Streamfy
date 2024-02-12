@@ -65,7 +65,6 @@ export const getMessages = async (
         }),
       }) as MessageResponseType,
   )
-  Logger.info('Returning messages', values)
   return values
 }
 
