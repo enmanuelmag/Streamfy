@@ -18,17 +18,16 @@
     "server:start": "npx lerna exec --scope @packages/server -- npm run start",
     "web:dev": "npx lerna exec --scope @packages/web -- npm run dev",
     "web:build": "npx lerna exec --scope @packages/web -- npm run build",
-    "web:start": "npx lerna exec --scope @packages/web -- npm run start"
+    "web:start": "npx lerna exec --scope @packages/web -- npm run start",
+    "dev": "concurrently \"npm run server:dev\" \"npm run web:dev\""
   },
-  "dependencies": {},
   "devDependencies": {
-    "lerna": "^8.1.2",
     "@commitlint/cli": "^18.x",
     "@commitlint/config-conventional": "^18.x",
     "@commitlint/prompt-cli": "^18.x",
     "@commitlint/types": "^18.x",
+    "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
-    "lint-staged": "^15.x",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-import": "^2.x",
@@ -38,6 +37,8 @@
     "eslint-plugin-react-hooks": "^4.x",
     "eslint-plugin-react-refresh": "^0.x",
     "husky": "^9.x",
+    "lerna": "^8.1.2",
+    "lint-staged": "^15.x",
     "prettier": "3.1.0"
   }
 }

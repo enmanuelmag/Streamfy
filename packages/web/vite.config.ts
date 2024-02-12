@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react-swc'
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import { compression } from 'vite-plugin-compression2'
-import { qrcode } from 'vite-plugin-qrcode'
+//import { qrcode } from 'vite-plugin-qrcode'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -24,7 +24,7 @@ export default defineConfig({
   envDir: resolve(__dirname, '..', '..', 'global', 'env'),
   plugins: [
     react(),
-    qrcode(),
+    //qrcode(),
     compression({
       algorithm: 'gzip',
       exclude: [/\.(br)$/, /\.(gz)$/],
