@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { AppShell, Burger, Button, Drawer, Loader, Flex, Text, Title } from '@mantine/core'
 
-import { useStoreBase } from '@src/store'
+import { useStoreBase, useStoreLaughLoss } from '@src/store'
 import { ROUTES } from '@src/constants/routes'
 import { UserType } from '@global/types/src/user'
 
@@ -65,8 +65,10 @@ export default function Protected() {
             leftSection={<IconLogout />}
             variant="subtle"
             onClick={() => {
-              close()
               DataRepo.logoutUser()
+              useStoreLaughLoss.persist.clearStorage()
+              useStoreBase.persist.clearStorage()
+              close()
             }}
           >
             Cerrar sesión
@@ -88,7 +90,7 @@ export default function Protected() {
           </div>
         </div>
       </AppShell.Header>
-      <AppShell.Main className="cd-w-full cd-h-full cd-absolute">
+      <AppShell.Main className="cd-w-full cd-h-full cd-absolute cd-p-0" pt={60} px={0}>
         <Outlet />
       </AppShell.Main>
     </AppShell>
