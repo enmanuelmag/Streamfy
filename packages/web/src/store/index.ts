@@ -5,17 +5,21 @@ import type { UserType } from '@global/types/src/user'
 import type { ChannelResponseType, MessageResponseType } from '@global/types/src/discord'
 
 type StoreState = {
+  volume: number
   user?: UserType | null
 }
 
 type Action = {
+  setVolume: (volume: StoreState['volume']) => void
   setUser: (user: StoreState['user'] | null) => void
 }
 export const useStoreBase = create(
   persist<StoreState & Action>(
     (set) => ({
       user: null,
+      volume: 0.1,
       setUser: (user) => set(() => ({ user })),
+      setVolume: (volume) => set(() => ({ volume })),
     }),
     {
       name: 'storage-base',

@@ -6,30 +6,38 @@ import { MessageResponseType } from '@global/types/src/discord'
 
 type MediaProps = {
   autoPlay?: boolean
-  message: MessageResponseType
+  message?: MessageResponseType | null
+  styles: React.CSSProperties
   nextMessage: () => void
+  onVideoEnd?: () => void
 }
 
 const Media = (props: MediaProps) => {
-  const { attachments, content } = props.message
+  const { autoPlay = false, styles, onVideoEnd, nextMessage, message } = props
 
-  const [{ contentType, url, description }] = React.useMemo(() => attachments, [attachments])
+  if (!message) return null
+
+  const { attachments, content } = message
+
+  const [{ contentType, url, description }] = attachments
 
   if (contentType?.includes('image')) {
-    return <Image alt={content || description || 'Imagen'} src={url} />
+    return <Image alt={content || description || 'Imagen'} src={url} style={styles} />
   } else if (contentType?.includes('video')) {
     return (
-      <div className="cd-relative cd-h-full cd-w-full">
+      <div className="cd-relative cd-h-full cd-w-full" style={styles}>
         <ReactPlayer
           controls
           className="cd-absolute cd-top-0 cd-left-0"
           height="100%"
           pip={false}
-          playing={props.autoPlay}
+          playing={autoPlay}
           url={url}
-          volume={0.05}
           width="100%"
-          onEnded={props.nextMessage}
+          onEnded={() => {
+            nextMessage()
+            onVideoEnd?.()
+          }}
         />
       </div>
     )

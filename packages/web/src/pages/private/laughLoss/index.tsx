@@ -1,8 +1,19 @@
 import React from 'react'
-import { IconPlayerTrackNextFilled, IconPlayerTrackPrevFilled } from '@tabler/icons-react'
-import { ActionIcon, Container, Select, Switch } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { IconPlayerTrackNextFilled, IconPlayerTrackPrevFilled } from '@tabler/icons-react'
+import {
+  ActionIcon,
+  Avatar,
+  Container,
+  Flex,
+  Select,
+  Switch,
+  Text,
+  Title,
+  Transition,
+} from '@mantine/core'
 
 import { DiscordRepo } from '@src/db'
 import { useStoreLaughLoss } from '@src/store'
@@ -15,16 +26,17 @@ import Loading from '@src/components/shared/loading'
 import { useSliderMedia } from '@hooks/slider'
 
 import { Logger } from '@global/utils/src/log'
-import { useDisclosure } from '@mantine/hooks'
+
+import './styles.scss'
 
 const LaughLoss = () => {
   const {
-    discordChannel,
     messages,
+    discordChannel,
     currentMessage,
+    setMessages,
     setDiscordChannel,
     setCurrentMessage,
-    setMessages,
   } = useStoreLaughLoss((state) => state)
 
   const form = useForm<Step1Type>({
@@ -44,7 +56,10 @@ const LaughLoss = () => {
   })
 
   const messagesMutation = useMutation<MessageResponseType[] | null, Error, string, string>({
-    mutationFn: (channelId: string) => DiscordRepo.getMessages({ channelId }),
+    mutationFn: async (channelId: string) => {
+      const messages = await DiscordRepo.getMessages({ channelId })
+      return messages?.filter((m) => m.attachments.length) || null
+    },
     onSuccess: (messages) => {
       setMessages(messages)
       setCurrentMessage(currentMessage || messages?.[0] || null)
@@ -55,13 +70,15 @@ const LaughLoss = () => {
   })
 
   const [autoPlay, handlers] = useDisclosure(false)
+  const [gameOver, handlersGameOver] = useDisclosure(false)
 
-  const { nextMessage, prevMessage } = useSliderMedia({
+  const { nextMessage, prevMessage, currentIndex, hasNext, hasPrev } = useSliderMedia({
     messages,
     currentMessage,
     setCurrentMessage,
   })
 
+  // Clear storage if there are no more messages
   React.useEffect(() => {
     if (discordChannel && !messages) {
       messagesMutation.mutate(discordChannel.id)
@@ -69,46 +86,94 @@ const LaughLoss = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discordChannel])
 
-  console.log('currentMessage', currentMessage?.id)
-
   return (
-    <Container
-      className="cd-w-full cd-h-full cd-relative"
-      fluid={currentMessage ? true : undefined}
-      size="md"
-    >
-      {channelQuery.isLoading && <Loading text="Cargando canales" />}
-      {messagesMutation.isPending && <Loading text="Cargando mensajes" />}
-      {!discordChannel && channelQuery.data && (
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
-          <Select
-            data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
-            label="Canal"
-            value={form.values.discordChannel.id}
-            {...form.getInputProps('discordChannel.id')}
-            onChange={handleChannelChange}
-          />
-        </form>
-      )}
-      <div className="cd-absolute cd-top-0 cd-right-0 cd-z-50">
-        <Switch checked={autoPlay} label="AutoPlay" onChange={handlers.toggle} />
-      </div>
-      {/* create a div absolute pos in the center vertically and left to show the prev butotn */}
-      <div className="cd-absolute cd-top-[50%] cd-left-0 cd-z-50">
-        <ActionIcon disabled={!prevMessage} size="xl" variant="subtle" onClick={prevMessage}>
-          <IconPlayerTrackPrevFilled />
-        </ActionIcon>
-      </div>
-      {/* create a div absolute pos in the center vertically and right to show the next butotn */}
-      <div className="cd-absolute cd-top-[50%] cd-right-0 cd-z-50">
-        <ActionIcon disabled={!nextMessage} size="xl" variant="subtle" onClick={nextMessage}>
-          <IconPlayerTrackNextFilled />
-        </ActionIcon>
-      </div>
-      {currentMessage && (
-        <Media autoPlay={autoPlay} message={currentMessage} nextMessage={nextMessage} />
-      )}
-    </Container>
+    <React.Fragment>
+      <Transition duration={750} mounted={gameOver} timingFunction="ease" transition="fade">
+        {(styles) => (
+          <Flex
+            align="center"
+            className="cd-h-full cd-w-full cd-absolute cd-bg-black cd-bg-opacity-90 cd-z-50"
+            direction="column"
+            justify="center"
+            style={styles}
+          >
+            <Title c="violet">¡Felicidades!</Title>
+            <Text fz="xl">Has completado el reto :baityfeliz:</Text>
+          </Flex>
+        )}
+      </Transition>
+      <Container
+        className="cd-w-full cd-h-full cd-relative"
+        fluid={currentMessage ? true : undefined}
+        p={0}
+        size="md"
+      >
+        {!gameOver && channelQuery.isLoading && <Loading text="Cargando canales" />}
+        {!gameOver && messagesMutation.isPending && <Loading text="Cargando mensajes" />}
+        {!gameOver && !discordChannel && channelQuery.data && (
+          <form onSubmit={form.onSubmit((values) => console.log(values))}>
+            <Select
+              data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
+              label="Canal"
+              value={form.values.discordChannel.id}
+              {...form.getInputProps('discordChannel.id')}
+              className="cd-pt-8"
+              onChange={handleChannelChange}
+            />
+          </form>
+        )}
+        {!gameOver && messages && Boolean(messages.length) && (
+          <React.Fragment>
+            {currentMessage && (
+              <div className="cd-absolute cd-top-0 cd-left-0 cd-z-50 bg-controls-right cd-pl-[1rem] cd-pt-[0.5rem] cd-pr-[10rem] cd-pb-[4rem]">
+                <Flex align="center" direction="row" gap="md" justify="center">
+                  <Avatar size="lg" src={currentMessage.author.avatar} />
+                  <Text>{currentMessage.author.globalName}</Text>
+                </Flex>
+              </div>
+            )}
+
+            <div className="cd-absolute cd-top-0 cd-right-0 cd-z-50 bg-controls-left cd-pl-[10rem] cd-pt-[0.5rem] cd-pr-[1rem] cd-pb-[4rem]">
+              <Flex align="flex-end" direction="column" gap="xs" justify="center">
+                <Switch checked={autoPlay} label="AutoPlay" onChange={handlers.toggle} />
+                <Text c="violet.3">
+                  {currentIndex + 1} / {messages.length} videos
+                </Text>
+              </Flex>
+            </div>
+
+            <div className="cd-absolute cd-top-[50%] cd-left-[16px] cd-z-50">
+              <ActionIcon disabled={!hasPrev} size="xl" variant="subtle" onClick={prevMessage}>
+                <IconPlayerTrackPrevFilled />
+              </ActionIcon>
+            </div>
+
+            <div className="cd-absolute cd-top-[50%] cd-right-[16px] cd-z-50">
+              <ActionIcon disabled={!hasNext} size="xl" variant="subtle" onClick={nextMessage}>
+                <IconPlayerTrackNextFilled />
+              </ActionIcon>
+            </div>
+          </React.Fragment>
+        )}
+
+        <Transition
+          duration={1000}
+          mounted={Boolean(currentMessage)}
+          timingFunction="ease"
+          transition="fade"
+        >
+          {(styles) => (
+            <Media
+              autoPlay={autoPlay}
+              message={currentMessage}
+              nextMessage={nextMessage}
+              styles={styles}
+              onVideoEnd={handleGameOver}
+            />
+          )}
+        </Transition>
+      </Container>
+    </React.Fragment>
   )
 
   function handleChannelChange(channelId: string | null) {
@@ -121,6 +186,12 @@ const LaughLoss = () => {
     })
     setDiscordChannel(channel)
     messagesMutation.mutate(channelId)
+  }
+
+  function handleGameOver() {
+    if (hasNext) return
+    handlersGameOver.open()
+    useStoreLaughLoss.persist.clearStorage()
   }
 }
 
