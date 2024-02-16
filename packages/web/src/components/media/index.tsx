@@ -9,7 +9,7 @@ type MediaProps = {
   message?: MessageResponseType | null
   styles: React.CSSProperties
   nextMessage: () => void
-  onVideoEnd?: () => void
+  onVideoEnd: () => void
 }
 
 const Media = (props: MediaProps) => {
@@ -36,7 +36,7 @@ const Media = (props: MediaProps) => {
           width="100%"
           onEnded={() => {
             nextMessage()
-            onVideoEnd?.()
+            onVideoEnd()
           }}
         />
       </div>
