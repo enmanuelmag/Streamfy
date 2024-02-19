@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -17,6 +18,8 @@ import {
   Title,
   Text,
   Flex,
+  Group,
+  Button,
 } from '@mantine/core'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/laughLoss'
@@ -33,6 +36,7 @@ import { useSliderMedia } from '@hooks/slider'
 import { Logger } from '@global/utils/src/log'
 
 import './styles.scss'
+import { ROUTES } from '@src/constants/routes'
 
 const LaughLoss = () => {
   const {
@@ -45,6 +49,7 @@ const LaughLoss = () => {
     reset,
   } = useStoreLaughLoss((state) => state)
 
+  const navigate = useNavigate()
   const queryClient = useQueryClient()
 
   const form = useForm<Step1Type>({
@@ -96,7 +101,7 @@ const LaughLoss = () => {
 
   return (
     <React.Fragment>
-      <Transition duration={750} mounted={gameOver} timingFunction="ease" transition="fade">
+      <Transition duration={650} mounted={gameOver} timingFunction="ease" transition="fade">
         {(styles) => (
           <Flex
             align="center"
@@ -105,8 +110,22 @@ const LaughLoss = () => {
             justify="center"
             style={styles}
           >
-            <Title c="violet">¡Felicidades!</Title>
-            <Text fz="xl">Has completado el reto :baityfeliz:</Text>
+            <Title c="white">¡Felicidades!</Title>
+            <Text fz="xl">Has completado el reto, ahora paga :baitydedo:</Text>
+            <Group pt={16}>
+              <Button
+                variant="filled"
+                onClick={() => {
+                  handleReset()
+                  navigate(ROUTES.HOME)
+                }}
+              >
+                Ir a Inicio
+              </Button>
+              <Button variant="light" onClick={handleReset}>
+                Repetir
+              </Button>
+            </Group>
           </Flex>
         )}
       </Transition>
