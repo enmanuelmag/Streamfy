@@ -22,6 +22,7 @@ import Register from '@pages/auth/register'
 import Home from '@pages/private/home'
 import LaughLoss from '@pages/private/laughLoss'
 import Loading from '@src/components/shared/loading'
+import { Logger } from '@global/utils/src/log'
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache(),
@@ -51,10 +52,12 @@ const App = () => {
 }
 
 function Root() {
+  //const { user } = useStoreBase((state) => state)
   const location = useLocation()
   const navigate = useNavigate()
 
   const userQuery = useQuery<UserType | null, Error>({
+    //enabled: !user,
     queryKey: ['user'],
     queryFn: async () => await DataRepo.getUser(),
   })
@@ -63,7 +66,7 @@ function Root() {
     if ([ROUTES.LOGIN, ROUTES.REGISTER].includes(location.pathname)) return
 
     if (userQuery.isSuccess && !userQuery.data) {
-      console.log('sin usuario')
+      Logger.info('Root: No user found, redirecting to login')
       navigate(ROUTES.LOGIN)
     } else if (userQuery.isSuccess && userQuery.data) {
       navigate(ROUTES.HOME)

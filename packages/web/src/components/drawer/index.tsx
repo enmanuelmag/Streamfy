@@ -10,15 +10,18 @@ import { ROUTES } from '@src/constants/routes'
 import { UserType } from '@global/types/src/user'
 
 import { DataRepo } from '@src/db'
+import { Logger } from '@global/utils/src/log'
+
+const HEIGHT_DRAWER = 50
 
 export default function Protected() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { user } = useStoreBase((state) => state)
+  const { user, setUser } = useStoreBase((state) => state)
   const [opened, { open, close }] = useDisclosure()
 
   const userQuery = useQuery<UserType | null, Error>({
-    enabled: !user,
+    //enabled: !user,
     queryKey: ['user'],
     queryFn: async () => await DataRepo.getUser(),
   })
@@ -27,8 +30,10 @@ export default function Protected() {
     if ([ROUTES.LOGIN, ROUTES.REGISTER].includes(location.pathname)) return
 
     if (userQuery.isSuccess && !userQuery.data) {
-      console.log('sin usuario 2')
+      Logger.info('Drawer: No user found, redirecting to login')
       navigate(ROUTES.LOGIN)
+    } else if (userQuery.data) {
+      setUser(userQuery.data)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userQuery.isPending, userQuery.data, userQuery.isSuccess, userQuery.isError])
@@ -43,7 +48,7 @@ export default function Protected() {
   }
 
   return (
-    <AppShell header={{ height: 60 }} padding="md">
+    <AppShell header={{ height: HEIGHT_DRAWER }} padding="md">
       <Drawer
         offset={8}
         opened={opened}
@@ -69,6 +74,7 @@ export default function Protected() {
               useStoreLaughLoss.persist.clearStorage()
               useStoreBase.persist.clearStorage()
               close()
+              navigate(ROUTES.LOGIN)
             }}
           >
             Cerrar sesión
@@ -90,7 +96,12 @@ export default function Protected() {
           </div>
         </div>
       </AppShell.Header>
-      <AppShell.Main className="cd-w-full cd-h-full cd-absolute cd-p-0" pt={60} px={0}>
+      <AppShell.Main
+        className="cd-w-full cd-h-full cd-absolute cd-p-0"
+        pb={0}
+        pt={HEIGHT_DRAWER}
+        px={0}
+      >
         <Outlet />
       </AppShell.Main>
     </AppShell>

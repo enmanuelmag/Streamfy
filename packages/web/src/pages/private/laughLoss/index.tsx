@@ -1,23 +1,28 @@
 import React from 'react'
 import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { IconPlayerTrackNextFilled, IconPlayerTrackPrevFilled } from '@tabler/icons-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
+  IconPlayerTrackNextFilled,
+  IconPlayerTrackPrevFilled,
+  IconRestore,
+} from '@tabler/icons-react'
+import {
+  Transition,
   ActionIcon,
-  Avatar,
   Container,
-  Flex,
+  Avatar,
   Select,
   Switch,
-  Text,
   Title,
-  Transition,
+  Text,
+  Flex,
 } from '@mantine/core'
+
+import { type Step1Type, Step1Schema } from '@global/types/src/laughLoss'
 
 import { DiscordRepo } from '@src/db'
 import { useStoreLaughLoss } from '@src/store'
-import { type Step1Type, Step1Schema } from '@global/types/src/laughLoss'
 import { ChannelResponseType, MessageResponseType } from '@global/types/src/discord'
 
 import Media from '@src/components/media'
@@ -37,7 +42,10 @@ const LaughLoss = () => {
     setMessages,
     setDiscordChannel,
     setCurrentMessage,
+    reset,
   } = useStoreLaughLoss((state) => state)
+
+  const queryClient = useQueryClient()
 
   const form = useForm<Step1Type>({
     validate: zodResolver(Step1Schema),
@@ -139,6 +147,9 @@ const LaughLoss = () => {
                 <Text c="violet.3">
                   {currentIndex + 1} / {messages.length} videos
                 </Text>
+                <ActionIcon size="sm" variant="subtle" onClick={handleReset}>
+                  <IconRestore />
+                </ActionIcon>
               </Flex>
             </div>
 
@@ -192,6 +203,15 @@ const LaughLoss = () => {
     if (hasNext) return
     handlersGameOver.open()
     useStoreLaughLoss.persist.clearStorage()
+  }
+
+  function handleReset() {
+    queryClient.invalidateQueries({
+      queryKey: ['discordChannels'],
+    })
+    form.reset()
+    reset()
+    handlersGameOver.close()
   }
 }
 

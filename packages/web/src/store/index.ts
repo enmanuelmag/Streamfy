@@ -35,9 +35,10 @@ type LaughLossState = {
 }
 
 type LaughLossAction = {
-  setDiscordChannel: (discordChannel: LaughLossState['discordChannel'] | null) => void
   setMessages: (messages: LaughLossState['messages'] | null) => void
+  setDiscordChannel: (discordChannel: LaughLossState['discordChannel'] | null) => void
   setCurrentMessage: (currentMessage: LaughLossState['currentMessage'] | null) => void
+  reset: () => void
 }
 
 export const useStoreLaughLoss = create(
@@ -49,6 +50,7 @@ export const useStoreLaughLoss = create(
       setDiscordChannel: (discordChannel) => set(() => ({ discordChannel })),
       setMessages: (messages) => set(() => ({ messages })),
       setCurrentMessage: (currentMessage) => set(() => ({ currentMessage })),
+      reset: () => set(() => ({ discordChannel: null, messages: null, currentMessage: null })),
     }),
     {
       name: 'storage-laugh-loss',
@@ -59,6 +61,7 @@ export const useStoreLaughLoss = create(
             ([key]) => key === 'currentMessage' || key === 'discordChannel',
           ),
         ),
+        reset: state.reset,
         setMessages: state.setMessages,
         setDiscordChannel: state.setDiscordChannel,
         setCurrentMessage: state.setCurrentMessage,
