@@ -80,7 +80,7 @@ export default function Protected() {
           <Burger opened={opened} onClick={open} />
           <div className="cd-ml-4">
             <Link to={ROUTES.HOME}>
-              <Title className="cd-title-form" order={2}>
+              <Title className="cd-title-form cd-text-white" order={2}>
                 Stream
                 <Text inherit c="violet" component="span">
                   fy

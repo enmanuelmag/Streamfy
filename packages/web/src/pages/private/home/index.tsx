@@ -1,8 +1,10 @@
 import { Card, Center, Container, Flex, Image, Text } from '@mantine/core'
 
-import LaughLoss from '@assets/images/si_ries_pierdes.jpg'
-import Doctor from '@assets/images/consultorio.png'
 import { ROUTES } from '@src/constants/routes'
+
+import Reddit from '@assets/images/reddit.png'
+import Doctor from '@assets/images/consultorio.png'
+import LaughLoss from '@assets/images/si_ries_pierdes.jpg'
 
 type CardProps = {
   image: string
@@ -14,7 +16,7 @@ type CardProps = {
 const Cards: CardProps[] = [
   {
     image: LaughLoss,
-    title: 'Si te ries pierdes',
+    title: 'Si te ríes pierdes',
     href: ROUTES.LAUGH_LOSS,
     description:
       'Actividad donde podemos sacarle dinero al Baity, esperemos que si cumpla :baitydedo:',
@@ -25,6 +27,12 @@ const Cards: CardProps[] = [
     href: ROUTES.BAITY_CONSULTORIO,
     description:
       'Espacio para que el Baity lee los chisme de los Masturbaiters y nos da consejos :baitylove:',
+  },
+  {
+    image: Reddit,
+    title: 'Reddit',
+    href: ROUTES.REDDIT,
+    description: 'Actividad donde el Baity revisa memes del Reddit :baitymeme:',
   },
 ]
 

@@ -5,4 +5,5 @@ export const ROUTES = {
   HOME: '/home',
   LAUGH_LOSS: '/laugh-loss',
   BAITY_CONSULTORIO: '/baity-consultorio',
+  REDDIT: '/reddit',
 }
