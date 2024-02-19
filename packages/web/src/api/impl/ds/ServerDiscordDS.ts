@@ -18,13 +18,13 @@ export default class ServerDS extends DiscordDS {
   constructor() {
     super()
     this.axiosInstance = axios.create({
-      baseURL: import.meta.env.VITE_SERVER_API_URL,
+      baseURL: `${import.meta.env.VITE_SERVER_API_URL}/v1`,
     })
   }
   async getMessages(params: GetMessagesParamsType): Promise<MessageResponseType[]> {
     try {
       const response = await this.axiosInstance.post<ResponseType<MessageResponseType[]>>(
-        '/messages',
+        '/discord/messages',
         params,
       )
 
@@ -41,7 +41,7 @@ export default class ServerDS extends DiscordDS {
   async getChannels(params: GetChannelsParamsType): Promise<ChannelResponseType[]> {
     try {
       const response = await this.axiosInstance.post<ResponseType<ChannelResponseType[]>>(
-        '/channels',
+        '/discord/channels',
         params,
       )
 

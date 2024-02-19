@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactPlayer from 'react-player'
-import { Image, Text } from '@mantine/core'
+import { Center, Image, Text } from '@mantine/core'
 
 import { MessageResponseType } from '@global/types/src/discord'
 
@@ -25,10 +25,10 @@ const Media = (props: MediaProps) => {
     return <Image alt={content || description || 'Imagen'} src={url} style={styles} />
   } else if (contentType?.includes('video')) {
     return (
-      <div className="cd-relative cd-h-full cd-w-full" style={styles}>
+      <Center className="cd-relative cd-h-full cd-w-full" style={styles}>
         <ReactPlayer
           controls
-          className="cd-absolute cd-top-0 cd-left-0"
+          // className="cd-absolute cd-top-0 cd-left-0"
           height="100%"
           pip={false}
           playing={autoPlay}
@@ -39,7 +39,7 @@ const Media = (props: MediaProps) => {
             onVideoEnd()
           }}
         />
-      </div>
+      </Center>
     )
   }
 

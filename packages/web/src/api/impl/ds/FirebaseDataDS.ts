@@ -138,7 +138,6 @@ export default class FirebaseDS extends DataDS {
 
   async getUser() {
     const { currentUser } = await this.getLoggedInUser()
-    Logger.info('currentUser', currentUser)
     if (!currentUser) return null
 
     return currentUser
