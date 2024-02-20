@@ -3,10 +3,10 @@ import ReactPlayer from 'react-player'
 import { Center, Image, Loader, Stack, Text } from '@mantine/core'
 import { TwitterTweetEmbed } from 'react-twitter-embed'
 
+import { REGEX_TWITTER_URL } from '@src/constants/media'
 import { MessageResponseType } from '@global/types/src/discord'
 
 import './styles.scss'
-import { REGEX_TWITTER_URL } from '@src/constants/media'
 
 type MediaProps = {
   autoPlay?: boolean
@@ -50,9 +50,7 @@ const Media = (props: MediaProps) => {
 
     return (
       <React.Fragment>
-        {isImage(contentType) && (
-          <Image alt={content || description || 'Imagen'} src={url} style={styles} />
-        )}
+        {isImage(contentType) && <Image alt={content || description || 'Imagen'} src={url} />}
         {isVideo(contentType) && (
           <ReactPlayer
             controls
@@ -73,7 +71,11 @@ const Media = (props: MediaProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [message?.id])
 
-  return <Center className="cd-relative cd-h-full cd-w-full">{Component}</Center>
+  return (
+    <Center className="cd-relative cd-h-full cd-w-full" style={styles}>
+      {Component}
+    </Center>
+  )
 
   function getTweetId(content: string) {
     const match = REGEX_TWITTER_URL.exec(content)
