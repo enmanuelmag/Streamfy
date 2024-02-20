@@ -41,6 +41,14 @@ export const MessageResponseSchema = zod.object({
       width: zod.number().nullable(),
     }),
   ),
+  reactions: zod.array(
+    zod.object({
+      id: zod.string(),
+      count: zod.number(),
+      emoji: zod.string(),
+      imageURL: zod.string().optional().nullable(),
+    }),
+  ),
 })
 
 export type MessageResponseType = zod.infer<typeof MessageResponseSchema>

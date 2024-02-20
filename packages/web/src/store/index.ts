@@ -69,3 +69,45 @@ export const useStoreLaughLoss = create(
     },
   ),
 )
+
+type ConsultorioState = {
+  discordChannel?: ChannelResponseType | null
+  messages?: MessageResponseType[] | null
+  currentMessage?: MessageResponseType | null
+}
+
+type ConsultorioAction = {
+  setMessages: (messages: ConsultorioState['messages'] | null) => void
+  setDiscordChannel: (discordChannel: ConsultorioState['discordChannel'] | null) => void
+  setCurrentMessage: (currentMessage: ConsultorioState['currentMessage'] | null) => void
+  reset: () => void
+}
+
+export const useStoreConsultorio = create(
+  persist<ConsultorioState & ConsultorioAction>(
+    (set) => ({
+      discordChannel: null,
+      messages: null,
+      currentMessageId: null,
+      setDiscordChannel: (discordChannel) => set(() => ({ discordChannel })),
+      setMessages: (messages) => set(() => ({ messages })),
+      setCurrentMessage: (currentMessage) => set(() => ({ currentMessage })),
+      reset: () => set(() => ({ discordChannel: null, messages: null, currentMessage: null })),
+    }),
+    {
+      name: 'storage-consultorio',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        ...Object.fromEntries(
+          Object.entries(state).filter(
+            ([key]) => key === 'currentMessage' || key === 'discordChannel',
+          ),
+        ),
+        reset: state.reset,
+        setMessages: state.setMessages,
+        setDiscordChannel: state.setDiscordChannel,
+        setCurrentMessage: state.setCurrentMessage,
+      }),
+    },
+  ),
+)

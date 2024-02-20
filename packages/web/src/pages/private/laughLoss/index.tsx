@@ -38,6 +38,8 @@ import { Logger } from '@global/utils/src/log'
 import './styles.scss'
 import { ROUTES } from '@src/constants/routes'
 
+const DELAY_TRANSITION = 250
+
 const LaughLoss = () => {
   const {
     messages,
@@ -85,11 +87,14 @@ const LaughLoss = () => {
   const [autoPlay, handlers] = useDisclosure(false)
   const [gameOver, handlersGameOver] = useDisclosure(false)
 
-  const { nextMessage, prevMessage, currentIndex, hasNext, hasPrev } = useSliderMedia({
-    messages,
-    currentMessage,
-    setCurrentMessage,
-  })
+  const { showAnimation, nextMessage, prevMessage, currentIndex, hasNext, hasPrev } =
+    useSliderMedia({
+      messages,
+      currentMessage,
+      setCurrentMessage,
+      useTransition: true,
+      delay: DELAY_TRANSITION,
+    })
 
   // Clear storage if there are no more messages
   React.useEffect(() => {
@@ -186,22 +191,24 @@ const LaughLoss = () => {
           </React.Fragment>
         )}
 
-        <Transition
-          duration={1000}
-          mounted={Boolean(currentMessage)}
-          timingFunction="ease"
-          transition="fade"
-        >
-          {(styles) => (
-            <Media
-              autoPlay={autoPlay}
-              message={currentMessage}
-              nextMessage={nextMessage}
-              styles={styles}
-              onVideoEnd={handleGameOver}
-            />
-          )}
-        </Transition>
+        {currentMessage && (
+          <Transition
+            duration={DELAY_TRANSITION}
+            mounted={showAnimation}
+            timingFunction="ease"
+            transition="fade"
+          >
+            {(styles) => (
+              <Media
+                autoPlay={autoPlay}
+                message={currentMessage}
+                nextMessage={nextMessage}
+                styles={styles}
+                onVideoEnd={handleGameOver}
+              />
+            )}
+          </Transition>
+        )}
       </Container>
     </React.Fragment>
   )

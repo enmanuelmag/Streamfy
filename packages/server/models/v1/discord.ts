@@ -33,27 +33,25 @@ export const getMessages = async (
     messages = messages.filter((message) => regexPattern.test(message.content))
   }
 
-  Logger.info(
-    'Got messages',
-    messages.forEach((message) => message.content),
-  )
+  Logger.info('Got messages', messages.size)
 
-  const values = messages.map(
-    (message) =>
-      ({
-        id: message.id,
-        author: {
-          id: message.author.id,
-          username: message.author.username,
-          globalName: message.author.globalName,
-          discriminator: message.author.discriminator,
-          accentColor: message.author.accentColor,
-          avatar: message.author.avatarURL(),
-        },
-        content: message.content,
-        timestamp: message.createdTimestamp,
-        attachments: message.attachments.map((data) => {
-          return {
+  return messages
+    .sort((a, b) => a.createdTimestamp - b.createdTimestamp)
+    .map(
+      (message) =>
+        ({
+          id: message.id,
+          author: {
+            id: message.author.id,
+            username: message.author.username,
+            globalName: message.author.globalName,
+            discriminator: message.author.discriminator,
+            accentColor: message.author.accentColor,
+            avatar: message.author.avatarURL(),
+          },
+          content: message.content,
+          timestamp: message.createdTimestamp,
+          attachments: message.attachments.map((data) => ({
             id: data.id,
             description: data.description,
             contentType: data.contentType,
@@ -61,11 +59,15 @@ export const getMessages = async (
             url: data.url,
             height: data.height,
             width: data.width,
-          }
-        }),
-      }) as MessageResponseType,
-  )
-  return values
+          })),
+          reactions: message.reactions.cache.map((reaction) => ({
+            id: reaction.emoji.id,
+            count: reaction.count,
+            emoji: reaction.emoji.name,
+            imageURL: reaction.emoji.imageURL(),
+          })),
+        }) as MessageResponseType,
+    )
 }
 
 export const getChannels = async (

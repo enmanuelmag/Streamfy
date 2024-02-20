@@ -21,7 +21,9 @@ import Register from '@pages/auth/register'
 //Private
 import Home from '@pages/private/home'
 import LaughLoss from '@pages/private/laughLoss'
+import Consultorio from '@pages/private/consultorio'
 import Loading from '@src/components/shared/loading'
+
 import { Logger } from '@global/utils/src/log'
 
 export const queryClient = new QueryClient({
@@ -43,6 +45,7 @@ const App = () => {
           <Route element={<Drawer />}>
             <Route element={<Home />} path={ROUTES.HOME} />
             <Route element={<LaughLoss />} path={ROUTES.LAUGH_LOSS} />
+            <Route element={<Consultorio />} path={ROUTES.BAITY_CONSULTORIO} />
           </Route>
           <Route element={<Root />} path="/" />
         </Routes>
