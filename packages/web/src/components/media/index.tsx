@@ -5,9 +5,8 @@ import { TwitterTweetEmbed } from 'react-twitter-embed'
 
 import { MessageResponseType } from '@global/types/src/discord'
 
-import { Logger } from '@global/utils/src/log'
-
 import './styles.scss'
+import { REGEX_TWITTER_URL } from '@src/constants/media'
 
 type MediaProps = {
   autoPlay?: boolean
@@ -22,50 +21,39 @@ const Media = (props: MediaProps) => {
 
   const { attachments, content, id } = message
 
-  const Tweet = React.useMemo(() => {
-    if (!isTweet(content)) return null
-    Logger.info('Tweet detected', getTweetId(content))
-    return (
-      <TwitterTweetEmbed
-        key={id}
-        options={{
-          width: 500,
-        }}
-        placeholder={
-          <Center className="cd-h-full">
-            <Stack align="center">
-              <Loader />
-              <Text>Loading tweet</Text>
-            </Stack>
-          </Center>
-        }
-        tweetId={getTweetId(content)}
-      />
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [message?.id])
-
-  if (attachments.length === 0) {
-    if (isTweet(content)) {
-      Logger.info('Tweet detected', getTweetId(content))
-      return (
-        <Center className="cd-relative cd-h-full cd-w-full" style={styles}>
-          {Tweet}
-        </Center>
-      )
+  const Component = React.useMemo(() => {
+    if (attachments.length === 0) {
+      const tweetId = getTweetId(content)
+      if (tweetId) {
+        return (
+          <TwitterTweetEmbed
+            key={id}
+            options={{
+              width: 500,
+            }}
+            placeholder={
+              <Center className="cd-h-full">
+                <Stack align="center">
+                  <Loader />
+                  <Text>Loading tweet</Text>
+                </Stack>
+              </Center>
+            }
+            tweetId={tweetId}
+          />
+        )
+      }
+      return <Text>{content}</Text>
     }
 
-    return <Center style={styles}>{content && <Text>{content}</Text>}</Center>
-  }
+    const [{ contentType = '', url, description }] = attachments
 
-  if (attachments) {
-    const [{ contentType, url, description }] = attachments
-
-    if (contentType?.includes('image')) {
-      return <Image alt={content || description || 'Imagen'} src={url} style={styles} />
-    } else if (contentType?.includes('video')) {
-      return (
-        <Center className="cd-relative cd-h-full cd-w-full" style={styles}>
+    return (
+      <React.Fragment>
+        {isImage(contentType) && (
+          <Image alt={content || description || 'Imagen'} src={url} style={styles} />
+        )}
+        {isVideo(contentType) && (
           <ReactPlayer
             controls
             // className="cd-absolute cd-top-0 cd-left-0"
@@ -79,20 +67,25 @@ const Media = (props: MediaProps) => {
               onVideoEnd()
             }}
           />
-        </Center>
-      )
-    }
-  }
+        )}
+      </React.Fragment>
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [message?.id])
 
-  function isTweet(content: string) {
-    const regex = /https?:\/\/(www\.)?[x|twitter]+\.com\/[a-zA-Z0-9_]+\/status\/([0-9]+)\?s=[0-9]+/g
-    return regex.test(content)
-  }
+  return <Center className="cd-relative cd-h-full cd-w-full">{Component}</Center>
 
   function getTweetId(content: string) {
-    const regex = /https?:\/\/(www\.)?[x|twitter]+\.com\/[a-zA-Z0-9_]+\/status\/([0-9]+)\?s=[0-9]+/g
-    const match = regex.exec(content)
-    return match ? match[2] : ''
+    const match = REGEX_TWITTER_URL.exec(content)
+    return match ? match[2] : null
+  }
+
+  function isImage(contentType: string | null) {
+    return contentType?.includes('image')
+  }
+
+  function isVideo(contentType: string | null) {
+    return contentType?.includes('video')
   }
 }
 
