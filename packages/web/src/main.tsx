@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { MantineProvider, createTheme } from '@mantine/core'
 //import { ModalsProvider } from '@mantine/modals'
@@ -31,18 +30,10 @@ if (import.meta.env.MODE === 'test') {
       worker.start()
     })
     .then(() => {
-      root.render(
-        <StrictMode>
-          <AppWrapper />
-        </StrictMode>,
-      )
+      root.render(<AppWrapper />)
     })
 } else {
-  root.render(
-    <StrictMode>
-      <AppWrapper />
-    </StrictMode>,
-  )
+  root.render(<AppWrapper />)
 }
 
 // Uncomment if you want to see the Lighthouse report in the console

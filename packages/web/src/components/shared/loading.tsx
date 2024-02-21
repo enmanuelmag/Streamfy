@@ -4,13 +4,20 @@ import React from 'react'
 type LoadingProps = {
   text?: string | React.ReactNode
   loadingSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+  className?: string
 }
-const Loading = ({ text, loadingSize = 'xl' }: LoadingProps) => {
+const Loading = ({ className, text, loadingSize = 'xl' }: LoadingProps) => {
   return (
-    <Center h="100%" w="100%">
+    <Center className={`${className} cd-h-full cd-w-full`}>
       <Flex align="center" direction="column" justify="center">
         <Loader size={loadingSize} />
-        {React.isValidElement(text) ? text : <Text fz="lg">{text}</Text>}
+        {React.isValidElement(text) ? (
+          text
+        ) : (
+          <Text fz="lg" mt={8}>
+            {text}
+          </Text>
+        )}
       </Flex>
     </Center>
   )

@@ -95,8 +95,6 @@ const Consultorio = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discordChannel])
 
-  console.log('Consultorio', currentMessage?.content)
-
   return (
     <React.Fragment>
       <Transition duration={650} mounted={gameOver} timingFunction="ease" transition="fade">
@@ -134,7 +132,9 @@ const Consultorio = () => {
         size="md"
       >
         {!gameOver && channelQuery.isLoading && <Loading text="Cargando canales" />}
-        {!gameOver && messagesMutation.isPending && <Loading text="Cargando mensajes" />}
+        {!gameOver && messagesMutation.isPending && !currentMessage && (
+          <Loading text="Cargando mensajes" />
+        )}
         {!gameOver && !discordChannel && channelQuery.data && (
           <form onSubmit={form.onSubmit((values) => console.log(values))}>
             <Select
@@ -163,7 +163,7 @@ const Consultorio = () => {
             <div className="cd-absolute cd-top-0 cd-right-0 cd-z-50 cd-pl-[10rem] cd-pt-[0.5rem] cd-pr-[1rem] cd-pb-[4rem]">
               <Flex align="flex-end" direction="column" gap="xs" justify="center">
                 <Text c="violet.3">
-                  {currentIndex + 1} / {messages.length} videos
+                  {currentIndex + 1} / {messages.length} mensajes
                 </Text>
                 <ActionIcon size="sm" variant="subtle" onClick={handleReset}>
                   <IconRestore />

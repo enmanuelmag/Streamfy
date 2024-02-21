@@ -1,10 +1,11 @@
 import React from 'react'
 import ReactPlayer from 'react-player'
-import { Center, Image, Loader, Stack, Text } from '@mantine/core'
+import { Center, Image, Text } from '@mantine/core'
 import { TwitterTweetEmbed } from 'react-twitter-embed'
 
 import { REGEX_TWITTER_URL } from '@src/constants/media'
 import { MessageResponseType } from '@global/types/src/discord'
+import Loading from '@src/components/shared/loading'
 
 import './styles.scss'
 
@@ -27,18 +28,11 @@ const Media = (props: MediaProps) => {
       if (tweetId) {
         return (
           <TwitterTweetEmbed
-            key={id}
+            key={tweetId}
             options={{
               width: 500,
             }}
-            placeholder={
-              <Center className="cd-h-full">
-                <Stack align="center">
-                  <Loader />
-                  <Text>Loading tweet</Text>
-                </Stack>
-              </Center>
-            }
+            placeholder={<Loading className="cd-absolute" text="Cargando tweet" />}
             tweetId={tweetId}
           />
         )
@@ -69,7 +63,7 @@ const Media = (props: MediaProps) => {
       </React.Fragment>
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [message?.id])
+  }, [id])
 
   return (
     <Center className="cd-relative cd-h-full cd-w-full" style={styles}>
@@ -78,8 +72,12 @@ const Media = (props: MediaProps) => {
   )
 
   function getTweetId(content: string) {
-    const match = REGEX_TWITTER_URL.exec(content)
-    return match ? match[2] : null
+    const isTwitterUrl = content.match(REGEX_TWITTER_URL)
+    if (isTwitterUrl) {
+      const match = REGEX_TWITTER_URL.exec(content)
+      return match ? match[2] : null
+    }
+    return null
   }
 
   function isImage(contentType: string | null) {
