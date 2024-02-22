@@ -1,26 +1,10 @@
 import React from 'react'
-import {
-  IconRestore,
-  IconPlayerTrackNextFilled,
-  IconPlayerTrackPrevFilled,
-} from '@tabler/icons-react'
+
 import { useNavigate } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
+import { Transition, Container, Select, Center } from '@mantine/core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  Transition,
-  ActionIcon,
-  Container,
-  Avatar,
-  Select,
-  Button,
-  Group,
-  Title,
-  Text,
-  Flex,
-  Center,
-} from '@mantine/core'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/consultorio'
 
@@ -31,10 +15,12 @@ import { ChannelResponseType, MessageResponseType } from '@global/types/src/disc
 
 import Media from '@src/components/media'
 import Loading from '@src/components/shared/loading'
+import SliderHUD from '@src/shared/SliderHUD'
 
 import { useSliderMedia } from '@hooks/slider'
 
 import { Logger } from '@global/utils/src/log'
+import EndGame from '@src/shared/EndGame'
 
 const Consultorio = () => {
   const {
@@ -79,7 +65,7 @@ const Consultorio = () => {
 
   const [gameOver, handlersGameOver] = useDisclosure(false)
 
-  const { showAnimation, nextMessage, prevMessage, currentIndex, hasNext, hasPrev } =
+  const { showAnimation, goNextMessage, goPrevMessage, currentIndex, hasNext, hasPrev } =
     useSliderMedia({
       messages,
       currentMessage,
@@ -99,30 +85,16 @@ const Consultorio = () => {
     <React.Fragment>
       <Transition duration={650} mounted={gameOver} timingFunction="ease" transition="fade">
         {(styles) => (
-          <Flex
-            align="center"
-            className="cd-h-full cd-w-full cd-absolute cd-bg-black cd-bg-opacity-90 cd-z-50"
-            direction="column"
-            justify="center"
-            style={styles}
-          >
-            <Title c="white">¡Felicidades!</Title>
-            <Text fz="xl">Has completado el reto, ahora paga :baitydedo:</Text>
-            <Group pt={16}>
-              <Button
-                variant="filled"
-                onClick={() => {
-                  handleReset()
-                  navigate(ROUTES.HOME)
-                }}
-              >
-                Ir a Inicio
-              </Button>
-              <Button variant="light" onClick={handleReset}>
-                Repetir
-              </Button>
-            </Group>
-          </Flex>
+          <EndGame
+            description="Espero que les haya funcionado los consejos o terapia :baitylove:"
+            handleGoHome={() => {
+              handleReset()
+              navigate(ROUTES.HOME)
+            }}
+            handleReset={handleReset}
+            styles={styles}
+            title="¡Fin del consultorio!"
+          />
         )}
       </Transition>
       <Container
@@ -148,41 +120,17 @@ const Consultorio = () => {
           </form>
         )}
         {!gameOver && messages && Boolean(messages.length) && (
-          <React.Fragment>
-            {/* bg-controls-right */}
-            {currentMessage && (
-              <div className="cd-absolute cd-top-0 cd-left-0 cd-z-50 cd-pl-[1rem] cd-pt-[0.5rem] cd-pr-[10rem] cd-pb-[4rem]">
-                <Flex align="center" direction="row" gap="md" justify="center">
-                  <Avatar size="lg" src={currentMessage.author.avatar} />
-                  <Text>{currentMessage.author.globalName}</Text>
-                </Flex>
-              </div>
-            )}
-
-            {/* bg-controls-left */}
-            <div className="cd-absolute cd-top-0 cd-right-0 cd-z-50 cd-pl-[10rem] cd-pt-[0.5rem] cd-pr-[1rem] cd-pb-[4rem]">
-              <Flex align="flex-end" direction="column" gap="xs" justify="center">
-                <Text c="violet.3">
-                  {currentIndex + 1} / {messages.length} mensajes
-                </Text>
-                <ActionIcon size="sm" variant="subtle" onClick={handleReset}>
-                  <IconRestore />
-                </ActionIcon>
-              </Flex>
-            </div>
-
-            <div className="cd-absolute cd-top-[50%] cd-left-[16px] cd-z-50">
-              <ActionIcon disabled={!hasPrev} size="xl" variant="subtle" onClick={prevMessage}>
-                <IconPlayerTrackPrevFilled />
-              </ActionIcon>
-            </div>
-
-            <div className="cd-absolute cd-top-[50%] cd-right-[16px] cd-z-50">
-              <ActionIcon disabled={!hasNext} size="xl" variant="subtle" onClick={nextMessage}>
-                <IconPlayerTrackNextFilled />
-              </ActionIcon>
-            </div>
-          </React.Fragment>
+          <SliderHUD
+            currentIndex={currentIndex}
+            currentMessage={currentMessage}
+            goNextMessage={hasNext ? goNextMessage : handleGameOver}
+            goPrevMessage={goPrevMessage}
+            handleReset={handleReset}
+            hasNext={!gameOver}
+            hasPrev={hasPrev}
+            labelCounter="mensajes"
+            messages={messages}
+          />
         )}
 
         {currentMessage && (
@@ -196,8 +144,8 @@ const Consultorio = () => {
               >
                 {(styles) => (
                   <Media
+                    goNextMessage={goNextMessage}
                     message={currentMessage}
-                    nextMessage={nextMessage}
                     styles={styles}
                     onVideoEnd={handleGameOver}
                   />

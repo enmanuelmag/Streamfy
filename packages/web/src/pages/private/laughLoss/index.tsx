@@ -2,41 +2,26 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
+import { Transition, Container, Select } from '@mantine/core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  IconPlayerTrackNextFilled,
-  IconPlayerTrackPrevFilled,
-  IconRestore,
-} from '@tabler/icons-react'
-import {
-  Transition,
-  ActionIcon,
-  Container,
-  Avatar,
-  Select,
-  Switch,
-  Title,
-  Text,
-  Flex,
-  Group,
-  Button,
-} from '@mantine/core'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/laughLoss'
 
 import { DiscordRepo } from '@src/db'
 import { useStoreLaughLoss } from '@src/store'
 import { ChannelResponseType, MessageResponseType } from '@global/types/src/discord'
+import { ROUTES } from '@src/constants/routes'
 
 import Media from '@src/components/media'
 import Loading from '@src/components/shared/loading'
+import SliderHUD from '@src/shared/SliderHUD'
 
 import { useSliderMedia } from '@hooks/slider'
 
 import { Logger } from '@global/utils/src/log'
 
 import './styles.scss'
-import { ROUTES } from '@src/constants/routes'
+import EndGame from '@src/shared/EndGame'
 
 const DELAY_TRANSITION = 250
 
@@ -85,9 +70,10 @@ const LaughLoss = () => {
   })
 
   const [autoPlay, handlers] = useDisclosure(false)
+  const [alreadyPlayed, handlersPlayed] = useDisclosure(false)
   const [gameOver, handlersGameOver] = useDisclosure(false)
 
-  const { showAnimation, nextMessage, prevMessage, currentIndex, hasNext, hasPrev } =
+  const { showAnimation, goNextMessage, goPrevMessage, currentIndex, hasNext, hasPrev } =
     useSliderMedia({
       messages,
       currentMessage,
@@ -108,30 +94,34 @@ const LaughLoss = () => {
     <React.Fragment>
       <Transition duration={650} mounted={gameOver} timingFunction="ease" transition="fade">
         {(styles) => (
-          <Flex
-            align="center"
-            className="cd-h-full cd-w-full cd-absolute cd-bg-black cd-bg-opacity-90 cd-z-50"
-            direction="column"
-            justify="center"
-            style={styles}
-          >
-            <Title c="white">¡Felicidades!</Title>
-            <Text fz="xl">Has completado el reto, ahora paga :baitydedo:</Text>
-            <Group pt={16}>
-              <Button
-                variant="filled"
-                onClick={() => {
-                  handleReset()
-                  navigate(ROUTES.HOME)
-                }}
-              >
-                Ir a Inicio
-              </Button>
-              <Button variant="light" onClick={handleReset}>
-                Repetir
-              </Button>
-            </Group>
-          </Flex>
+          <EndGame
+            description="Has completado el reto, ahora paga :baitydedo:"
+            handleGoHome={() => {
+              handleReset()
+              navigate(ROUTES.HOME)
+            }}
+            handleReset={handleReset}
+            styles={styles}
+            title="¡Felicidades!"
+          />
+        )}
+      </Transition>
+      <Transition
+        duration={650}
+        mounted={alreadyPlayed && !autoPlay && Boolean(messages?.length)}
+        timingFunction="ease"
+        transition="fade"
+      >
+        {(styles) => (
+          <EndGame
+            description="¿Acaso Baity pauso la cadena de videos? :baitydedo:"
+            handleContinue={() => {
+              handlersPlayed.close()
+              handlers.open()
+            }}
+            styles={styles}
+            title="¡TONGO!"
+          />
         )}
       </Transition>
       <Container
@@ -141,7 +131,9 @@ const LaughLoss = () => {
         size="md"
       >
         {!gameOver && channelQuery.isLoading && <Loading text="Cargando canales" />}
-        {!gameOver && messagesMutation.isPending && <Loading text="Cargando mensajes" />}
+        {!gameOver && messagesMutation.isPending && !currentMessage && (
+          <Loading text="Cargando mensajes" />
+        )}
         {!gameOver && !discordChannel && channelQuery.data && (
           <form onSubmit={form.onSubmit((values) => console.log(values))}>
             <Select
@@ -155,40 +147,23 @@ const LaughLoss = () => {
           </form>
         )}
         {!gameOver && messages && Boolean(messages.length) && (
-          <React.Fragment>
-            {currentMessage && (
-              <div className="cd-absolute cd-top-0 cd-left-0 cd-z-50 bg-controls-right cd-pl-[1rem] cd-pt-[0.5rem] cd-pr-[10rem] cd-pb-[4rem]">
-                <Flex align="center" direction="row" gap="md" justify="center">
-                  <Avatar size="lg" src={currentMessage.author.avatar} />
-                  <Text>{currentMessage.author.globalName}</Text>
-                </Flex>
-              </div>
-            )}
-
-            <div className="cd-absolute cd-top-0 cd-right-0 cd-z-50 bg-controls-left cd-pl-[10rem] cd-pt-[0.5rem] cd-pr-[1rem] cd-pb-[4rem]">
-              <Flex align="flex-end" direction="column" gap="xs" justify="center">
-                <Switch checked={autoPlay} label="AutoPlay" onChange={handlers.toggle} />
-                <Text c="violet.3">
-                  {currentIndex + 1} / {messages.length} videos
-                </Text>
-                <ActionIcon size="sm" variant="subtle" onClick={handleReset}>
-                  <IconRestore />
-                </ActionIcon>
-              </Flex>
-            </div>
-
-            <div className="cd-absolute cd-top-[50%] cd-left-[16px] cd-z-50">
-              <ActionIcon disabled={!hasPrev} size="xl" variant="subtle" onClick={prevMessage}>
-                <IconPlayerTrackPrevFilled />
-              </ActionIcon>
-            </div>
-
-            <div className="cd-absolute cd-top-[50%] cd-right-[16px] cd-z-50">
-              <ActionIcon disabled={!hasNext} size="xl" variant="subtle" onClick={nextMessage}>
-                <IconPlayerTrackNextFilled />
-              </ActionIcon>
-            </div>
-          </React.Fragment>
+          <SliderHUD
+            useShadowCorners
+            autoPlay={autoPlay}
+            currentIndex={currentIndex}
+            currentMessage={currentMessage}
+            goNextMessage={goNextMessage}
+            goPrevMessage={goPrevMessage}
+            handleAutoPlay={() => {
+              handlers.toggle()
+              handlersPlayed.open()
+            }}
+            handleReset={handleReset}
+            hasNext={hasNext}
+            hasPrev={hasPrev}
+            labelCounter="videos"
+            messages={messages}
+          />
         )}
 
         {currentMessage && (
@@ -201,10 +176,18 @@ const LaughLoss = () => {
             {(styles) => (
               <Media
                 autoPlay={autoPlay}
+                goNextMessage={goNextMessage}
                 message={currentMessage}
-                nextMessage={nextMessage}
                 styles={styles}
-                onVideoEnd={handleGameOver}
+                onVideoEnd={() => {
+                  handlers.open()
+                  handleGameOver()
+                }}
+                //onVideoPause={handlers.close}
+                onVideoPlay={() => {
+                  handlers.open()
+                  handlersPlayed.open()
+                }}
               />
             )}
           </Transition>
@@ -237,6 +220,8 @@ const LaughLoss = () => {
     })
     form.reset()
     reset()
+    handlers.close()
+    handlersPlayed.close()
     handlersGameOver.close()
   }
 }

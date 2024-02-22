@@ -3,67 +3,76 @@ import ReactPlayer from 'react-player'
 import { Center, Image, Text } from '@mantine/core'
 import { TwitterTweetEmbed } from 'react-twitter-embed'
 
-import { REGEX_TWITTER_URL } from '@src/constants/media'
 import { MessageResponseType } from '@global/types/src/discord'
-import Loading from '@src/components/shared/loading'
 
 import './styles.scss'
+import Loading from '../shared/loading'
 
 type MediaProps = {
   autoPlay?: boolean
   message: MessageResponseType
   styles: React.CSSProperties
-  nextMessage: () => void
+  goNextMessage: () => void
   onVideoEnd: () => void
+  onVideoPause?: () => void
+  onVideoPlay?: () => void
 }
 
 const Media = (props: MediaProps) => {
-  const { autoPlay = false, styles, onVideoEnd, nextMessage, message } = props
+  const {
+    autoPlay = false,
+    styles,
+    onVideoEnd,
+    onVideoPause,
+    onVideoPlay,
+    goNextMessage,
+    message,
+  } = props
 
   const { attachments, content, id } = message
 
-  const Component = React.useMemo(() => {
-    if (attachments.length === 0) {
-      const tweetId = getTweetId(content)
-      if (tweetId) {
-        return (
-          <TwitterTweetEmbed
-            key={tweetId}
-            options={{
-              width: 500,
-            }}
-            placeholder={<Loading className="cd-absolute" text="Cargando tweet" />}
-            tweetId={tweetId}
-          />
-        )
-      }
-      return <Text>{content}</Text>
+  let Component = null
+
+  if (attachments.length === 0) {
+    const tweetId = getTweetId(content)
+    if (tweetId) {
+      Component = (
+        <TwitterTweetEmbed
+          key={id}
+          options={{
+            width: 500,
+          }}
+          placeholder={<Loading className="cd-absolute" text="Cargando tweet" />}
+          tweetId={tweetId}
+        />
+      )
+    } else {
+      Component = <Text>{content}</Text>
     }
-
+  } else {
     const [{ contentType = '', url, description }] = attachments
-
-    return (
+    Component = (
       <React.Fragment>
         {isImage(contentType) && <Image alt={content || description || 'Imagen'} src={url} />}
         {isVideo(contentType) && (
           <ReactPlayer
             controls
-            // className="cd-absolute cd-top-0 cd-left-0"
             height="100%"
             pip={false}
             playing={autoPlay}
             url={url}
             width="100%"
             onEnded={() => {
-              nextMessage()
+              goNextMessage()
               onVideoEnd()
             }}
+            onPause={onVideoPause}
+            onPlay={onVideoPlay}
           />
         )}
       </React.Fragment>
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
+  }
 
   return (
     <Center className="cd-relative cd-h-full cd-w-full" style={styles}>
@@ -72,12 +81,11 @@ const Media = (props: MediaProps) => {
   )
 
   function getTweetId(content: string) {
-    const isTwitterUrl = content.match(REGEX_TWITTER_URL)
-    if (isTwitterUrl) {
-      const match = REGEX_TWITTER_URL.exec(content)
-      return match ? match[2] : null
-    }
-    return null
+    const contentHasTwitterUrl = content.includes('twitter.com') || content.includes('x.com')
+
+    if (!contentHasTwitterUrl) return null
+
+    return content.split('/').pop()?.split('?')[0]
   }
 
   function isImage(contentType: string | null) {

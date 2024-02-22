@@ -15,8 +15,8 @@ export const useSliderMedia = (props: SliderMediaProps) => {
   const [currentIndex, setCurrentIndex] = React.useState<number>(0)
   const [direction, setDirection] = React.useState<'left' | 'right'>('left')
 
-  const hasPrev = currentIndex > 0
-  const hasNext = messages && currentIndex < messages.length - 1
+  const hasPrev = Boolean(currentIndex > 0)
+  const hasNext = Boolean(messages && currentIndex < messages.length - 1)
 
   const [showAnimation, setShowAnimation] = React.useState<boolean>(true)
 
@@ -27,7 +27,7 @@ export const useSliderMedia = (props: SliderMediaProps) => {
     }
   }, [messages, currentMessage])
 
-  function nextMessage() {
+  function goNextMessage() {
     if (!hasNext || !messages) return
 
     if (useTransition) {
@@ -44,7 +44,7 @@ export const useSliderMedia = (props: SliderMediaProps) => {
     setCurrentMessage(messages[currentIndex + 1])
   }
 
-  function prevMessage() {
+  function goPrevMessage() {
     if (!hasPrev || !messages) return
 
     if (useTransition) {
@@ -63,11 +63,11 @@ export const useSliderMedia = (props: SliderMediaProps) => {
 
   return {
     direction,
-    nextMessage,
-    prevMessage,
     currentIndex,
     showAnimation,
-    hasPrev: currentIndex > 0,
-    hasNext: messages && currentIndex < messages.length - 1,
+    goNextMessage,
+    goPrevMessage,
+    hasPrev,
+    hasNext,
   }
 }
