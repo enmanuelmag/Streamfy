@@ -100,7 +100,7 @@ const Consultorio = () => {
   }, [channelQuery.isError])
 
   return (
-    <React.Fragment>
+    <Container fluid className="cd-w-full cd-h-full cd-relative baity-consultorio-transition" p={0}>
       <Transition duration={650} mounted={gameOver} timingFunction="ease" transition="fade">
         {(styles) => (
           <OverlayScreen
@@ -125,7 +125,7 @@ const Consultorio = () => {
         )}
       </Transition>
       <Container
-        className="cd-w-full cd-h-full cd-relative baity-consultorio-transition"
+        className="cd-w-full cd-h-full cd-relative"
         fluid={currentMessage ? true : undefined}
         p={0}
         size="md"
@@ -183,7 +183,7 @@ const Consultorio = () => {
           </Container>
         )}
       </Container>
-    </React.Fragment>
+    </Container>
   )
 
   function handleChannelChange(channelId: string | null) {

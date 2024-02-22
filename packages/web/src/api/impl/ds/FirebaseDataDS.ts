@@ -108,9 +108,17 @@ export default class FirebaseDS extends DataDS {
 
   async getLoggedInUser() {
     try {
-      let currentUser: UserType | null = null
+      const firebaseUser = this.auth.currentUser
 
-      currentUser = await new Promise<UserType | null>((resolve, reject) =>
+      if (firebaseUser) {
+        return {
+          id: firebaseUser.uid,
+          email: firebaseUser.email,
+          password: '', // TODO: Remove this field from the UserType
+        } as UserType
+      }
+
+      const currentUser = await new Promise<UserType | null>((resolve, reject) =>
         onAuthStateChanged(
           this.auth,
           (user) => {
@@ -128,18 +136,15 @@ export default class FirebaseDS extends DataDS {
           },
         ),
       )
-
-      return { currentUser }
+      return currentUser
     } catch (error) {
       console.error(error)
-      return { currentUser: null }
+      return null
     }
   }
 
   async getUser() {
-    const { currentUser } = await this.getLoggedInUser()
-    if (!currentUser) return null
-
+    const currentUser = await this.getLoggedInUser()
     return currentUser
   }
 }

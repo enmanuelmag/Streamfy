@@ -108,7 +108,7 @@ const LaughLoss = () => {
   }, [channelQuery.isError])
 
   return (
-    <React.Fragment>
+    <Container fluid className="cd-w-full cd-h-full cd-relative laugh-loss-transition" p={0}>
       <Transition duration={650} mounted={gameOver} timingFunction="ease" transition="fade">
         {(styles) => (
           <OverlayScreen
@@ -158,7 +158,7 @@ const LaughLoss = () => {
         )}
       </Transition>
       <Container
-        className="cd-w-full cd-h-full cd-relative laugh-loss-transition"
+        className="cd-w-full cd-h-full cd-relative"
         fluid={currentMessage ? true : undefined}
         p={0}
         size="md"
@@ -226,7 +226,7 @@ const LaughLoss = () => {
           </Transition>
         )}
       </Container>
-    </React.Fragment>
+    </Container>
   )
 
   function handleChannelChange(channelId: string | null) {
