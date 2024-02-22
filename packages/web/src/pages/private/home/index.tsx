@@ -1,4 +1,4 @@
-import { Card, Center, Container, Flex, Image, Text } from '@mantine/core'
+import { Card, Center, Container, Flex, Image, Overlay, Text } from '@mantine/core'
 
 import { ROUTES } from '@src/constants/routes'
 
@@ -11,6 +11,7 @@ type CardProps = {
   href: string
   title: string
   description: string
+  comingSoon?: boolean
 }
 
 const Cards: CardProps[] = [
@@ -31,6 +32,7 @@ const Cards: CardProps[] = [
   {
     image: Reddit,
     title: 'Reddit',
+    comingSoon: true,
     href: ROUTES.REDDIT,
     description: 'Actividad donde el Baity revisa memes del Reddit :baitymeme:',
   },
@@ -55,6 +57,15 @@ const Home = () => {
               <Card.Section>
                 <Image alt="No way!" h={225} src={card.image} />
               </Card.Section>
+              {card.comingSoon && (
+                <Overlay backgroundOpacity={0.6} color="dark">
+                  <Center className="cd-h-[80%]">
+                    <Text c="white" size="xl">
+                      Próximamente
+                    </Text>
+                  </Center>
+                </Overlay>
+              )}
               <Text fw={500} mt="md" size="lg">
                 {card.title}
               </Text>
