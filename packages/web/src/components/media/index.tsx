@@ -5,13 +5,15 @@ import { TwitterTweetEmbed } from 'react-twitter-embed'
 
 import { MessageResponseType } from '@global/types/src/discord'
 
+import Loading from '@components/shared/Loading'
+
 import './styles.scss'
-import Loading from '../shared/loading'
 
 type MediaProps = {
   autoPlay?: boolean
   message: MessageResponseType
   styles: React.CSSProperties
+  useMediaControls?: boolean
   goNextMessage: () => void
   onVideoEnd: () => void
   onVideoPause?: () => void
@@ -20,6 +22,7 @@ type MediaProps = {
 
 const Media = (props: MediaProps) => {
   const {
+    useMediaControls,
     autoPlay = false,
     styles,
     onVideoEnd,
@@ -56,7 +59,7 @@ const Media = (props: MediaProps) => {
         {isImage(contentType) && <Image alt={content || description || 'Imagen'} src={url} />}
         {isVideo(contentType) && (
           <ReactPlayer
-            controls
+            controls={useMediaControls}
             height="100%"
             pip={false}
             playing={autoPlay}

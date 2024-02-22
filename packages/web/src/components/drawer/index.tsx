@@ -12,7 +12,7 @@ import { UserType } from '@global/types/src/user'
 import { DataRepo } from '@src/db'
 import { Logger } from '@global/utils/src/log'
 
-const HEIGHT_DRAWER = 50
+export const HEIGHT_DRAWER = 50
 
 export default function Protected() {
   const location = useLocation()
