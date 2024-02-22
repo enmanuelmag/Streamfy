@@ -27,6 +27,8 @@ import Loading from '@components/shared/Loading'
 
 import { Logger } from '@global/utils/src/log'
 
+import './styles.scss'
+
 export const queryClient = new QueryClient({
   queryCache: new QueryCache(),
   mutationCache: new MutationCache(),

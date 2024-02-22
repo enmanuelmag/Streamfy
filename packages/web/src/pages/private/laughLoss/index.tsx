@@ -21,7 +21,6 @@ import { useSliderMedia } from '@hooks/slider'
 
 import { Logger } from '@global/utils/src/log'
 
-import './styles.scss'
 import { notifications } from '@mantine/notifications'
 
 const DELAY_TRANSITION = 250
@@ -159,7 +158,7 @@ const LaughLoss = () => {
         )}
       </Transition>
       <Container
-        className="cd-w-full cd-h-full cd-relative"
+        className="cd-w-full cd-h-full cd-relative laugh-loss-transition"
         fluid={currentMessage ? true : undefined}
         p={0}
         size="md"

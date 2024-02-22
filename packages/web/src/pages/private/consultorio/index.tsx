@@ -125,7 +125,7 @@ const Consultorio = () => {
         )}
       </Transition>
       <Container
-        className="cd-w-full cd-h-full cd-relative"
+        className="cd-w-full cd-h-full cd-relative baity-consultorio-transition"
         fluid={currentMessage ? true : undefined}
         p={0}
         size="md"
