@@ -13,14 +13,14 @@ import { ROUTES } from '@src/constants/routes'
 import { useStoreConsultorio } from '@src/store'
 import { ChannelResponseType, MessageResponseType } from '@global/types/src/discord'
 
-import Media from '@src/components/media'
-import Loading from '@src/components/shared/loading'
-import SliderHUD from '@src/shared/SliderHUD'
+import Media from '@components/media'
+import OverlayScreen from '@src/components/shared/OverlayScreen'
+import Loading from '@components/shared/Loading'
+import SliderHUD from '@components/shared/SliderHUD'
 
 import { useSliderMedia } from '@hooks/slider'
 
 import { Logger } from '@global/utils/src/log'
-import EndGame from '@src/shared/EndGame'
 
 const Consultorio = () => {
   const {
@@ -85,7 +85,7 @@ const Consultorio = () => {
     <React.Fragment>
       <Transition duration={650} mounted={gameOver} timingFunction="ease" transition="fade">
         {(styles) => (
-          <EndGame
+          <OverlayScreen
             description="Espero que les haya funcionado los consejos o terapia :baitylove:"
             handleGoHome={() => {
               handleReset()
@@ -144,6 +144,7 @@ const Consultorio = () => {
               >
                 {(styles) => (
                   <Media
+                    useMediaControls
                     goNextMessage={goNextMessage}
                     message={currentMessage}
                     styles={styles}

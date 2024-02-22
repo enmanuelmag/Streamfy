@@ -9,9 +9,9 @@ import { DataRepo } from '@src/db'
 import { useStoreBase } from '@src/store'
 import { CreationUserSchema, CreationUserType, UserType } from '@global/types/src/user'
 
-import { ROUTES } from '@constants/routes'
-
 import Input from '@components/shared/Input'
+
+import { ROUTES } from '@constants/routes'
 
 export default function Register() {
   const { setUser } = useStoreBase((state) => state)

@@ -12,16 +12,16 @@ import { useStoreLaughLoss } from '@src/store'
 import { ChannelResponseType, MessageResponseType } from '@global/types/src/discord'
 import { ROUTES } from '@src/constants/routes'
 
-import Media from '@src/components/media'
-import Loading from '@src/components/shared/loading'
-import SliderHUD from '@src/shared/SliderHUD'
+import Media from '@components/media'
+import OverlayScreen from '@src/components/shared/OverlayScreen'
+import Loading from '@components/shared/Loading'
+import SliderHUD from '@components/shared/SliderHUD'
 
 import { useSliderMedia } from '@hooks/slider'
 
 import { Logger } from '@global/utils/src/log'
 
 import './styles.scss'
-import EndGame from '@src/shared/EndGame'
 
 const DELAY_TRANSITION = 250
 
@@ -94,7 +94,7 @@ const LaughLoss = () => {
     <React.Fragment>
       <Transition duration={650} mounted={gameOver} timingFunction="ease" transition="fade">
         {(styles) => (
-          <EndGame
+          <OverlayScreen
             description="Has completado el reto, ahora paga :baitydedo:"
             handleGoHome={() => {
               handleReset()
@@ -113,8 +113,8 @@ const LaughLoss = () => {
         transition="fade"
       >
         {(styles) => (
-          <EndGame
-            description="¿Acaso Baity pauso la cadena de videos? :baitydedo:"
+          <OverlayScreen
+            description="¿Acaso Baity pausó la cadena de videos? :baitydedo:"
             handleContinue={() => {
               handlersPlayed.close()
               handlers.open()

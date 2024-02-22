@@ -22,7 +22,8 @@ import Register from '@pages/auth/register'
 import Home from '@pages/private/home'
 import LaughLoss from '@pages/private/laughLoss'
 import Consultorio from '@pages/private/consultorio'
-import Loading from '@src/components/shared/loading'
+
+import Loading from '@components/shared/Loading'
 
 import { Logger } from '@global/utils/src/log'
 
