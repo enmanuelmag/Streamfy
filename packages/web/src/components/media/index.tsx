@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactPlayer from 'react-player'
-import { Center, Image, Text } from '@mantine/core'
+import { Center, Image, Progress, Text } from '@mantine/core'
 import { TwitterTweetEmbed } from 'react-twitter-embed'
 
 import { MessageResponseType } from '@global/types/src/discord'
@@ -8,6 +8,7 @@ import { MessageResponseType } from '@global/types/src/discord'
 import Loading from '@components/shared/Loading'
 
 import './styles.scss'
+import { useCounter } from '@mantine/hooks'
 
 type MediaProps = {
   autoPlay?: boolean
@@ -38,6 +39,7 @@ const Media = (props: MediaProps) => {
 
   if (attachments.length === 0) {
     const tweetId = getTweetId(content)
+
     if (tweetId) {
       Component = (
         <TwitterTweetEmbed
@@ -54,31 +56,33 @@ const Media = (props: MediaProps) => {
     }
   } else {
     const [{ contentType = '', url, description }] = attachments
-    Component = (
-      <React.Fragment>
-        {isImage(contentType) && <Image alt={content || description || 'Imagen'} src={url} />}
-        {isVideo(contentType) && (
-          <ReactPlayer
-            controls={useMediaControls}
-            height="100%"
-            pip={false}
-            playing={autoPlay}
-            url={url}
-            width="100%"
-            onEnded={() => {
-              goNextMessage()
-              onVideoEnd()
-            }}
-            onPause={onVideoPause}
-            onPlay={onVideoPlay}
-          />
-        )}
-      </React.Fragment>
-    )
+
+    if (isType(contentType, 'image')) {
+      Component = <Image alt={content || description || 'Imagen'} src={url} />
+    } else if (isType(contentType, 'video')) {
+      return (
+        <VideoPlayer
+          autoPlay={autoPlay}
+          goNextMessage={goNextMessage}
+          styles={styles}
+          url={url}
+          useMediaControls={useMediaControls}
+          onVideoEnd={onVideoEnd}
+          onVideoPause={onVideoPause}
+          onVideoPlay={onVideoPlay}
+        />
+      )
+    } else {
+      Component = (
+        <Text>
+          Media type {contentType} not supported: {content}
+        </Text>
+      )
+    }
   }
 
   return (
-    <Center className="cd-relative cd-h-full cd-w-full" style={styles}>
+    <Center className="cd-relative cd-w-full cd-h-full" style={styles}>
       {Component}
     </Center>
   )
@@ -91,13 +95,63 @@ const Media = (props: MediaProps) => {
     return content.split('/').pop()?.split('?')[0]
   }
 
-  function isImage(contentType: string | null) {
-    return contentType?.includes('image')
+  function isType(contentType: string | null, type: 'image' | 'video') {
+    return contentType?.includes(type)
   }
+}
 
-  function isVideo(contentType: string | null) {
-    return contentType?.includes('video')
-  }
+type MediaPlayerProps = {
+  autoPlay?: boolean
+  url: string
+  useMediaControls?: boolean
+  onVideoEnd: () => void
+  onVideoPause?: () => void
+  onVideoPlay?: () => void
+  goNextMessage: () => void
+  styles: React.CSSProperties
+}
+
+function VideoPlayer(props: MediaPlayerProps) {
+  const {
+    autoPlay = false,
+    url,
+    useMediaControls,
+    onVideoEnd,
+    onVideoPause,
+    onVideoPlay,
+    goNextMessage,
+    styles,
+  } = props
+
+  const [videoProgress, handlersVideoProgress] = useCounter(0, { min: 0, max: 100 })
+
+  return (
+    <React.Fragment>
+      <Center className="cd-relative cd-w-full cd-h-[calc(100%-8px)]" style={styles}>
+        <ReactPlayer
+          controls={useMediaControls}
+          height="100%"
+          pip={false}
+          playing={autoPlay}
+          url={url}
+          width="100%"
+          onEnded={() => {
+            goNextMessage()
+            onVideoEnd()
+          }}
+          onPause={onVideoPause}
+          onPlay={onVideoPlay}
+          onProgress={(state) => handlersVideoProgress.set(state.played * 100)}
+        />
+      </Center>
+      <Progress
+        className="cd-absolute cd-bottom-0 cd-w-full cd-z-50"
+        radius="xs"
+        transitionDuration={250}
+        value={videoProgress}
+      />
+    </React.Fragment>
+  )
 }
 
 export default Media

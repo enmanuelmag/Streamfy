@@ -1,4 +1,5 @@
 import { MessageResponseType } from '@global/types/src/discord'
+import { useDisclosure } from '@mantine/hooks'
 import React from 'react'
 
 type SliderMediaProps = {
@@ -13,12 +14,11 @@ export const useSliderMedia = (props: SliderMediaProps) => {
   const { delay = 500, useTransition, messages, currentMessage, setCurrentMessage } = props
 
   const [currentIndex, setCurrentIndex] = React.useState<number>(0)
+  const [showAnimation, handlersShowAnimation] = useDisclosure(true)
   const [direction, setDirection] = React.useState<'left' | 'right'>('left')
 
   const hasPrev = Boolean(currentIndex > 0)
   const hasNext = Boolean(messages && currentIndex < messages.length - 1)
-
-  const [showAnimation, setShowAnimation] = React.useState<boolean>(true)
 
   React.useEffect(() => {
     if (messages && currentMessage) {
@@ -32,11 +32,11 @@ export const useSliderMedia = (props: SliderMediaProps) => {
 
     if (useTransition) {
       setDirection('left')
-      setShowAnimation(false)
+      handlersShowAnimation.close()
       return setTimeout(() => {
         setCurrentIndex((prev) => prev + 1)
         setCurrentMessage(messages[currentIndex + 1])
-        setShowAnimation(true)
+        handlersShowAnimation.open()
       }, delay)
     }
 
@@ -49,11 +49,11 @@ export const useSliderMedia = (props: SliderMediaProps) => {
 
     if (useTransition) {
       setDirection('right')
-      setShowAnimation(false)
+      handlersShowAnimation.close()
       return setTimeout(() => {
         setCurrentIndex((prev) => prev - 1)
         setCurrentMessage(messages[currentIndex - 1])
-        setShowAnimation(true)
+        handlersShowAnimation.open()
       }, delay)
     }
 
@@ -62,12 +62,12 @@ export const useSliderMedia = (props: SliderMediaProps) => {
   }
 
   return {
+    hasPrev,
+    hasNext,
     direction,
     currentIndex,
     showAnimation,
     goNextMessage,
     goPrevMessage,
-    hasPrev,
-    hasNext,
   }
 }

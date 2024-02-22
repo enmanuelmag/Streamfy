@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
-import { Transition, Container, Select } from '@mantine/core'
+import { Transition, Container, Select, Button } from '@mantine/core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/laughLoss'
@@ -22,6 +22,7 @@ import { useSliderMedia } from '@hooks/slider'
 import { Logger } from '@global/utils/src/log'
 
 import './styles.scss'
+import { notifications } from '@mantine/notifications'
 
 const DELAY_TRANSITION = 250
 
@@ -38,6 +39,10 @@ const LaughLoss = () => {
 
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+
+  const [autoPlay, handlers] = useDisclosure(false)
+  const [gameOver, handlersGameOver] = useDisclosure(false)
+  const [alreadyPlayed, handlersPlayed] = useDisclosure(false)
 
   const form = useForm<Step1Type>({
     validate: zodResolver(Step1Schema),
@@ -66,12 +71,13 @@ const LaughLoss = () => {
     },
     onError: (error) => {
       Logger.error('Error getting messages', error)
+      notifications.show({
+        color: 'red',
+        title: 'Error al obtener los mensajes',
+        message: error.message || 'Error al obtener los mensajes',
+      })
     },
   })
-
-  const [autoPlay, handlers] = useDisclosure(false)
-  const [alreadyPlayed, handlersPlayed] = useDisclosure(false)
-  const [gameOver, handlersGameOver] = useDisclosure(false)
 
   const { showAnimation, goNextMessage, goPrevMessage, currentIndex, hasNext, hasPrev } =
     useSliderMedia({
@@ -90,20 +96,41 @@ const LaughLoss = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discordChannel])
 
+  React.useEffect(() => {
+    if (channelQuery.isError) {
+      Logger.error('Error getting channels', channelQuery.error)
+      notifications.show({
+        color: 'red',
+        title: 'Error al obtener los canales',
+        message: channelQuery.error.message || 'Error al obtener los canales',
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [channelQuery.isError])
+
   return (
     <React.Fragment>
       <Transition duration={650} mounted={gameOver} timingFunction="ease" transition="fade">
         {(styles) => (
           <OverlayScreen
             description="Has completado el reto, ahora paga :baitydedo:"
-            handleGoHome={() => {
-              handleReset()
-              navigate(ROUTES.HOME)
-            }}
-            handleReset={handleReset}
             styles={styles}
             title="¡Felicidades!"
-          />
+          >
+            <OverlayScreen.ActionButtons>
+              <Button
+                onClick={() => {
+                  handleReset()
+                  navigate(ROUTES.HOME)
+                }}
+              >
+                Ir al inicio
+              </Button>
+              <Button variant="outline" onClick={handleReset}>
+                Repetir
+              </Button>
+            </OverlayScreen.ActionButtons>
+          </OverlayScreen>
         )}
       </Transition>
       <Transition
@@ -115,13 +142,20 @@ const LaughLoss = () => {
         {(styles) => (
           <OverlayScreen
             description="¿Acaso Baity pausó la cadena de videos? :baitydedo:"
-            handleContinue={() => {
-              handlersPlayed.close()
-              handlers.open()
-            }}
             styles={styles}
             title="¡TONGO!"
-          />
+          >
+            <OverlayScreen.ActionButtons>
+              <Button
+                onClick={() => {
+                  handlersPlayed.close()
+                  handlers.open()
+                }}
+              >
+                Continuar
+              </Button>
+            </OverlayScreen.ActionButtons>
+          </OverlayScreen>
         )}
       </Transition>
       <Container

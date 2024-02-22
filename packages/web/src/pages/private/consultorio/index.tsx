@@ -3,7 +3,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
-import { Transition, Container, Select, Center } from '@mantine/core'
+import { Transition, Container, Select, Center, Button } from '@mantine/core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/consultorio'
@@ -21,6 +21,7 @@ import SliderHUD from '@components/shared/SliderHUD'
 import { useSliderMedia } from '@hooks/slider'
 
 import { Logger } from '@global/utils/src/log'
+import { notifications } from '@mantine/notifications'
 
 const Consultorio = () => {
   const {
@@ -60,6 +61,11 @@ const Consultorio = () => {
     },
     onError: (error) => {
       Logger.error('Error getting messages', error)
+      notifications.show({
+        color: 'red',
+        title: 'Error al obtener mensajes',
+        message: error.message || 'Error al obtener mensajes',
+      })
     },
   })
 
@@ -81,20 +87,41 @@ const Consultorio = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discordChannel])
 
+  React.useEffect(() => {
+    if (channelQuery.isError) {
+      Logger.error('Error getting channels', channelQuery.error)
+      notifications.show({
+        color: 'red',
+        title: 'Error al obtener canales',
+        message: channelQuery.error.message || 'Error al obtener canales',
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [channelQuery.isError])
+
   return (
     <React.Fragment>
       <Transition duration={650} mounted={gameOver} timingFunction="ease" transition="fade">
         {(styles) => (
           <OverlayScreen
             description="Espero que les haya funcionado los consejos o terapia :baitylove:"
-            handleGoHome={() => {
-              handleReset()
-              navigate(ROUTES.HOME)
-            }}
-            handleReset={handleReset}
             styles={styles}
             title="¡Fin del consultorio!"
-          />
+          >
+            <OverlayScreen.ActionButtons>
+              <Button
+                onClick={() => {
+                  handleReset()
+                  navigate(ROUTES.HOME)
+                }}
+              >
+                Ir a Inicio
+              </Button>
+              <Button variant="outline" onClick={handleReset}>
+                Repetir
+              </Button>
+            </OverlayScreen.ActionButtons>
+          </OverlayScreen>
         )}
       </Transition>
       <Container
