@@ -19,7 +19,9 @@
     "web:dev": "npx lerna exec --scope @packages/web -- npm run dev",
     "web:build": "npx lerna exec --scope @packages/web -- npm run build",
     "web:start": "npx lerna exec --scope @packages/web -- npm run start",
-    "dev": "concurrently \"npm run server:dev\" \"npm run web:dev\""
+    "dev": "concurrently \"npm run server:dev\" \"npm run web:dev\"",
+    "build": "echo \"Builing Web\" && npm run web:build && echo \"Building Server\" && npm run server:build",
+    "start": "concurrently \"npm run server:start\" \"npm run web:start\""
   },
   "devDependencies": {
     "@commitlint/cli": "^18.x",
