@@ -8,7 +8,7 @@ import type {
 } from '@global/types/src/discord'
 import type { ResponseType } from '@global/types/src/response'
 
-import { Logger } from '@global/utils/src/log'
+import { Logger } from '@global/utils/src'
 
 import DiscordDS from '@api/domain/ds/DiscordDS'
 

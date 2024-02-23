@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 import {
   type Auth,
   initializeAuth,
@@ -20,7 +21,7 @@ import { type FirebaseApp, initializeApp } from 'firebase/app'
 import { CreationUserType, LoginUserType, UserType } from '@global/types/src/user'
 
 import DataDS from '@api/domain/ds/DataDS'
-import { Logger } from '@global/utils/src/log'
+import { Logger } from '@global/utils'
 
 const ConfigCredentials = {
   firebaseConfig: {

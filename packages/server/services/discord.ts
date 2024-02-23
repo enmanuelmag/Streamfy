@@ -1,6 +1,6 @@
 import { Client, Events, GatewayIntentBits } from 'discord.js'
 
-import { Logger } from '@global/utils/src/log'
+import { Logger } from '@global/utils'
 
 class DiscordClient {
   private client: Client

@@ -25,7 +25,7 @@ import Consultorio from '@pages/private/consultorio'
 
 import Loading from '@components/shared/Loading'
 
-import { Logger } from '@global/utils/src/log'
+import { Logger } from '@global/utils/src'
 
 import './styles.scss'
 

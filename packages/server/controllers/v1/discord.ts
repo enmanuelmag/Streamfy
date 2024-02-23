@@ -1,7 +1,7 @@
 import express from 'express'
 
-import { Response } from '@global/utils/src/response'
-import { GetChannelsParamsSchema, GetMessagesParamsSchema } from '@global/types/src/discord'
+import { Response } from '@global/utils'
+import { GetChannelsParamsSchema, GetMessagesParamsSchema } from '@global/types/dist/discord'
 
 import * as Discord from '../../models/v1/discord'
 
