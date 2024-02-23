@@ -11,6 +11,7 @@ import { UserType } from '@global/types/src/user'
 
 import { DataRepo } from '@src/db'
 import { Logger } from '@global/utils/src/log'
+import { transitionView } from '@src/utils/viewTransition'
 
 export const HEIGHT_DRAWER = 50
 
@@ -25,6 +26,22 @@ export default function Protected() {
     queryKey: ['user'],
     queryFn: async () => await DataRepo.getUser(),
   })
+
+  // React.useEffect(() => {
+  //   window.addEventListener(
+  //     'popstate',
+  //     () => {
+  //       console.log('popstate')
+  //       transitionView(() => navigate(-1))
+  //     },
+  //     { passive: true },
+  //   )
+
+  //   return () => {
+  //     window.removeEventListener('popstate', () => transitionView(() => navigate(-1)))
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
   React.useEffect(() => {
     if ([ROUTES.LOGIN, ROUTES.REGISTER].includes(location.pathname)) return
@@ -85,7 +102,14 @@ export default function Protected() {
         <div className="cd-h-full cd-flex cd-justify-start cd-items-center cd-pl-4">
           <Burger opened={opened} onClick={open} />
           <div className="cd-ml-4">
-            <Link to={ROUTES.HOME}>
+            <Link
+              className="home-link-transition"
+              to={ROUTES.HOME}
+              onClick={(e) => {
+                e.preventDefault()
+                transitionView(() => navigate(ROUTES.HOME))
+              }}
+            >
               <Title className="cd-title-form cd-text-white" order={2}>
                 Stream
                 <Text inherit c="violet" component="span">

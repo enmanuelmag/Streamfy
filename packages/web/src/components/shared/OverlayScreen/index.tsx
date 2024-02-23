@@ -17,10 +17,7 @@ const OverlayScreen = (props: OverlayScreenProps) => {
   return (
     <Flex
       align="center"
-      className={$(
-        'cd-w-full cd-absolute cd-bg-black cd-bg-opacity-90 cd-z-50',
-        `cd-h-[calc(100%-50px)]`,
-      )}
+      className={$('cd-w-full cd-absolute cd-bg-black cd-bg-opacity-90 cd-z-50 cd-h-full')}
       direction="column"
       justify="center"
       style={styles}
