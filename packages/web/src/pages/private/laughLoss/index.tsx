@@ -163,10 +163,13 @@ const LaughLoss = () => {
         p={0}
         size="md"
       >
-        {!gameOver && channelQuery.isLoading && <Loading text="Cargando canales" />}
-        {!gameOver && messagesMutation.isPending && !currentMessage && (
-          <Loading text="Cargando mensajes" />
-        )}
+        <Loading show={!gameOver && channelQuery.isLoading} text="Cargando canales" />
+
+        <Loading
+          show={!gameOver && messagesMutation.isPending && !currentMessage}
+          text="Cargando mensajes"
+        />
+
         {!gameOver && !discordChannel && channelQuery.data && (
           <form
             className="cd-h-full cd-w-full"
@@ -185,25 +188,25 @@ const LaughLoss = () => {
             </Center>
           </form>
         )}
-        {!gameOver && messages && Boolean(messages.length) && (
-          <SliderHUD
-            useShadowCorners
-            autoPlay={autoPlay}
-            currentIndex={currentIndex}
-            currentMessage={currentMessage}
-            goNextMessage={goNextMessage}
-            goPrevMessage={goPrevMessage}
-            handleAutoPlay={() => {
-              handlers.toggle()
-              handlersPlayed.open()
-            }}
-            handleReset={handleReset}
-            hasNext={hasNext}
-            hasPrev={hasPrev}
-            labelCounter="videos"
-            messages={messages}
-          />
-        )}
+
+        <SliderHUD
+          useShadowCorners
+          autoPlay={autoPlay}
+          currentIndex={currentIndex}
+          currentMessage={currentMessage}
+          goNextMessage={goNextMessage}
+          goPrevMessage={goPrevMessage}
+          handleAutoPlay={() => {
+            handlers.toggle()
+            handlersPlayed.open()
+          }}
+          handleReset={handleReset}
+          hasNext={hasNext}
+          hasPrev={hasPrev}
+          labelCounter="videos"
+          messages={messages}
+          show={!gameOver && messages && Boolean(messages.length)}
+        />
 
         {currentMessage && (
           <Transition
