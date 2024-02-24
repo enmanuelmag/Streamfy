@@ -12,13 +12,14 @@ import './styles.scss'
 import { $ } from '@src/utils/styles'
 
 type SliderHUDProps = {
+  show?: boolean | null
   hasPrev: boolean
   hasNext: boolean
   autoPlay?: boolean
   currentIndex: number
   labelCounter?: string
   useShadowCorners?: boolean
-  messages: MessageResponseType[]
+  messages?: MessageResponseType[] | null
   currentMessage?: MessageResponseType | null
   goPrevMessage: () => void
   goNextMessage: () => void
@@ -28,6 +29,7 @@ type SliderHUDProps = {
 
 const SliderHUD = (props: SliderHUDProps) => {
   const {
+    show,
     hasPrev,
     hasNext,
     autoPlay,
@@ -41,6 +43,9 @@ const SliderHUD = (props: SliderHUDProps) => {
     goNextMessage,
     handleReset,
   } = props
+
+  if (!show || !messages) return null
+
   return (
     <React.Fragment>
       <React.Fragment>

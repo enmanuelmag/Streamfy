@@ -13,6 +13,8 @@ import { ROUTES } from '@src/constants/routes'
 import { useStoreConsultorio } from '@src/store'
 import { ChannelResponseType, MessageResponseType } from '@global/types/src/discord'
 
+import { backTransition } from '@utils/viewTransition'
+
 import Media from '@components/media'
 import OverlayScreen from '@src/components/shared/OverlayScreen'
 import Loading from '@components/shared/Loading'
@@ -79,6 +81,11 @@ const Consultorio = () => {
       useTransition: true,
     })
 
+  React.useEffect(() => {
+    backTransition(() => navigate(-1))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Clear storage if there are no more messages
   React.useEffect(() => {
     if (discordChannel && !messages) {
@@ -124,63 +131,69 @@ const Consultorio = () => {
           </OverlayScreen>
         )}
       </Transition>
+
       <Container
         className="cd-w-full cd-h-full cd-relative"
         fluid={currentMessage ? true : undefined}
         p={0}
         size="md"
       >
-        {!gameOver && channelQuery.isLoading && <Loading text="Cargando canales" />}
-        {!gameOver && messagesMutation.isPending && !currentMessage && (
-          <Loading text="Cargando mensajes" />
-        )}
+        <Loading show={!gameOver && channelQuery.isLoading} text="Cargando canales" />
+
+        <Loading
+          show={!gameOver && messagesMutation.isPending && !currentMessage}
+          text="Cargando mensajes"
+        />
+
         {!gameOver && !discordChannel && channelQuery.data && (
-          <form onSubmit={form.onSubmit((values) => console.log(values))}>
-            <Select
-              data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
-              label="Canal"
-              value={form.values.discordChannel.id}
-              {...form.getInputProps('discordChannel.id')}
-              className="cd-pt-8"
-              onChange={handleChannelChange}
-            />
+          <form
+            className="cd-h-full cd-w-full"
+            onSubmit={form.onSubmit((values) => console.log(values))}
+          >
+            <Center className="cd-h-full">
+              <Select
+                data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
+                label="Canal"
+                placeholder="Selecciona un canal"
+                value={form.values.discordChannel.id}
+                {...form.getInputProps('discordChannel.id')}
+                className="cd-w-[400px]"
+                onChange={handleChannelChange}
+              />
+            </Center>
           </form>
         )}
-        {!gameOver && messages && Boolean(messages.length) && (
-          <SliderHUD
-            currentIndex={currentIndex}
-            currentMessage={currentMessage}
-            goNextMessage={hasNext ? goNextMessage : handleGameOver}
-            goPrevMessage={goPrevMessage}
-            handleReset={handleReset}
-            hasNext={!gameOver}
-            hasPrev={hasPrev}
-            labelCounter="mensajes"
-            messages={messages}
-          />
-        )}
+
+        <SliderHUD
+          currentIndex={currentIndex}
+          currentMessage={currentMessage}
+          goNextMessage={hasNext ? goNextMessage : handleGameOver}
+          goPrevMessage={goPrevMessage}
+          handleReset={handleReset}
+          hasNext={!gameOver}
+          hasPrev={hasPrev}
+          labelCounter="mensajes"
+          messages={messages}
+          show={!gameOver && messages && Boolean(messages.length)}
+        />
 
         {currentMessage && (
-          <Container className="cd-h-full cd-relative" size="md">
-            <Center className="cd-h-full">
-              <Transition
-                duration={500}
-                mounted={showAnimation}
-                timingFunction="ease"
-                transition="fade"
-              >
-                {(styles) => (
-                  <Media
-                    useMediaControls
-                    goNextMessage={goNextMessage}
-                    message={currentMessage}
-                    styles={styles}
-                    onVideoEnd={handleGameOver}
-                  />
-                )}
-              </Transition>
-            </Center>
-          </Container>
+          <Transition
+            duration={500}
+            mounted={showAnimation}
+            timingFunction="ease"
+            transition="fade"
+          >
+            {(styles) => (
+              <Media
+                useMediaControls
+                goNextMessage={goNextMessage}
+                message={currentMessage}
+                styles={styles}
+                onVideoEnd={handleGameOver}
+              />
+            )}
+          </Transition>
         )}
       </Container>
     </Container>

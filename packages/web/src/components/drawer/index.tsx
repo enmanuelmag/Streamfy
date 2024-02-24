@@ -27,22 +27,6 @@ export default function Protected() {
     queryFn: async () => await DataRepo.getUser(),
   })
 
-  // React.useEffect(() => {
-  //   window.addEventListener(
-  //     'popstate',
-  //     () => {
-  //       console.log('popstate')
-  //       transitionView(() => navigate(-1))
-  //     },
-  //     { passive: true },
-  //   )
-
-  //   return () => {
-  //     window.removeEventListener('popstate', () => transitionView(() => navigate(-1)))
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
-
   React.useEffect(() => {
     if ([ROUTES.LOGIN, ROUTES.REGISTER].includes(location.pathname)) return
 

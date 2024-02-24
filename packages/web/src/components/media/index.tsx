@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactPlayer from 'react-player'
-import { Center, Image, Progress, Text } from '@mantine/core'
+import { Center, Container, Image, Progress, Text } from '@mantine/core'
 import { TwitterTweetEmbed } from 'react-twitter-embed'
 
 import { MessageResponseType } from '@global/types/src/discord'
@@ -47,18 +47,26 @@ const Media = (props: MediaProps) => {
           options={{
             width: 500,
           }}
-          placeholder={<Loading className="cd-absolute" text="Cargando tweet" />}
+          placeholder={<Loading show className="cd-absolute" text="Cargando tweet" />}
           tweetId={tweetId}
         />
       )
     } else {
-      Component = <Text>{content}</Text>
+      Component = (
+        <Container size="lg">
+          <Text>{content}</Text>
+        </Container>
+      )
     }
   } else {
     const [{ contentType = '', url, description }] = attachments
 
     if (isType(contentType, 'image')) {
-      Component = <Image alt={content || description || 'Imagen'} src={url} />
+      Component = (
+        <Container size="lg">
+          <Image alt={content || description || 'Imagen'} src={url} />
+        </Container>
+      )
     } else if (isType(contentType, 'video')) {
       return (
         <VideoPlayer
@@ -74,9 +82,11 @@ const Media = (props: MediaProps) => {
       )
     } else {
       Component = (
-        <Text>
-          Media type {contentType} not supported: {content}
-        </Text>
+        <Container size="lg">
+          <Text>
+            Media type {contentType} not supported: {content}
+          </Text>
+        </Container>
       )
     }
   }

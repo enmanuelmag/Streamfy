@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
-import { Transition, Container, Select, Button } from '@mantine/core'
+import { Transition, Container, Select, Button, Center } from '@mantine/core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/laughLoss'
@@ -168,15 +168,21 @@ const LaughLoss = () => {
           <Loading text="Cargando mensajes" />
         )}
         {!gameOver && !discordChannel && channelQuery.data && (
-          <form onSubmit={form.onSubmit((values) => console.log(values))}>
-            <Select
-              data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
-              label="Canal"
-              value={form.values.discordChannel.id}
-              {...form.getInputProps('discordChannel.id')}
-              className="cd-pt-8"
-              onChange={handleChannelChange}
-            />
+          <form
+            className="cd-h-full cd-w-full"
+            onSubmit={form.onSubmit((values) => console.log(values))}
+          >
+            <Center className="cd-h-full">
+              <Select
+                data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
+                label="Canal"
+                placeholder="Selecciona un canal"
+                value={form.values.discordChannel.id}
+                {...form.getInputProps('discordChannel.id')}
+                className="cd-w-[400px]"
+                onChange={handleChannelChange}
+              />
+            </Center>
           </form>
         )}
         {!gameOver && messages && Boolean(messages.length) && (

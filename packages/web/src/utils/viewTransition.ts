@@ -7,3 +7,24 @@ export const transitionView = (updateCb: () => void) => {
     updateCb()
   }
 }
+
+export const backTransition = (updateCb: () => void) => {
+  console.log('backTransition')
+  window.addEventListener(
+    'popstate',
+    (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      transitionView(() => updateCb)
+    },
+    { passive: true },
+  )
+
+  return () => {
+    window.removeEventListener('popstate', (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      transitionView(() => updateCb)
+    })
+  }
+}
