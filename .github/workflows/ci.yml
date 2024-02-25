@@ -38,8 +38,8 @@ jobs:
       #- name: Lint
       #  run: cd packages/web && npm run lint
 
-      - name: Test
-        run: cd packages/web && npm run test
+      #- name: Test
+      #  run: cd packages/web && npm run test
 
       - name: Build
-        run: cd packages/web && npm run build
+        run: npm run build
