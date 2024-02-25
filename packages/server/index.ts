@@ -6,7 +6,7 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import cors from 'cors'
 
-import { Logger } from '@global/utils/src/log'
+import { Logger } from '@global/utils'
 
 import DiscordV1 from './controllers/v1/discord'
 

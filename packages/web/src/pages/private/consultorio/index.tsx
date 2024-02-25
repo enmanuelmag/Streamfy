@@ -22,7 +22,7 @@ import SliderHUD from '@components/shared/SliderHUD'
 
 import { useSliderMedia } from '@hooks/slider'
 
-import { Logger } from '@global/utils/src/log'
+import { Logger } from '@global/utils/src'
 import { notifications } from '@mantine/notifications'
 
 const Consultorio = () => {

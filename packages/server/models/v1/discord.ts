@@ -2,13 +2,13 @@ import type { TextChannel } from 'discord.js'
 import type {
   ChannelResponseType,
   GetChannelsParamsType,
-  GetMessagesParamsType,
   MessageResponseType,
-} from '@global/types/src/discord'
+  GetMessagesParamsType,
+} from '@global/types/dist/discord'
 
 import DiscordClient from '../../services/discord'
 
-import { Logger } from '@global/utils/src/log'
+import { Logger } from '@global/utils'
 
 const Discord = DiscordClient.getInstance()
 

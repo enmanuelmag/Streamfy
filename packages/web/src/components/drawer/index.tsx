@@ -10,8 +10,9 @@ import { ROUTES } from '@src/constants/routes'
 import { UserType } from '@global/types/src/user'
 
 import { DataRepo } from '@src/db'
-import { Logger } from '@global/utils/src/log'
 import { transitionView } from '@src/utils/viewTransition'
+
+import { Logger } from '@global/utils/src'
 
 export const HEIGHT_DRAWER = 50
 
