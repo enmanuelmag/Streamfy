@@ -42,7 +42,8 @@
     "husky": "^9.x",
     "lerna": "^8.1.2",
     "lint-staged": "^15.x",
-    "prettier": "3.1.0"
+    "prettier": "3.1.0",
+    "vite-plugin-pwa": "^0.19.0"
   },
   "dependencies": {
     "react-twitter-embed": "^4.0.4"
