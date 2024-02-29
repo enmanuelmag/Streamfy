@@ -7,7 +7,7 @@ import { ChannelType } from 'discord.js'
 
 // Get Messages
 export const GetMessagesParamsSchema = zod.object({
-  channelId: zod.string(),
+  channelIds: zod.array(zod.string()),
   limit: zod.number().optional(),
   before: zod.string().optional(),
   after: zod.string().optional(),

@@ -1,4 +1,4 @@
-import type { TextChannel } from 'discord.js'
+import type { TextChannel, Message } from 'discord.js'
 import type {
   ChannelResponseType,
   GetChannelsParamsType,
@@ -18,22 +18,30 @@ export const getMessages = async (
 ): Promise<MessageResponseType[]> => {
   Logger.info('Getting messages', params)
 
-  const { channelId, limit, before, after, around, regex } = params
-  const channel = Discord.channels.cache.get(channelId) as TextChannel
+  const { channelIds, limit, before, after, around, regex } = params
 
-  if (!channel) {
-    Logger.error('Channel not found', channelId)
+  const channels = channelIds.map(
+    (channelId) => Discord.channels.cache.get(channelId) as TextChannel,
+  )
+
+  if (!channels.length) {
+    Logger.error('Channels not found', channelIds)
     throw new Error('Channel not found')
   }
 
-  let messages = await channel.messages.fetch({ limit, before, after, around })
+  let messages: Message[] = []
+
+  for (const channel of channels) {
+    const fetchedMessages = await channel.messages.fetch({ limit, before, after, around })
+    messages.push(...fetchedMessages.toJSON())
+  }
 
   if (regex) {
     const regexPattern = new RegExp(regex)
     messages = messages.filter((message) => regexPattern.test(message.content))
   }
 
-  Logger.info('Got messages', messages.size)
+  Logger.info('Amount of messages', messages.length)
 
   return messages
     .sort((a, b) => a.createdTimestamp - b.createdTimestamp)

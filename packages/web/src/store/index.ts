@@ -55,30 +55,19 @@ export const useStoreLaughLoss = create(
     {
       name: 'storage-laugh-loss',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        ...Object.fromEntries(
-          Object.entries(state).filter(
-            ([key]) => key === 'currentMessage' || key === 'discordChannel',
-          ),
-        ),
-        reset: state.reset,
-        setMessages: state.setMessages,
-        setDiscordChannel: state.setDiscordChannel,
-        setCurrentMessage: state.setCurrentMessage,
-      }),
     },
   ),
 )
 
 type ConsultorioState = {
-  discordChannel?: ChannelResponseType | null
+  discordChannels?: ChannelResponseType[] | null
   messages?: MessageResponseType[] | null
   currentMessage?: MessageResponseType | null
 }
 
 type ConsultorioAction = {
   setMessages: (messages: ConsultorioState['messages'] | null) => void
-  setDiscordChannel: (discordChannel: ConsultorioState['discordChannel'] | null) => void
+  setDiscordChannels: (discordChannel: ConsultorioState['discordChannels'] | null) => void
   setCurrentMessage: (currentMessage: ConsultorioState['currentMessage'] | null) => void
   reset: () => void
 }
@@ -89,7 +78,7 @@ export const useStoreConsultorio = create(
       discordChannel: null,
       messages: null,
       currentMessageId: null,
-      setDiscordChannel: (discordChannel) => set(() => ({ discordChannel })),
+      setDiscordChannels: (discordChannels) => set(() => ({ discordChannels })),
       setMessages: (messages) => set(() => ({ messages })),
       setCurrentMessage: (currentMessage) => set(() => ({ currentMessage })),
       reset: () => set(() => ({ discordChannel: null, messages: null, currentMessage: null })),
@@ -97,17 +86,6 @@ export const useStoreConsultorio = create(
     {
       name: 'storage-consultorio',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        ...Object.fromEntries(
-          Object.entries(state).filter(
-            ([key]) => key === 'currentMessage' || key === 'discordChannel',
-          ),
-        ),
-        reset: state.reset,
-        setMessages: state.setMessages,
-        setDiscordChannel: state.setDiscordChannel,
-        setCurrentMessage: state.setCurrentMessage,
-      }),
     },
   ),
 )

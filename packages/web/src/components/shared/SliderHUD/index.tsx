@@ -1,9 +1,10 @@
 import React from 'react'
-import { ActionIcon, Avatar, Flex, Switch, Text, Tooltip } from '@mantine/core'
+import { format } from '@formkit/tempo'
+import { ActionIcon, Avatar, Flex, Stack, Switch, Text, Tooltip } from '@mantine/core'
 import {
+  IconRestore,
   IconPlayerTrackNextFilled,
   IconPlayerTrackPrevFilled,
-  IconRestore,
 } from '@tabler/icons-react'
 
 import type { MessageResponseType } from '@global/types/src/discord'
@@ -59,7 +60,12 @@ const SliderHUD = (props: SliderHUDProps) => {
           >
             <Flex align="center" direction="row" gap="md" justify="center">
               <Avatar size="lg" src={currentMessage.author.avatar} />
-              <Text>{currentMessage.author.globalName}</Text>
+              <Stack gap={0}>
+                <Text>{currentMessage.author.globalName}</Text>
+                <Text c="dimmed" size="sm">
+                  {format(new Date(currentMessage.timestamp), 'DD/MM/YYYY @ HH:mm', 'en')}
+                </Text>
+              </Stack>
             </Flex>
           </div>
         )}

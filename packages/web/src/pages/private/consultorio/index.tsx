@@ -3,8 +3,8 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
-import { Transition, Container, Select, Center, Button } from '@mantine/core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Transition, Container, MultiSelect, Center, Button, Stack } from '@mantine/core'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/consultorio'
 
@@ -12,8 +12,6 @@ import { DiscordRepo } from '@src/db'
 import { ROUTES } from '@src/constants/routes'
 import { useStoreConsultorio } from '@src/store'
 import { ChannelResponseType, MessageResponseType } from '@global/types/src/discord'
-
-import { backTransition } from '@utils/viewTransition'
 
 import Media from '@components/media'
 import OverlayScreen from '@src/components/shared/OverlayScreen'
@@ -28,35 +26,33 @@ import { notifications } from '@mantine/notifications'
 const Consultorio = () => {
   const {
     messages,
-    discordChannel,
+    discordChannels,
     currentMessage,
     setMessages,
-    setDiscordChannel,
+    setDiscordChannels,
     setCurrentMessage,
     reset,
   } = useStoreConsultorio((state) => state)
 
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const [gameOver, handlersGameOver] = useDisclosure(false)
 
   const form = useForm<Step1Type>({
     validate: zodResolver(Step1Schema),
     initialValues: {
-      discordChannel: {
-        id: '',
-        name: '',
-      },
+      discordChannels: [],
     },
   })
 
   const channelQuery = useQuery<ChannelResponseType[] | null, Error>({
     queryKey: ['discordChannels'],
-    enabled: !discordChannel,
+    enabled: !discordChannels?.length || !messages,
     queryFn: () => DiscordRepo.getChannels({ channelType: 0 }),
   })
 
-  const messagesMutation = useMutation<MessageResponseType[] | null, Error, string, string>({
-    mutationFn: async (channelId: string) => DiscordRepo.getMessages({ channelId }),
+  const messagesMutation = useMutation<MessageResponseType[] | null, Error, string[], string[]>({
+    mutationFn: async (channelIds: string[]) => DiscordRepo.getMessages({ channelIds }),
     onSuccess: (messages) => {
       setMessages(messages)
       setCurrentMessage(currentMessage || messages?.[0] || null)
@@ -71,8 +67,6 @@ const Consultorio = () => {
     },
   })
 
-  const [gameOver, handlersGameOver] = useDisclosure(false)
-
   const { showAnimation, goNextMessage, goPrevMessage, currentIndex, hasNext, hasPrev } =
     useSliderMedia({
       messages,
@@ -80,19 +74,6 @@ const Consultorio = () => {
       setCurrentMessage,
       useTransition: true,
     })
-
-  React.useEffect(() => {
-    backTransition(() => navigate(-1))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Clear storage if there are no more messages
-  React.useEffect(() => {
-    if (discordChannel && !messages) {
-      messagesMutation.mutate(discordChannel.id)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [discordChannel])
 
   React.useEffect(() => {
     if (channelQuery.isError) {
@@ -140,26 +121,44 @@ const Consultorio = () => {
       >
         <Loading show={!gameOver && channelQuery.isLoading} text="Cargando canales" />
 
-        <Loading
+        {/* <Loading
           show={!gameOver && messagesMutation.isPending && !currentMessage}
           text="Cargando mensajes"
-        />
+        /> */}
 
-        {!gameOver && !discordChannel && channelQuery.data && (
+        {!gameOver && !messages?.length && channelQuery.data && (
           <form
             className="cd-h-full cd-w-full"
-            onSubmit={form.onSubmit((values) => console.log(values))}
+            onSubmit={form.onSubmit(({ discordChannels }) =>
+              messagesMutation.mutate(discordChannels.map((c) => c.id)),
+            )}
           >
             <Center className="cd-h-full">
-              <Select
-                data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
-                label="Canal"
-                placeholder="Selecciona un canal"
-                value={form.values.discordChannel.id}
-                {...form.getInputProps('discordChannel.id')}
-                className="cd-w-[400px]"
-                onChange={handleChannelChange}
-              />
+              <Stack>
+                <MultiSelect
+                  clearable
+                  hidePickedOptions
+                  searchable
+                  data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
+                  label="Canales de Discord"
+                  placeholder="Selecciona uno o varios canales"
+                  {...form.getInputProps('discordChannels')}
+                  className="cd-w-[450px]"
+                  comboboxProps={{ transitionProps: { transition: 'pop', duration: 250 } }}
+                  value={form.values.discordChannels.map((c) => c.id) || []}
+                  onChange={handleChannelChange}
+                />
+                <Button
+                  className="cd-mt-4"
+                  disabled={!form.isValid()}
+                  loaderProps={{ type: 'dots' }}
+                  loading={messagesMutation.isPending && !messagesMutation.isIdle}
+                  type="submit"
+                  variant="filled"
+                >
+                  Obtener mensajes
+                </Button>
+              </Stack>
             </Center>
           </form>
         )}
@@ -199,16 +198,12 @@ const Consultorio = () => {
     </Container>
   )
 
-  function handleChannelChange(channelId: string | null) {
-    if (!channelId || !channelQuery.data) return
+  function handleChannelChange(channelIds: string[]) {
+    if (!channelQuery.data) return
 
-    const channel = channelQuery.data.find((c) => c.id === channelId)
-    form.setFieldValue('discordChannel', {
-      id: channelId,
-      name: channel?.name || '',
-    })
-    setDiscordChannel(channel)
-    messagesMutation.mutate(channelId)
+    const channels = channelQuery.data.filter((c) => channelIds.includes(c.id))
+    form.setFieldValue('discordChannels', channels)
+    setDiscordChannels(channels)
   }
 
   function handleGameOver() {

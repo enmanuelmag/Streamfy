@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
-import { Transition, Container, Select, Button, Center } from '@mantine/core'
+import { Transition, Container, Select, Button, Center, Stack } from '@mantine/core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/laughLoss'
@@ -61,7 +61,7 @@ const LaughLoss = () => {
 
   const messagesMutation = useMutation<MessageResponseType[] | null, Error, string, string>({
     mutationFn: async (channelId: string) => {
-      const messages = await DiscordRepo.getMessages({ channelId })
+      const messages = await DiscordRepo.getMessages({ channelIds: [channelId] })
       return messages?.filter((m) => m.attachments.length) || null
     },
     onSuccess: (messages) => {
@@ -86,14 +86,6 @@ const LaughLoss = () => {
       useTransition: true,
       delay: DELAY_TRANSITION,
     })
-
-  // Clear storage if there are no more messages
-  React.useEffect(() => {
-    if (discordChannel && !messages) {
-      messagesMutation.mutate(discordChannel.id)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [discordChannel])
 
   React.useEffect(() => {
     if (channelQuery.isError) {
@@ -165,26 +157,35 @@ const LaughLoss = () => {
       >
         <Loading show={!gameOver && channelQuery.isLoading} text="Cargando canales" />
 
-        <Loading
-          show={!gameOver && messagesMutation.isPending && !currentMessage}
-          text="Cargando mensajes"
-        />
-
-        {!gameOver && !discordChannel && channelQuery.data && (
+        {!gameOver && !messages?.length && channelQuery.data && (
           <form
             className="cd-h-full cd-w-full"
-            onSubmit={form.onSubmit((values) => console.log(values))}
+            onSubmit={form.onSubmit(({ discordChannel }) =>
+              messagesMutation.mutate(discordChannel.id),
+            )}
           >
             <Center className="cd-h-full">
-              <Select
-                data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
-                label="Canal"
-                placeholder="Selecciona un canal"
-                value={form.values.discordChannel.id}
-                {...form.getInputProps('discordChannel.id')}
-                className="cd-w-[400px]"
-                onChange={handleChannelChange}
-              />
+              <Stack>
+                <Select
+                  data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
+                  label="Canal"
+                  placeholder="Selecciona un canal"
+                  value={form.values.discordChannel.id}
+                  {...form.getInputProps('discordChannel.id')}
+                  className="cd-w-[400px]"
+                  onChange={handleChannelChange}
+                />
+                <Button
+                  className="cd-mt-4"
+                  disabled={!form.isValid()}
+                  loaderProps={{ type: 'dots' }}
+                  loading={messagesMutation.isPending && !messagesMutation.isIdle}
+                  type="submit"
+                  variant="filled"
+                >
+                  Obtener mensajes
+                </Button>
+              </Stack>
             </Center>
           </form>
         )}
@@ -247,7 +248,6 @@ const LaughLoss = () => {
       name: channel?.name || '',
     })
     setDiscordChannel(channel)
-    messagesMutation.mutate(channelId)
   }
 
   function handleGameOver() {

@@ -68,6 +68,8 @@ function Root() {
     queryFn: async () => await DataRepo.getUser(),
   })
 
+  console.log('userQuery', userQuery.data)
+
   React.useEffect(() => {
     if ([ROUTES.LOGIN, ROUTES.REGISTER].includes(location.pathname)) return
 

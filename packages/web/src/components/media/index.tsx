@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactPlayer from 'react-player'
-import { Center, Container, Image, Progress, Text } from '@mantine/core'
+import { IconVolumeOff, IconVolume2, IconVolume } from '@tabler/icons-react'
+import { Center, Container, Group, Image, Progress, Slider, Text, Transition } from '@mantine/core'
 import { TwitterTweetEmbed } from 'react-twitter-embed'
 
 import { MessageResponseType } from '@global/types/src/discord'
@@ -8,7 +9,8 @@ import { MessageResponseType } from '@global/types/src/discord'
 import Loading from '@components/shared/Loading'
 
 import './styles.scss'
-import { useCounter } from '@mantine/hooks'
+import { useCounter, useDisclosure, useHover } from '@mantine/hooks'
+import { $ } from '@src/utils/styles'
 
 type MediaProps = {
   autoPlay?: boolean
@@ -135,6 +137,21 @@ function VideoPlayer(props: MediaPlayerProps) {
 
   const [videoProgress, handlersVideoProgress] = useCounter(0, { min: 0, max: 100 })
 
+  const [audio, handlers] = useCounter(0, { min: 0, max: 100 })
+
+  const { hovered, ref } = useHover()
+
+  const [showVolume, handlersShowVolume] = useDisclosure(false)
+
+  React.useEffect(() => {
+    if (hovered) {
+      handlersShowVolume.open()
+    }
+
+    setTimeout(() => handlersShowVolume.close(), 5000)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hovered])
+
   return (
     <React.Fragment>
       <Center className="cd-relative cd-w-full cd-h-[calc(100%-8px)]" style={styles}>
@@ -144,6 +161,7 @@ function VideoPlayer(props: MediaPlayerProps) {
           pip={false}
           playing={autoPlay}
           url={url}
+          volume={audio / 100}
           width="100%"
           onEnded={() => {
             goNextMessage()
@@ -154,6 +172,35 @@ function VideoPlayer(props: MediaPlayerProps) {
           onProgress={(state) => handlersVideoProgress.set(state.played * 100)}
         />
       </Center>
+      {/* bg-controls-bottom-right */}
+      <div
+        className={$(
+          'cd-absolute cd-bottom-0 cd-right-0 cd-z-50 cd-pl-[1rem] cd-pt-[4rem] cd-pr-[0rem] cd-pb-[1rem] bg-controls-bottom-left',
+          'cd-w-[200px]',
+        )}
+        ref={ref}
+        //style={{ opacity: showVolume ? 1 : 0 }}
+      >
+        <Transition duration={250} mounted={showVolume} transition="fade">
+          {(styles) => (
+            <Group gap="xs" style={styles}>
+              {audio === 0 && <IconVolumeOff />}
+              {audio > 0 && audio < 50 && <IconVolume2 />}
+              {audio >= 50 && <IconVolume />}
+              <Slider
+                className="cd-w-[135px]"
+                defaultValue={0}
+                label={(value) => value.toFixed(0)}
+                max={100}
+                min={0}
+                step={0.1}
+                value={audio}
+                onChange={handlers.set}
+              />
+            </Group>
+          )}
+        </Transition>
+      </div>
       <Progress
         className="cd-absolute cd-bottom-0 cd-w-full cd-z-50"
         radius="xs"
