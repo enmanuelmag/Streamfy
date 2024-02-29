@@ -87,7 +87,19 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor-react': ['react', 'react/jsx-runtime', 'react-dom'],
+          'vendor-react': ['react', 'react/jsx-runtime', 'react-dom', 'react-router-dom'],
+          'mantine-core': ['@mantine/core', '@mantine/hooks'],
+          'mantine-rest': [
+            '@mantine/notifications',
+            '@mantine/charts',
+            '@mantine/dates',
+            '@mantine/nprogress',
+            '@mantine/carousel',
+            '@mantine/modals',
+            '@mantine/spotlight',
+            '@tabler/icons-react',
+          ],
+          'react-query': ['@tanstack/react-query'],
         },
       },
     },
