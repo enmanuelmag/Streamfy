@@ -25,7 +25,7 @@
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --watch --coverage",
     "test:ui": "vitest --watch --coverage --ui",
-    "lint": "eslint src --no-inline-config --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint packages --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
     "lint:css": "stylelint **/*.css --aei --color",
     "prettier:fix": "npm run prettier -- --write",
@@ -34,10 +34,7 @@
     "lint-staged": "lint-staged && tsc",
     "prepare": "husky",
     "commit": "commit",
-    "prettier": "prettier . --write",
-    "bot:build": "cd ./server && npx tsc",
-    "bot:start": "cd ./server &&  node dist/index.js",
-    "bot:dev": "cd ./server && nodemon index.ts"
+    "prettier": "prettier . --write"
   },
   "dependencies": {
     "@formkit/tempo": "^0.0.13",

@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-catch */
 import {
   type Auth,
   initializeAuth,

@@ -8,7 +8,7 @@
     "global/**"
   ],
   "scripts": {
-    "lint": "eslint src --no-inline-config --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint packages --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
     "lint:css": "stylelint **/*.css --aei --color",
     "lint-staged": "lint-staged && tsc",
@@ -44,8 +44,5 @@
     "lint-staged": "^15.x",
     "prettier": "3.1.0",
     "vite-plugin-pwa": "^0.19.0"
-  },
-  "dependencies": {
-    "@packages/web": "^1.9"
   }
 }

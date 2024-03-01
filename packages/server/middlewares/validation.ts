@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Response, Request } from 'express'
 import { AnyZodObject } from 'zod'
 

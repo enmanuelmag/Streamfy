@@ -33,10 +33,10 @@ jobs:
           key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}    
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
-      #- name: Lint
-      #  run: cd packages/web && npm run lint
+      - name: Lint
+        run: cd packages/web && npm run lint
 
       #- name: Test
       #  run: cd packages/web && npm run test
