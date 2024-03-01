@@ -1,7 +1,22 @@
 import React from 'react'
 import ReactPlayer from 'react-player'
-import { IconVolumeOff, IconVolume2, IconVolume } from '@tabler/icons-react'
-import { Center, Container, Group, Image, Progress, Slider, Text, Transition } from '@mantine/core'
+import {
+  IconPlayerPlayFilled,
+  IconPlayerPauseFilled,
+  IconVolumeOff,
+  IconVolume2,
+  IconVolume,
+} from '@tabler/icons-react'
+import {
+  ActionIcon,
+  Center,
+  Container,
+  Group,
+  Image,
+  Slider,
+  Text,
+  Transition,
+} from '@mantine/core'
 import { TwitterTweetEmbed } from 'react-twitter-embed'
 
 import { MessageResponseType } from '@global/types/src/discord'
@@ -66,7 +81,7 @@ const Media = (props: MediaProps) => {
     if (isType(contentType, 'image')) {
       Component = (
         <Container size="lg">
-          <Image alt={content || description || 'Imagen'} src={url} />
+          <ImageRenderer alt={content || description || 'Imagen'} src={url} />
         </Container>
       )
     } else if (isType(contentType, 'video')) {
@@ -112,6 +127,24 @@ const Media = (props: MediaProps) => {
   }
 }
 
+type ImageRendererProps = {
+  src: string
+  alt: string
+}
+
+function ImageRenderer(props: ImageRendererProps) {
+  const { src, alt } = props
+
+  const [loading, handlers] = useDisclosure(true)
+
+  return (
+    <React.Fragment>
+      <Image alt={alt} display={loading ? 'none' : 'block'} src={src} onLoad={handlers.close} />
+      <Loading show={loading} text="Cargando imagen" />
+    </React.Fragment>
+  )
+}
+
 type MediaPlayerProps = {
   autoPlay?: boolean
   url: string
@@ -135,31 +168,63 @@ function VideoPlayer(props: MediaPlayerProps) {
     styles,
   } = props
 
-  const [videoProgress, handlersVideoProgress] = useCounter(0, { min: 0, max: 100 })
+  const refVideo = React.useRef<ReactPlayer>(null)
+  const { hovered: hoveredPlay, ref: refPlay } = useHover()
+  const { hovered: hoveredVolumen, ref: refVolumen } = useHover()
 
-  const [audio, handlers] = useCounter(0, { min: 0, max: 100 })
+  const mediaControlsHover = hoveredPlay || hoveredVolumen
 
-  const { hovered, ref } = useHover()
-
+  const [showPlay, handlersShowPlay] = useDisclosure(false)
   const [showVolume, handlersShowVolume] = useDisclosure(false)
 
+  const [audio, handlers] = useCounter(33, { min: 0, max: 100 })
+  const [videoProgress, handlersVideoProgress] = useCounter(0, { min: 0, max: 100 })
+
   React.useEffect(() => {
-    if (hovered) {
+    if (mediaControlsHover) {
+      handlersShowPlay.open()
       handlersShowVolume.open()
     }
+    const idTimeout = setTimeout(() => {
+      if (mediaControlsHover) return
+      handlersShowPlay.close()
+      handlersShowVolume.close()
+    }, 5500)
 
-    setTimeout(() => handlersShowVolume.close(), 5000)
+    return () => clearTimeout(idTimeout)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hovered])
+  }, [mediaControlsHover])
 
   return (
     <React.Fragment>
+      <div
+        className={$(
+          'cd-absolute cd-bottom-0 cd-left-0 cd-z-50 cd-pr-[1rem] cd-pt-[4rem] cd-pl-[0.5rem] cd-pb-[1.5rem] bg-controls-bottom-left',
+          'cd-w-[500px]',
+        )}
+        ref={refPlay}
+      >
+        <Transition duration={250} mounted={showPlay} transition="fade">
+          {(styles) => (
+            <ActionIcon
+              className="cd-cursor-pointer"
+              size="lg"
+              style={styles}
+              variant="subtle"
+              onClick={autoPlay ? onVideoPause : onVideoPlay}
+            >
+              {autoPlay ? <IconPlayerPauseFilled /> : <IconPlayerPlayFilled />}
+            </ActionIcon>
+          )}
+        </Transition>
+      </div>
       <Center className="cd-relative cd-w-full cd-h-[calc(100%-8px)]" style={styles}>
         <ReactPlayer
           controls={useMediaControls}
           height="100%"
           pip={false}
           playing={autoPlay}
+          ref={refVideo}
           url={url}
           volume={audio / 100}
           width="100%"
@@ -175,22 +240,22 @@ function VideoPlayer(props: MediaPlayerProps) {
       {/* bg-controls-bottom-right */}
       <div
         className={$(
-          'cd-absolute cd-bottom-0 cd-right-0 cd-z-50 cd-pl-[1rem] cd-pt-[4rem] cd-pr-[0rem] cd-pb-[1rem] bg-controls-bottom-left',
-          'cd-w-[200px]',
+          'cd-absolute cd-bottom-0 cd-right-0 cd-z-50 cd-pl-[1rem] cd-pt-[4rem] cd-pr-[0rem] cd-pb-[2rem] bg-controls-bottom-left',
+          'cd-w-[500px]',
         )}
-        ref={ref}
+        ref={refVolumen}
         //style={{ opacity: showVolume ? 1 : 0 }}
       >
         <Transition duration={250} mounted={showVolume} transition="fade">
           {(styles) => (
-            <Group gap="xs" style={styles}>
+            <Group className="cd-pr-[1rem]" gap="xs" justify="flex-end" style={styles}>
               {audio === 0 && <IconVolumeOff />}
               {audio > 0 && audio < 50 && <IconVolume2 />}
               {audio >= 50 && <IconVolume />}
               <Slider
                 className="cd-w-[135px]"
                 defaultValue={0}
-                label={(value) => value.toFixed(0)}
+                label={(value) => (value === 33 ? 'Me repites ese numerin?' : value.toFixed(0))}
                 max={100}
                 min={0}
                 step={0.1}
@@ -201,14 +266,26 @@ function VideoPlayer(props: MediaPlayerProps) {
           )}
         </Transition>
       </div>
-      <Progress
-        className="cd-absolute cd-bottom-0 cd-w-full cd-z-50"
-        radius="xs"
-        transitionDuration={250}
+      <Slider
+        className="cd-absolute cd-bottom-[0.4rem] cd-right-0 cd-w-full cd-z-50"
+        label={(value) => (value === 33 ? 'Me repites ese numerin?' : null)}
+        size="md"
         value={videoProgress}
+        onChange={handleSeek}
+        onChangeEnd={onVideoPlay}
       />
     </React.Fragment>
   )
+
+  function handleSeek(value: number) {
+    const player = refVideo.current
+    onVideoPause?.()
+
+    if (player) {
+      player.seekTo(value / 100)
+    }
+    handlersVideoProgress.set(value)
+  }
 }
 
 export default Media

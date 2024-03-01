@@ -39,7 +39,7 @@ const LaughLoss = () => {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
-  const [autoPlay, handlers] = useDisclosure(false)
+  const [autoPlay, handlersPlay] = useDisclosure(false)
   const [gameOver, handlersGameOver] = useDisclosure(false)
   const [alreadyPlayed, handlersPlayed] = useDisclosure(false)
 
@@ -139,8 +139,8 @@ const LaughLoss = () => {
             <OverlayScreen.ActionButtons>
               <Button
                 onClick={() => {
-                  handlersPlayed.close()
-                  handlers.open()
+                  //handlersPlayed.close()
+                  handlersPlay.open()
                 }}
               >
                 Continuar
@@ -192,15 +192,15 @@ const LaughLoss = () => {
 
         <SliderHUD
           useShadowCorners
-          autoPlay={autoPlay}
+          //autoPlay={autoPlay}
           currentIndex={currentIndex}
           currentMessage={currentMessage}
           goNextMessage={goNextMessage}
           goPrevMessage={goPrevMessage}
-          handleAutoPlay={() => {
-            handlers.toggle()
-            handlersPlayed.open()
-          }}
+          // handleAutoPlay={() => {
+          //   handlersPlay.toggle()
+          //   handlersPlayed.open()
+          // }}
           handleReset={handleReset}
           hasNext={hasNext}
           hasPrev={hasPrev}
@@ -223,12 +223,12 @@ const LaughLoss = () => {
                 message={currentMessage}
                 styles={styles}
                 onVideoEnd={() => {
-                  handlers.open()
+                  handlersPlay.open()
                   handleGameOver()
                 }}
-                //onVideoPause={handlers.close}
+                onVideoPause={handlersPlay.close}
                 onVideoPlay={() => {
-                  handlers.open()
+                  handlersPlay.open()
                   handlersPlayed.open()
                 }}
               />
@@ -262,7 +262,7 @@ const LaughLoss = () => {
     })
     form.reset()
     reset()
-    handlers.close()
+    handlersPlay.close()
     handlersPlayed.close()
     handlersGameOver.close()
   }
