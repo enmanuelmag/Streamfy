@@ -60,10 +60,14 @@ const LaughLoss = () => {
   })
 
   const messagesMutation = useMutation<MessageResponseType[] | null, Error, string, string>({
-    mutationFn: async (channelId: string) => {
-      const messages = await DiscordRepo.getMessages({ channelIds: [channelId] })
-      return messages?.filter((m) => m.attachments.length) || null
-    },
+    mutationFn: async (channelId: string) =>
+      await DiscordRepo.getMessages({
+        channelIds: [channelId],
+        shuffle: true,
+        filters: {
+          hasAttachments: true,
+        },
+      }),
     onSuccess: (messages) => {
       setMessages(messages)
       setCurrentMessage(currentMessage || messages?.[0] || null)

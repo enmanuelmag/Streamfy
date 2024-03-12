@@ -23,6 +23,8 @@ import { useSliderMedia } from '@hooks/slider'
 import { Logger } from '@global/utils/src'
 import { notifications } from '@mantine/notifications'
 
+const EMOJI_TARGET_NAME = import.meta.env.VITE_EMOJI_TARGET_NAME as string
+
 const Consultorio = () => {
   const {
     messages,
@@ -52,7 +54,14 @@ const Consultorio = () => {
   })
 
   const messagesMutation = useMutation<MessageResponseType[] | null, Error, string[], string[]>({
-    mutationFn: async (channelIds: string[]) => DiscordRepo.getMessages({ channelIds }),
+    mutationFn: async (channelIds: string[]) =>
+      await DiscordRepo.getMessages({
+        channelIds,
+        shuffle: true,
+        filters: {
+          emojiName: EMOJI_TARGET_NAME,
+        },
+      }),
     onSuccess: (messages) => {
       setMessages(messages)
       setCurrentMessage(currentMessage || messages?.[0] || null)
@@ -86,6 +95,8 @@ const Consultorio = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channelQuery.isError])
+
+  console.log('mutate', messagesMutation.data)
 
   return (
     <Container fluid className="cd-w-full cd-h-full cd-relative baity-consultorio-transition" p={0}>
