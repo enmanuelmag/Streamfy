@@ -6,11 +6,15 @@ import type {
   GetMessagesParamsType,
 } from '@global/types/dist/discord'
 
+import shuffleArray from 'knuth-shuffle-seeded'
+
 import DiscordClient from '../../services/discord'
 
 import { Logger } from '@global/utils'
 
 const Discord = DiscordClient.getInstance()
+
+const RANDOM_SEED = Number(process.env.VITE_RANDOM_SEED) || 7
 
 // Public methods
 export const getMessages = async (
@@ -18,7 +22,7 @@ export const getMessages = async (
 ): Promise<MessageResponseType[]> => {
   Logger.info('Getting messages', params)
 
-  const { channelIds, limit, before, after, around, regex } = params
+  const { channelIds, limit, before, after, around, regex, filters, shuffle } = params
 
   const channels = channelIds.map(
     (channelId) => Discord.channels.cache.get(channelId) as TextChannel,
@@ -43,7 +47,11 @@ export const getMessages = async (
 
   Logger.info('Amount of messages', messages.length)
 
-  return messages
+  const filteredMessages = filterMessages(messages, filters)
+
+  Logger.info('Filtered messages', filteredMessages.length)
+
+  const parsedMessages = filteredMessages
     .sort((a, b) => a.createdTimestamp - b.createdTimestamp)
     .map(
       (message) =>
@@ -76,6 +84,8 @@ export const getMessages = async (
           })),
         }) as MessageResponseType,
     )
+
+  return shuffle ? shuffleArray(parsedMessages, RANDOM_SEED) : parsedMessages
 }
 
 export const getChannels = async (
@@ -98,3 +108,22 @@ export const getChannels = async (
 }
 
 // Internal methods
+function filterMessages(messages: Message[], filters: GetMessagesParamsType['filters']) {
+  if (!filters) return messages
+
+  return messages.filter((message) => {
+    if (filters.hasAttachments && !message.attachments.size) return false
+
+    if (filters.emojiName) {
+      if (!message.reactions.cache.size) return false
+
+      const reaction = message.reactions.cache.some(
+        (reaction) => reaction.emoji.name === filters.emojiName,
+      )
+
+      if (!reaction) return false
+    }
+
+    return true
+  })
+}

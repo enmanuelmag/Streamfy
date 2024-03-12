@@ -13,6 +13,14 @@ export const GetMessagesParamsSchema = zod.object({
   after: zod.string().optional(),
   around: zod.string().optional(),
   regex: zod.string().optional(),
+  shuffle: zod.boolean().optional(),
+  filters: zod
+    .object({
+      authorId: zod.string().optional(),
+      emojiName: zod.string().optional(),
+      hasAttachments: zod.boolean().optional(),
+    })
+    .optional(),
 })
 
 export type GetMessagesParamsType = zod.infer<typeof GetMessagesParamsSchema>

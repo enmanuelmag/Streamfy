@@ -19,13 +19,14 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@global/types": "1.0.0",
+    "@global/utils": "1.0.0",
     "cors": "^2.8.5",
     "discord.js": "^14.14.1",
     "express": "^4.18.2",
     "helmet": "^7.1.0",
+    "knuth-shuffle-seeded": "^1.0.6",
     "morgan": "^1.10.0",
-    "nodemon": "^3.0.3",
-    "@global/types": "1.0.0",
-    "@global/utils": "1.0.0"
+    "nodemon": "^3.0.3"
   }
 }
