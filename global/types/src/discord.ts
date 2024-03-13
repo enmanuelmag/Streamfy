@@ -22,22 +22,26 @@ export const AttachmentSchema = zod.object({
 
 export type AttachmentType = zod.infer<typeof AttachmentSchema>
 
-// Get Messages
+export const MessageFiltersSchema = zod.object({
+  authorId: zod.string().optional().nullable(),
+  emojiName: zod.string().optional().nullable(),
+  hasAttachments: zod.boolean().optional().nullable(),
+})
+
+export type MessageFiltersType = zod.infer<typeof MessageFiltersSchema>
+
 export const GetMessagesParamsSchema = zod.object({
-  channelIds: zod.array(zod.string()),
-  limit: zod.number().optional(),
-  before: zod.string().optional(),
-  after: zod.string().optional(),
-  around: zod.string().optional(),
-  regex: zod.string().optional(),
   shuffle: zod.boolean().optional(),
-  filters: zod
-    .object({
-      authorId: zod.string().optional().nullable(),
-      emojiName: zod.string().optional().nullable(),
-      hasAttachments: zod.boolean().optional().nullable(),
-    })
-    .optional(),
+  channels: zod.array(
+    zod.object({
+      id: zod.string(),
+      limit: zod.number().optional(),
+      before: zod.string().optional(),
+      after: zod.string().optional(),
+      around: zod.string().optional(),
+      filters: MessageFiltersSchema.optional(),
+    }),
+  ),
 })
 
 export type GetMessagesParamsType = zod.infer<typeof GetMessagesParamsSchema>

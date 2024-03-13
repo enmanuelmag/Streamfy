@@ -11,7 +11,8 @@ export type DiscordChannelType = zod.infer<typeof DiscordChannelSchema>
 
 export const Step1Schema = zod.object({
   emoji: EmojiSchema.nullable().optional(),
-  discordChannels: zod.array(DiscordChannelSchema).min(1, 'Selecciona al menos un canal'),
+  publicChannel: DiscordChannelSchema.nullable().optional(),
+  privateChannel: DiscordChannelSchema.nullable().optional(),
 })
 
 export type Step1Type = zod.infer<typeof Step1Schema>

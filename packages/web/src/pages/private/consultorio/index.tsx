@@ -4,23 +4,19 @@ import { useNavigate } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  Transition,
-  Container,
-  MultiSelect,
-  Center,
-  Button,
-  Stack,
-  Select,
-  Text,
-} from '@mantine/core'
+import { Transition, Container, Center, Button, Stack, Select, Text, Divider } from '@mantine/core'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/consultorio'
 
 import { DiscordRepo } from '@src/db'
 import { ROUTES } from '@src/constants/routes'
 import { useStoreConsultorio } from '@src/store'
-import { ChannelResponseType, EmojiType, MessageResponseType } from '@global/types/src/discord'
+import {
+  ChannelResponseType,
+  EmojiType,
+  GetMessagesParamsType,
+  MessageResponseType,
+} from '@global/types/src/discord'
 
 import Media from '@components/media'
 import OverlayScreen from '@src/components/shared/OverlayScreen'
@@ -32,20 +28,16 @@ import { useSliderMedia } from '@hooks/slider'
 import { Logger } from '@global/utils/src'
 import { notifications } from '@mantine/notifications'
 
-type MutateMessagesType = {
-  channelIds: string[]
-  emojiName?: string
-}
-
 const Consultorio = () => {
   const {
     emoji,
     messages,
-    discordChannels,
+    publicChannel,
+    privateChannel,
     currentMessage,
     setEmoji,
     setMessages,
-    setDiscordChannels,
+    setDiscordChannel,
     setCurrentMessage,
     reset,
   } = useStoreConsultorio((state) => state)
@@ -58,35 +50,33 @@ const Consultorio = () => {
     validate: zodResolver(Step1Schema),
     initialValues: {
       emoji,
-      discordChannels: [],
+      publicChannel,
+      privateChannel,
     },
   })
 
   const emojisQuery = useQuery<EmojiType[] | null, Error>({
     queryKey: ['discordEmojis'],
     queryFn: async () => DiscordRepo.getEmojis(),
-    enabled: !discordChannels?.length || !messages,
+    enabled: !messages,
   })
 
   const channelQuery = useQuery<ChannelResponseType[] | null, Error>({
     queryKey: ['discordChannels'],
-    enabled: !discordChannels?.length || !messages,
+    enabled: !messages,
     queryFn: () => DiscordRepo.getChannels({ channelType: 0 }),
   })
 
   const messagesMutation = useMutation<
     MessageResponseType[] | null,
     Error,
-    MutateMessagesType,
-    MutateMessagesType
+    GetMessagesParamsType['channels'],
+    GetMessagesParamsType['channels']
   >({
-    mutationFn: async ({ channelIds, emojiName }: MutateMessagesType) =>
+    mutationFn: async (channels) =>
       await DiscordRepo.getMessages({
-        channelIds,
         shuffle: true,
-        filters: {
-          emojiName,
-        },
+        channels,
       }),
     onSuccess: (messages) => {
       setMessages(messages)
@@ -159,12 +149,21 @@ const Consultorio = () => {
         {!gameOver && !messages?.length && channelQuery.data && emojisQuery.data && (
           <form
             className="cd-h-full cd-w-full"
-            onSubmit={form.onSubmit(({ discordChannels }) =>
-              messagesMutation.mutate({
-                channelIds: discordChannels.map((c) => c.id),
-                emojiName: emoji?.name || undefined,
-              }),
-            )}
+            onSubmit={form.onSubmit(({ emoji, privateChannel, publicChannel }) => {
+              const channels: GetMessagesParamsType['channels'] = []
+
+              if (privateChannel) channels.push({ id: privateChannel.id })
+
+              if (publicChannel)
+                channels.push({
+                  id: publicChannel.id,
+                  filters: {
+                    emojiName: emoji?.name,
+                  },
+                })
+
+              return messagesMutation.mutate(channels)
+            })}
           >
             <Center className="cd-h-full">
               <Stack>
@@ -180,7 +179,7 @@ const Consultorio = () => {
                       <img alt="emoji" className="cd-w-6 cd-h-6" src={emoji.imageURL || ''} />
                     ) : undefined
                   }
-                  placeholder="Selecciona un emoji"
+                  placeholder="Selecciona un emoji que será el sello de calidad"
                   renderOption={({ option: { value } }) => {
                     const e = emojisQuery.data!.find((e) => e.name === value)
                     if (!e) return null
@@ -194,19 +193,32 @@ const Consultorio = () => {
                   value={form.values.emoji?.name}
                   onChange={handleEmojiChange}
                 />
-                <MultiSelect
+                <Select
                   clearable
-                  hidePickedOptions
                   searchable
                   withAsterisk
                   data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
-                  label="Canales de Discord"
-                  placeholder="Selecciona uno o varios canales"
+                  label="Canal privado"
+                  placeholder="Selecciona un canal privado"
                   {...form.getInputProps('discordChannels')}
                   className="cd-w-[450px]"
                   comboboxProps={{ transitionProps: { transition: 'pop', duration: 250 } }}
-                  value={form.values.discordChannels.map((c) => c.id) || []}
-                  onChange={handleChannelChange}
+                  value={form.values.privateChannel?.id}
+                  onChange={(channelId) => handleChannelChange('privateChannel', channelId)}
+                />
+                <Divider orientation="horizontal" size="sm" />
+                <Select
+                  clearable
+                  searchable
+                  withAsterisk
+                  data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
+                  label="Canal público"
+                  placeholder="Selecciona un canal público"
+                  {...form.getInputProps('discordChannels')}
+                  className="cd-w-[450px]"
+                  comboboxProps={{ transitionProps: { transition: 'pop', duration: 250 } }}
+                  value={form.values.publicChannel?.id}
+                  onChange={(channelId) => handleChannelChange('publicChannel', channelId)}
                 />
                 <Button
                   className="cd-mt-4"
@@ -267,12 +279,12 @@ const Consultorio = () => {
     setEmoji(emoji)
   }
 
-  function handleChannelChange(channelIds: string[]) {
+  function handleChannelChange(type: 'publicChannel' | 'privateChannel', channelId: string | null) {
     if (!channelQuery.data) return
 
-    const channels = channelQuery.data.filter((c) => channelIds.includes(c.id))
-    form.setFieldValue('discordChannels', channels)
-    setDiscordChannels(channels)
+    const channel = channelQuery.data.find((c) => channelId === c.id)
+    form.setFieldValue(type, channel)
+    setDiscordChannel(type, channel)
   }
 
   function handleGameOver() {

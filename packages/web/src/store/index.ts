@@ -61,7 +61,8 @@ export const useStoreLaughLoss = create(
 
 type ConsultorioState = {
   emoji?: EmojiType | null
-  discordChannels?: ChannelResponseType[] | null
+  publicChannel?: ChannelResponseType | null
+  privateChannel?: ChannelResponseType | null
   messages?: MessageResponseType[] | null
   currentMessage?: MessageResponseType | null
 }
@@ -69,7 +70,10 @@ type ConsultorioState = {
 type ConsultorioAction = {
   setEmoji: (emoji: ConsultorioState['emoji'] | null) => void
   setMessages: (messages: ConsultorioState['messages'] | null) => void
-  setDiscordChannels: (discordChannel: ConsultorioState['discordChannels'] | null) => void
+  setDiscordChannel: (
+    type: 'publicChannel' | 'privateChannel',
+    channel?: ChannelResponseType | null,
+  ) => void
   setCurrentMessage: (currentMessage: ConsultorioState['currentMessage'] | null) => void
   reset: () => void
 }
@@ -78,14 +82,23 @@ export const useStoreConsultorio = create(
   persist<ConsultorioState & ConsultorioAction>(
     (set) => ({
       emoji: null,
-      discordChannel: null,
+      publicChannel: null,
+      privateChannel: null,
       messages: null,
       currentMessageId: null,
       setEmoji: (emoji) => set(() => ({ emoji })),
-      setDiscordChannels: (discordChannels) => set(() => ({ discordChannels })),
       setMessages: (messages) => set(() => ({ messages })),
       setCurrentMessage: (currentMessage) => set(() => ({ currentMessage })),
-      reset: () => set(() => ({ discordChannel: null, messages: null, currentMessage: null })),
+      reset: () =>
+        set(() => ({
+          discordChannel: null,
+          messages: null,
+          currentMessage: null,
+          privateChannel: null,
+          publicChannel: null,
+          emoji: null,
+        })),
+      setDiscordChannel: (type, channel) => set(() => ({ [type]: channel })),
     }),
     {
       name: 'storage-consultorio',

@@ -5,6 +5,7 @@ import type {
   GetChannelsParamsType,
   MessageResponseType,
   GetMessagesParamsType,
+  MessageFiltersType,
 } from '@global/types/dist/discord'
 
 import shuffleArray from 'knuth-shuffle-seeded'
@@ -37,70 +38,29 @@ export const getMessages = async (
 ): Promise<MessageResponseType[]> => {
   Logger.info('Getting messages', params)
 
-  const { channelIds, limit, before, after, around, regex, filters, shuffle } = params
-
-  const channels = channelIds.map(
-    (channelId) => Discord.channels.cache.get(channelId) as TextChannel,
-  )
-
-  if (!channels.length) {
-    Logger.error('Channels not found', channelIds)
-    throw new Error('Channel not found')
-  }
+  const { channels, shuffle } = params
 
   let messages: Message[] = []
 
-  for (const channel of channels) {
+  for (const item of channels) {
+    const { id, after, around, before, filters, limit } = item
+
+    const channel = Discord.channels.cache.get(id) as TextChannel
+
     const fetchedMessages = await channel.messages.fetch({ limit, before, after, around })
-    messages.push(...fetchedMessages.toJSON())
+
+    const filteredMessages = filterMessages(fetchedMessages.toJSON(), filters)
+
+    messages.push(...filteredMessages)
   }
 
-  if (regex) {
-    const regexPattern = new RegExp(regex)
-    messages = messages.filter((message) => regexPattern.test(message.content))
+  Logger.info('All messages fetched', messages.length)
+
+  if (shuffle) {
+    messages = shuffleArray(messages, RANDOM_SEED)
   }
 
-  Logger.info('Amount of messages', messages.length)
-
-  const filteredMessages = filterMessages(messages, filters)
-
-  Logger.info('Filtered messages', filteredMessages.length)
-
-  const parsedMessages = filteredMessages
-    .sort((a, b) => a.createdTimestamp - b.createdTimestamp)
-    .map(
-      (message) =>
-        ({
-          id: message.id,
-          author: {
-            id: message.author.id,
-            username: message.author.username,
-            globalName: message.author.globalName,
-            discriminator: message.author.discriminator,
-            accentColor: message.author.accentColor,
-            avatar: message.author.avatarURL(),
-          },
-          content: message.content,
-          timestamp: message.createdTimestamp,
-          attachments: message.attachments.map((data) => ({
-            id: data.id,
-            description: data.description,
-            contentType: data.contentType,
-            size: data.size,
-            url: data.url,
-            height: data.height,
-            width: data.width,
-          })),
-          reactions: message.reactions.cache.map((reaction) => ({
-            id: reaction.emoji.id,
-            count: reaction.count,
-            name: reaction.emoji.name,
-            imageURL: reaction.emoji.imageURL(),
-          })),
-        }) as MessageResponseType,
-    )
-
-  return shuffle ? shuffleArray(parsedMessages, RANDOM_SEED) : parsedMessages
+  return messages.map(parseMessage)
 }
 
 export const getChannels = async (
@@ -123,7 +83,39 @@ export const getChannels = async (
 }
 
 // Internal methods
-function filterMessages(messages: Message[], filters: GetMessagesParamsType['filters']) {
+
+function parseMessage(message: Message): MessageResponseType {
+  return {
+    id: message.id,
+    author: {
+      id: message.author.id,
+      username: message.author.username,
+      globalName: message.author.globalName,
+      discriminator: message.author.discriminator,
+      accentColor: message.author.accentColor,
+      avatar: message.author.avatarURL(),
+    },
+    content: message.content,
+    timestamp: message.createdTimestamp,
+    attachments: message.attachments.map((data) => ({
+      id: data.id,
+      description: data.description,
+      contentType: data.contentType,
+      size: data.size,
+      url: data.url,
+      height: data.height,
+      width: data.width,
+    })),
+    reactions: message.reactions.cache.map((reaction) => ({
+      id: reaction.emoji.id,
+      count: reaction.count,
+      name: reaction.emoji.name,
+      imageURL: reaction.emoji.imageURL(),
+    })),
+  } as MessageResponseType
+}
+
+function filterMessages(messages: Message[], filters?: MessageFiltersType | null) {
   if (!filters) return messages
 
   return messages.filter((message) => {
