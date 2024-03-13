@@ -198,20 +198,6 @@ const Consultorio = () => {
                   searchable
                   withAsterisk
                   data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
-                  label="Canal privado"
-                  placeholder="Selecciona un canal privado"
-                  {...form.getInputProps('discordChannels')}
-                  className="cd-w-[450px]"
-                  comboboxProps={{ transitionProps: { transition: 'pop', duration: 250 } }}
-                  value={form.values.privateChannel?.id}
-                  onChange={(channelId) => handleChannelChange('privateChannel', channelId)}
-                />
-                <Divider orientation="horizontal" size="sm" />
-                <Select
-                  clearable
-                  searchable
-                  withAsterisk
-                  data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
                   label="Canal público"
                   placeholder="Selecciona un canal público"
                   {...form.getInputProps('discordChannels')}
@@ -219,6 +205,20 @@ const Consultorio = () => {
                   comboboxProps={{ transitionProps: { transition: 'pop', duration: 250 } }}
                   value={form.values.publicChannel?.id}
                   onChange={(channelId) => handleChannelChange('publicChannel', channelId)}
+                />
+                <Divider orientation="horizontal" size="sm" />
+                <Select
+                  clearable
+                  searchable
+                  withAsterisk
+                  data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
+                  label="Canal privado"
+                  placeholder="Selecciona un canal privado"
+                  {...form.getInputProps('discordChannels')}
+                  className="cd-w-[450px]"
+                  comboboxProps={{ transitionProps: { transition: 'pop', duration: 250 } }}
+                  value={form.values.privateChannel?.id}
+                  onChange={(channelId) => handleChannelChange('privateChannel', channelId)}
                 />
                 <Button
                   className="cd-mt-4"

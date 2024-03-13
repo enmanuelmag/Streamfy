@@ -2,14 +2,19 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
-import { Transition, Container, Select, Button, Center, Stack } from '@mantine/core'
+import { Transition, Container, Select, Button, Center, Stack, Text } from '@mantine/core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/laughLoss'
 
 import { DiscordRepo } from '@src/db'
 import { useStoreLaughLoss } from '@src/store'
-import { ChannelResponseType, MessageResponseType } from '@global/types/src/discord'
+import {
+  ChannelResponseType,
+  EmojiType,
+  GetMessagesParamsType,
+  MessageResponseType,
+} from '@global/types/src/discord'
 import { ROUTES } from '@src/constants/routes'
 
 import Media from '@components/media'
@@ -27,9 +32,11 @@ const DELAY_TRANSITION = 250
 
 const LaughLoss = () => {
   const {
+    emoji,
     messages,
     discordChannel,
     currentMessage,
+    setEmoji,
     setMessages,
     setDiscordChannel,
     setCurrentMessage,
@@ -46,11 +53,18 @@ const LaughLoss = () => {
   const form = useForm<Step1Type>({
     validate: zodResolver(Step1Schema),
     initialValues: {
+      emoji: null,
       discordChannel: {
         id: '',
         name: '',
       },
     },
+  })
+
+  const emojisQuery = useQuery<EmojiType[] | null, Error>({
+    queryKey: ['discordEmojis'],
+    queryFn: async () => DiscordRepo.getEmojis(),
+    enabled: !messages,
   })
 
   const channelQuery = useQuery<ChannelResponseType[] | null, Error>({
@@ -59,14 +73,16 @@ const LaughLoss = () => {
     queryFn: () => DiscordRepo.getChannels({ channelType: 0 }),
   })
 
-  const messagesMutation = useMutation<MessageResponseType[] | null, Error, string, string>({
-    mutationFn: async (channelId: string) =>
+  const messagesMutation = useMutation<
+    MessageResponseType[] | null,
+    Error,
+    GetMessagesParamsType['channels'],
+    GetMessagesParamsType['channels']
+  >({
+    mutationFn: async (channels) =>
       await DiscordRepo.getMessages({
-        channelIds: [channelId],
+        channels,
         shuffle: true,
-        filters: {
-          hasAttachments: true,
-        },
       }),
     onSuccess: (messages) => {
       setMessages(messages)
@@ -161,22 +177,56 @@ const LaughLoss = () => {
       >
         <Loading show={!gameOver && channelQuery.isLoading} text="Cargando canales" />
 
-        {!gameOver && !messages?.length && channelQuery.data && (
+        {!gameOver && !messages?.length && channelQuery.data && emojisQuery.data && (
           <form
             className="cd-h-full cd-w-full"
             onSubmit={form.onSubmit(({ discordChannel }) =>
-              messagesMutation.mutate(discordChannel.id),
+              messagesMutation.mutate([
+                {
+                  id: discordChannel.id,
+                  filters: {
+                    hasAttachments: true,
+                    emojiName: form.values.emoji?.name,
+                  },
+                },
+              ]),
             )}
           >
             <Center className="cd-h-full">
               <Stack>
+                <Select
+                  clearable
+                  searchable
+                  className="cd-w-[450px]"
+                  data={emojisQuery.data.map((e) => ({ value: e.name, label: e.name })) || []}
+                  label="Emoji"
+                  {...form.getInputProps('emoji')}
+                  leftSection={
+                    emoji?.imageURL ? (
+                      <img alt="emoji" className="cd-w-6 cd-h-6" src={emoji.imageURL || ''} />
+                    ) : undefined
+                  }
+                  placeholder="Selecciona un emoji que será el sello de calidad"
+                  renderOption={({ option: { value } }) => {
+                    const e = emojisQuery.data!.find((e) => e.name === value)
+                    if (!e) return null
+                    return (
+                      <div className="cd-flex cd-items-center cd-justify-start cd-gap-[0.5rem]">
+                        <img alt={e.name} className="cd-w-8 cd-h-8" src={e.imageURL || ''} />
+                        <Text fz="sm">{e.name}</Text>
+                      </div>
+                    )
+                  }}
+                  value={form.values.emoji?.name}
+                  onChange={handleEmojiChange}
+                />
                 <Select
                   data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
                   label="Canal"
                   placeholder="Selecciona un canal"
                   value={form.values.discordChannel.id}
                   {...form.getInputProps('discordChannel.id')}
-                  className="cd-w-[400px]"
+                  className="cd-w-[450px]"
                   onChange={handleChannelChange}
                 />
                 <Button
@@ -242,6 +292,15 @@ const LaughLoss = () => {
       </Container>
     </Container>
   )
+
+  function handleEmojiChange(emojiId: string | null) {
+    const isSameEmoji = emojiId === form.values.emoji?.id
+    if (!emojisQuery.data || isSameEmoji) return
+
+    const emoji = emojisQuery.data.find((e) => e.name === emojiId)
+    form.setFieldValue('emoji', emoji)
+    setEmoji(emoji)
+  }
 
   function handleChannelChange(channelId: string | null) {
     if (!channelId || !channelQuery.data) return

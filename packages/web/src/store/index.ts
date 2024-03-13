@@ -4,6 +4,8 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import type { UserType } from '@global/types/src/user'
 import type { ChannelResponseType, EmojiType, MessageResponseType } from '@global/types/src/discord'
 
+const VERSION_STORAGE = 2
+
 type StoreState = {
   volume: number
   user?: UserType | null
@@ -22,19 +24,21 @@ export const useStoreBase = create(
       setVolume: (volume) => set(() => ({ volume })),
     }),
     {
-      name: 'storage-base',
+      name: `storage-base-${VERSION_STORAGE}`,
       storage: createJSONStorage(() => localStorage),
     },
   ),
 )
 
 type LaughLossState = {
+  emoji?: EmojiType | null
   discordChannel?: ChannelResponseType | null
   messages?: MessageResponseType[] | null
   currentMessage?: MessageResponseType | null
 }
 
 type LaughLossAction = {
+  setEmoji: (emoji: LaughLossState['emoji'] | null) => void
   setMessages: (messages: LaughLossState['messages'] | null) => void
   setDiscordChannel: (discordChannel: LaughLossState['discordChannel'] | null) => void
   setCurrentMessage: (currentMessage: LaughLossState['currentMessage'] | null) => void
@@ -44,16 +48,18 @@ type LaughLossAction = {
 export const useStoreLaughLoss = create(
   persist<LaughLossState & LaughLossAction>(
     (set) => ({
+      emoji: null,
       discordChannel: null,
       messages: null,
       currentMessageId: null,
+      setEmoji: (emoji) => set(() => ({ emoji })),
       setDiscordChannel: (discordChannel) => set(() => ({ discordChannel })),
       setMessages: (messages) => set(() => ({ messages })),
       setCurrentMessage: (currentMessage) => set(() => ({ currentMessage })),
       reset: () => set(() => ({ discordChannel: null, messages: null, currentMessage: null })),
     }),
     {
-      name: 'storage-laugh-loss',
+      name: `storage-laughloss-${VERSION_STORAGE}`,
       storage: createJSONStorage(() => localStorage),
     },
   ),
@@ -101,7 +107,7 @@ export const useStoreConsultorio = create(
       setDiscordChannel: (type, channel) => set(() => ({ [type]: channel })),
     }),
     {
-      name: 'storage-consultorio',
+      name: `storage-consultorio-${VERSION_STORAGE}`,
       storage: createJSONStorage(() => localStorage),
     },
   ),

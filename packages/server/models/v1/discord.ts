@@ -36,7 +36,7 @@ export const getEmojis = async (): Promise<EmojiType[]> => {
 export const getMessages = async (
   params: GetMessagesParamsType,
 ): Promise<MessageResponseType[]> => {
-  Logger.info('Getting messages', params)
+  Logger.info('Getting messages', JSON.stringify(params))
 
   const { channels, shuffle } = params
 
