@@ -9,7 +9,6 @@ export const transitionView = (updateCb: () => void) => {
 }
 
 export const backTransition = (updateCb: () => void) => {
-  console.log('backTransition')
   window.addEventListener(
     'popstate',
     (e) => {

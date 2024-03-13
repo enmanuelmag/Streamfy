@@ -9,6 +9,18 @@ import { validate } from '../../middlewares/validation'
 
 const router = express.Router()
 
+router.get('/emojis', async (_, res) => {
+  try {
+    const emojis = await Discord.getEmojis()
+    return res.json(Response(200, 'Emojis retrieved', emojis))
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.json(Response(400, error.message, null))
+    }
+    return res.json(Response(500, 'Error retrieving emojis', null))
+  }
+})
+
 router.post(
   '/messages',
   validate({

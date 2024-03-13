@@ -1,9 +1,26 @@
 import zod from 'zod'
 import { ChannelType } from 'discord.js'
 
-/**
- * Definitions for LaughLoss model
- */
+export const EmojiSchema = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  imageURL: zod.string().optional().nullable(),
+})
+
+export type EmojiType = zod.infer<typeof EmojiSchema>
+
+export const AttachmentSchema = zod.object({
+  id: zod.string(),
+  url: zod.string(),
+  size: zod.number(),
+  attachment: zod.string(),
+  width: zod.number().nullable(),
+  height: zod.number().nullable(),
+  description: zod.string().nullable(),
+  contentType: zod.string().nullable(),
+})
+
+export type AttachmentType = zod.infer<typeof AttachmentSchema>
 
 // Get Messages
 export const GetMessagesParamsSchema = zod.object({
@@ -16,9 +33,9 @@ export const GetMessagesParamsSchema = zod.object({
   shuffle: zod.boolean().optional(),
   filters: zod
     .object({
-      authorId: zod.string().optional(),
-      emojiName: zod.string().optional(),
-      hasAttachments: zod.boolean().optional(),
+      authorId: zod.string().optional().nullable(),
+      emojiName: zod.string().optional().nullable(),
+      hasAttachments: zod.boolean().optional().nullable(),
     })
     .optional(),
 })
@@ -27,6 +44,10 @@ export type GetMessagesParamsType = zod.infer<typeof GetMessagesParamsSchema>
 
 export const MessageResponseSchema = zod.object({
   id: zod.string(),
+  content: zod.string(),
+  timestamp: zod.number(),
+  reactions: zod.array(EmojiSchema.extend({ count: zod.number() })),
+  attachments: zod.array(AttachmentSchema),
   author: zod.object({
     id: zod.string(),
     username: zod.string(),
@@ -35,28 +56,6 @@ export const MessageResponseSchema = zod.object({
     accentColor: zod.number().optional().nullable(),
     avatar: zod.string().optional().nullable(),
   }),
-  content: zod.string(),
-  timestamp: zod.number(),
-  attachments: zod.array(
-    zod.object({
-      id: zod.string(),
-      attachment: zod.string(),
-      description: zod.string().nullable(),
-      contentType: zod.string().nullable(),
-      size: zod.number(),
-      url: zod.string(),
-      height: zod.number().nullable(),
-      width: zod.number().nullable(),
-    }),
-  ),
-  reactions: zod.array(
-    zod.object({
-      id: zod.string(),
-      count: zod.number(),
-      emoji: zod.string(),
-      imageURL: zod.string().optional().nullable(),
-    }),
-  ),
 })
 
 export type MessageResponseType = zod.infer<typeof MessageResponseSchema>

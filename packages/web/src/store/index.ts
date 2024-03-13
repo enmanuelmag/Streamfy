@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 import type { UserType } from '@global/types/src/user'
-import type { ChannelResponseType, MessageResponseType } from '@global/types/src/discord'
+import type { ChannelResponseType, EmojiType, MessageResponseType } from '@global/types/src/discord'
 
 type StoreState = {
   volume: number
@@ -60,12 +60,14 @@ export const useStoreLaughLoss = create(
 )
 
 type ConsultorioState = {
+  emoji?: EmojiType | null
   discordChannels?: ChannelResponseType[] | null
   messages?: MessageResponseType[] | null
   currentMessage?: MessageResponseType | null
 }
 
 type ConsultorioAction = {
+  setEmoji: (emoji: ConsultorioState['emoji'] | null) => void
   setMessages: (messages: ConsultorioState['messages'] | null) => void
   setDiscordChannels: (discordChannel: ConsultorioState['discordChannels'] | null) => void
   setCurrentMessage: (currentMessage: ConsultorioState['currentMessage'] | null) => void
@@ -75,9 +77,11 @@ type ConsultorioAction = {
 export const useStoreConsultorio = create(
   persist<ConsultorioState & ConsultorioAction>(
     (set) => ({
+      emoji: null,
       discordChannel: null,
       messages: null,
       currentMessageId: null,
+      setEmoji: (emoji) => set(() => ({ emoji })),
       setDiscordChannels: (discordChannels) => set(() => ({ discordChannels })),
       setMessages: (messages) => set(() => ({ messages })),
       setCurrentMessage: (currentMessage) => set(() => ({ currentMessage })),

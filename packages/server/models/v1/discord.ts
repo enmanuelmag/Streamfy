@@ -1,5 +1,6 @@
 import type { TextChannel, Message } from 'discord.js'
 import type {
+  EmojiType,
   ChannelResponseType,
   GetChannelsParamsType,
   MessageResponseType,
@@ -15,6 +16,20 @@ import { Logger } from '@global/utils'
 const Discord = DiscordClient.getInstance()
 
 const RANDOM_SEED = Number(process.env.VITE_RANDOM_SEED) || 7
+
+export const getEmojis = async (): Promise<EmojiType[]> => {
+  Logger.info('Getting emojis')
+
+  const emojis = Discord.emojis.cache.toJSON()
+
+  Logger.info('Got emojis', emojis.length)
+
+  return emojis.map((e) => ({
+    id: e.id,
+    imageURL: e.imageURL(),
+    name: e.name || e.id,
+  }))
+}
 
 // Public methods
 export const getMessages = async (
@@ -79,7 +94,7 @@ export const getMessages = async (
           reactions: message.reactions.cache.map((reaction) => ({
             id: reaction.emoji.id,
             count: reaction.count,
-            emoji: reaction.emoji.name,
+            name: reaction.emoji.name,
             imageURL: reaction.emoji.imageURL(),
           })),
         }) as MessageResponseType,

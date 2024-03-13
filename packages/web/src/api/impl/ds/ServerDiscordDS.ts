@@ -1,6 +1,7 @@
 import axios, { type AxiosInstance } from 'axios'
 
 import type {
+  EmojiType,
   ChannelResponseType,
   GetChannelsParamsType,
   MessageResponseType,
@@ -21,6 +22,23 @@ export default class ServerDS extends DiscordDS {
       baseURL: import.meta.env.VITE_SERVER_API_URL,
     })
   }
+
+  async getEmojis() {
+    try {
+      const response = await this.axiosInstance.get<ResponseType<EmojiType[]>>('/discord/emojis')
+
+      if (response.data.status !== 200) {
+        Logger.error('Error from server getting emojis', response.data.message)
+        throw new Error(response.data.message)
+      }
+
+      return response.data.data
+    } catch (error) {
+      Logger.error('Error getting emojis', error)
+      throw new Error('Error getting emojis')
+    }
+  }
+
   async getMessages(params: GetMessagesParamsType): Promise<MessageResponseType[]> {
     try {
       const response = await this.axiosInstance.post<ResponseType<MessageResponseType[]>>(

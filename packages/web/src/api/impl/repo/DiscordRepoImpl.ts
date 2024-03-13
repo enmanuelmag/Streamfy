@@ -11,6 +11,10 @@ export default class DiscordRepoImpl extends DiscordRepo {
     this.ds = ds
   }
 
+  getEmojis() {
+    return this.ds.getEmojis()
+  }
+
   getMessages(params: GetMessagesParamsType) {
     return this.ds.getMessages(params)
   }
