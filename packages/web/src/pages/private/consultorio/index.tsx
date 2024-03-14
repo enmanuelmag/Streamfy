@@ -170,13 +170,18 @@ const Consultorio = () => {
                 <Select
                   clearable
                   searchable
+                  withAsterisk
                   className="cd-w-[450px]"
                   data={emojisQuery.data.map((e) => ({ value: e.name, label: e.name })) || []}
                   label="Emoji"
                   {...form.getInputProps('emoji')}
                   leftSection={
-                    emoji?.imageURL ? (
-                      <img alt="emoji" className="cd-w-6 cd-h-6" src={emoji.imageURL || ''} />
+                    form.values.emoji?.imageURL ? (
+                      <img
+                        alt="emoji"
+                        className="cd-w-6 cd-h-6"
+                        src={form.values.emoji?.imageURL || ''}
+                      />
                     ) : undefined
                   }
                   placeholder="Selecciona un emoji que será el sello de calidad"
@@ -258,7 +263,8 @@ const Consultorio = () => {
             {(styles) => (
               <Media
                 useMediaControls
-                goNextMessage={goNextMessage}
+                goNextMessage={hasNext ? goNextMessage : handleGameOver}
+                goPrevMessage={goPrevMessage}
                 message={currentMessage}
                 styles={styles}
                 onVideoEnd={handleGameOver}

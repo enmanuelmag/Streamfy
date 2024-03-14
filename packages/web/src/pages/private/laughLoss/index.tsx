@@ -32,7 +32,6 @@ const DELAY_TRANSITION = 250
 
 const LaughLoss = () => {
   const {
-    emoji,
     messages,
     discordChannel,
     currentMessage,
@@ -146,7 +145,7 @@ const LaughLoss = () => {
       </Transition>
       <Transition
         duration={650}
-        mounted={alreadyPlayed && !autoPlay && Boolean(messages?.length)}
+        mounted={alreadyPlayed && !autoPlay && !gameOver && Boolean(messages?.length)}
         timingFunction="ease"
         transition="fade"
       >
@@ -197,13 +196,18 @@ const LaughLoss = () => {
                 <Select
                   clearable
                   searchable
+                  withAsterisk
                   className="cd-w-[450px]"
                   data={emojisQuery.data.map((e) => ({ value: e.name, label: e.name })) || []}
                   label="Emoji"
                   {...form.getInputProps('emoji')}
                   leftSection={
-                    emoji?.imageURL ? (
-                      <img alt="emoji" className="cd-w-6 cd-h-6" src={emoji.imageURL || ''} />
+                    form.values.emoji?.imageURL ? (
+                      <img
+                        alt="emoji"
+                        className="cd-w-6 cd-h-6"
+                        src={form.values.emoji?.imageURL || ''}
+                      />
                     ) : undefined
                   }
                   placeholder="Selecciona un emoji que será el sello de calidad"
@@ -221,6 +225,7 @@ const LaughLoss = () => {
                   onChange={handleEmojiChange}
                 />
                 <Select
+                  withAsterisk
                   data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
                   label="Canal"
                   placeholder="Selecciona un canal"
@@ -274,6 +279,7 @@ const LaughLoss = () => {
               <Media
                 autoPlay={autoPlay}
                 goNextMessage={goNextMessage}
+                goPrevMessage={goPrevMessage}
                 message={currentMessage}
                 styles={styles}
                 onVideoEnd={() => {
@@ -315,6 +321,7 @@ const LaughLoss = () => {
 
   function handleGameOver() {
     if (hasNext) return
+    handlersPlay.close()
     handlersGameOver.open()
     useStoreLaughLoss.persist.clearStorage()
   }

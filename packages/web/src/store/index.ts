@@ -56,7 +56,8 @@ export const useStoreLaughLoss = create(
       setDiscordChannel: (discordChannel) => set(() => ({ discordChannel })),
       setMessages: (messages) => set(() => ({ messages })),
       setCurrentMessage: (currentMessage) => set(() => ({ currentMessage })),
-      reset: () => set(() => ({ discordChannel: null, messages: null, currentMessage: null })),
+      reset: () =>
+        set(() => ({ discordChannel: null, messages: null, currentMessage: null, emoji: null })),
     }),
     {
       name: `storage-laughloss-${VERSION_STORAGE}`,

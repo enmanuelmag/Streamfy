@@ -1,13 +1,29 @@
 import React from 'react'
+import { modals } from '@mantine/modals'
 import { useDisclosure } from '@mantine/hooks'
-import { IconLogout } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
+import { IconHelp, IconLogout } from '@tabler/icons-react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { AppShell, Burger, Button, Drawer, Loader, Flex, Text, Title } from '@mantine/core'
+import {
+  AppShell,
+  Burger,
+  Button,
+  Drawer,
+  Loader,
+  Flex,
+  Text,
+  Title,
+  ActionIcon,
+  Stack,
+  Kbd,
+  Box,
+  Group,
+  Divider,
+} from '@mantine/core'
 
-import { useStoreBase, useStoreLaughLoss } from '@src/store'
 import { ROUTES } from '@src/constants/routes'
 import { UserType } from '@global/types/src/user'
+import { useStoreBase, useStoreLaughLoss } from '@src/store'
 
 import { DataRepo } from '@src/db'
 import { transitionView } from '@src/utils/viewTransition'
@@ -84,9 +100,9 @@ export default function Protected() {
         </Flex>
       </Drawer>
       <AppShell.Header>
-        <div className="cd-h-full cd-flex cd-justify-start cd-items-center cd-pl-4">
-          <Burger opened={opened} onClick={open} />
-          <div className="cd-ml-4">
+        <div className="cd-h-full cd-flex cd-justify-between cd-items-center cd-px-[1rem]">
+          <Flex align="center" gap="xs" justify="flex-start">
+            <Burger opened={opened} onClick={open} />
             <Link
               className="home-link-transition"
               to={ROUTES.HOME}
@@ -95,14 +111,19 @@ export default function Protected() {
                 transitionView(() => navigate(ROUTES.HOME))
               }}
             >
-              <Title className="cd-title-form cd-text-white" order={2}>
+              <Title className="cd-title-form cd-text-white" order={3}>
                 Stream
                 <Text inherit c="violet" component="span">
                   fy
                 </Text>
               </Title>
             </Link>
-          </div>
+          </Flex>
+          <Flex align="center" gap="md" justify="flex-end">
+            <ActionIcon variant="transparent" onClick={handleHelpModal}>
+              <IconHelp size="lg" />
+            </ActionIcon>
+          </Flex>
         </div>
       </AppShell.Header>
       <AppShell.Main
@@ -115,4 +136,40 @@ export default function Protected() {
       </AppShell.Main>
     </AppShell>
   )
+
+  function handleHelpModal() {
+    modals.open({
+      centered: true,
+      title: 'Atajos de teclado',
+      children: (
+        <Stack className="cd-mb-[1rem]" gap="md">
+          <Group className="cd-mt-[1rem]" justify="space-between">
+            <Text>Ir al siguiente video/mensaje</Text>
+            <Box>
+              <Kbd>Ctrl</Kbd> + <Kbd>.</Kbd>
+            </Box>
+          </Group>
+          <Group className="cd-mt-[1rem]" justify="space-between">
+            <Text>Ir al anterior video/mensaje</Text>
+            <Box>
+              <Kbd>Ctrl</Kbd> + <Kbd>,</Kbd>
+            </Box>
+          </Group>
+          <Divider className="cd-my-[0.5rem]" />
+          <Group justify="space-between">
+            <Text>Repetir vídeo</Text>
+            <Box>
+              <Kbd>Ctrl</Kbd> + <Kbd>R</Kbd>
+            </Box>
+          </Group>
+          <Group className="cd-mt-[1rem]" justify="space-between">
+            <Text>Pausar/Reproducir vídeo</Text>
+            <Box>
+              <Kbd>Ctrl</Kbd> + <Kbd>Space</Kbd>
+            </Box>
+          </Group>
+        </Stack>
+      ),
+    })
+  }
 }

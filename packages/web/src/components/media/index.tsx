@@ -27,12 +27,20 @@ import './styles.scss'
 import { useCounter, useDisclosure, useHover } from '@mantine/hooks'
 import { $ } from '@src/utils/styles'
 
+const KEYBINDINGS = {
+  NEXT: '.',
+  PREV: ',',
+  REPEAT: 'r',
+  PLAY_PAUSE: ' ',
+}
+
 type MediaProps = {
   autoPlay?: boolean
   message: MessageResponseType
   styles: React.CSSProperties
   useMediaControls?: boolean
   goNextMessage: () => void
+  goPrevMessage: () => void
   onVideoEnd: () => void
   onVideoPause?: () => void
   onVideoPlay?: () => void
@@ -47,10 +55,31 @@ const Media = (props: MediaProps) => {
     onVideoPause,
     onVideoPlay,
     goNextMessage,
+    goPrevMessage,
     message,
   } = props
 
-  const { attachments, content, id } = message
+  const { attachments = [], content, id } = message
+
+  React.useEffect(() => {
+    const handleKeydown = (event: KeyboardEvent) => {
+      const isVideo = attachments.length
+        ? Boolean(attachments[0].contentType?.includes('video'))
+        : false
+
+      if (isVideo) return
+
+      if (event.ctrlKey && event.key === KEYBINDINGS.PREV) {
+        goPrevMessage()
+      } else if (event.ctrlKey && event.key === KEYBINDINGS.NEXT) {
+        goNextMessage()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeydown)
+
+    return () => window.removeEventListener('keydown', handleKeydown)
+  }, [attachments, goNextMessage, goPrevMessage])
 
   let Component = null
 
@@ -194,6 +223,25 @@ function VideoPlayer(props: MediaPlayerProps) {
     return () => clearTimeout(idTimeout)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mediaControlsHover])
+
+  // Ctrl + R (repeat video), Ctrl + Space (play/pause)
+  React.useEffect(() => {
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === KEYBINDINGS.REPEAT) {
+        refVideo.current?.seekTo(0)
+      } else if (event.ctrlKey && event.key === KEYBINDINGS.PLAY_PAUSE) {
+        if (autoPlay) {
+          onVideoPause?.()
+        } else {
+          onVideoPlay?.()
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeydown)
+
+    return () => window.removeEventListener('keydown', handleKeydown)
+  }, [autoPlay, onVideoPause, onVideoPlay])
 
   return (
     <React.Fragment>
