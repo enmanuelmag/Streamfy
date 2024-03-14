@@ -147,7 +147,7 @@ const Consultorio = () => {
                 Ir a Inicio
               </Button>
               <Button variant="outline" onClick={handleReset}>
-                Repetir
+                Reiniciar
               </Button>
             </OverlayScreen.ActionButtons>
           </OverlayScreen>

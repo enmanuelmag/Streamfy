@@ -13,6 +13,7 @@ import {
   Container,
   Group,
   Image,
+  ScrollArea,
   Slider,
   Text,
   Transition,
@@ -102,8 +103,14 @@ const Media = (props: MediaProps) => {
       )
     } else {
       Component = (
-        <Container size="lg">
-          <Text>{content}</Text>
+        <Container className="cd-h-[80%]" size="lg">
+          <Center className="cd-h-full">
+            <ScrollArea.Autosize mah="90%">
+              <Text className="cd-whitespace-pre-wrap !cd-mx-[1rem]" size="lg">
+                {content}
+              </Text>
+            </ScrollArea.Autosize>
+          </Center>
         </Container>
       )
     }
@@ -131,10 +138,8 @@ const Media = (props: MediaProps) => {
       )
     } else {
       Component = (
-        <Container size="lg">
-          <Text>
-            Media type {contentType} not supported: {content}
-          </Text>
+        <Container className="cd-h-full" size="lg">
+          <Text size="lg">Media type {contentType} not supported</Text>
         </Container>
       )
     }
@@ -171,7 +176,13 @@ function ImageRenderer(props: ImageRendererProps) {
 
   return (
     <React.Fragment>
-      <Image alt={alt} display={loading ? 'none' : 'block'} src={src} onLoad={handlers.close} />
+      <Image
+        alt={alt}
+        className="cd-max-h-full cd-max-w-full"
+        display={loading ? 'none' : 'block'}
+        src={src}
+        onLoad={handlers.close}
+      />
       <Loading show={loading} text="Cargando imagen" />
     </React.Fragment>
   )

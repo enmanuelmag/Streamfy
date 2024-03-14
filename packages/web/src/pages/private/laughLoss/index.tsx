@@ -143,7 +143,7 @@ const LaughLoss = () => {
                 Ir al inicio
               </Button>
               <Button variant="outline" onClick={handleReset}>
-                Repetir
+                Reiniciar
               </Button>
             </OverlayScreen.ActionButtons>
           </OverlayScreen>
