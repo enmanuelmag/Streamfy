@@ -4,7 +4,17 @@ import { useNavigate } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Transition, Container, Center, Button, Stack, Select, Text, Divider } from '@mantine/core'
+import {
+  Transition,
+  Container,
+  Center,
+  Button,
+  Stack,
+  Select,
+  Text,
+  Divider,
+  Image,
+} from '@mantine/core'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/consultorio'
 
@@ -27,6 +37,7 @@ import { useSliderMedia } from '@hooks/slider'
 
 import { Logger } from '@global/utils/src'
 import { notifications } from '@mantine/notifications'
+import { EMOJIS } from '@src/constants/emoji'
 
 const Consultorio = () => {
   const {
@@ -117,7 +128,12 @@ const Consultorio = () => {
       <Transition duration={650} mounted={gameOver} timingFunction="ease" transition="fade">
         {(styles) => (
           <OverlayScreen
-            description="Espero que les haya funcionado los consejos o terapia :baitylove:"
+            description={
+              <Text>
+                Espero que les haya funcionado los consejos o terapia{' '}
+                <Image alt="Reddit" className="!cd-inline" h={20} src={EMOJIS.BAITY_LOVE} w={20} />
+              </Text>
+            }
             styles={styles}
             title="¡Fin del consultorio!"
           >
@@ -211,7 +227,7 @@ const Consultorio = () => {
                   value={form.values.publicChannel?.id}
                   onChange={(channelId) => handleChannelChange('publicChannel', channelId)}
                 />
-                <Divider orientation="horizontal" size="sm" />
+                <Divider mt="xs" orientation="horizontal" size="xs" />
                 <Select
                   clearable
                   searchable

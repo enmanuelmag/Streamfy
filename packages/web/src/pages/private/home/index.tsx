@@ -1,3 +1,4 @@
+import React from 'react'
 import { Card, Center, Container, Flex, Image, Overlay, Text } from '@mantine/core'
 
 import { ROUTES } from '@src/constants/routes'
@@ -7,12 +8,13 @@ import Doctor from '@assets/images/consultorio.png'
 import LaughLoss from '@assets/images/si_ries_pierdes.jpg'
 import { useNavigate } from 'react-router-dom'
 import { transitionView } from '@src/utils/viewTransition'
+import { EMOJIS } from '@src/constants/emoji'
 
 type CardProps = {
   image: string
   href: string
   title: string
-  description: string
+  description: string | React.ReactNode
   comingSoon?: boolean
   transitionClass?: string
 }
@@ -23,16 +25,24 @@ const Cards: CardProps[] = [
     title: 'Si te ríes pierdes',
     transitionClass: 'laugh-loss-transition',
     href: ROUTES.LAUGH_LOSS,
-    description:
-      'Actividad donde podemos sacarle dinero al Baity, esperemos que si cumpla :baitydedo:',
+    description: (
+      <Text>
+        Actividad donde podemos sacarle dinero al Baity, esperemos que si cumpla{' '}
+        <Image alt="Baity" className="!cd-inline" h={20} src={EMOJIS.BAITY_DEDO} w={20} />
+      </Text>
+    ),
   },
   {
     image: Doctor,
     title: 'Baity consultorio',
     transitionClass: 'baity-consultorio-transition',
     href: ROUTES.BAITY_CONSULTORIO,
-    description:
-      'Espacio para que el Baity lee los chisme de los Masturbaiters y nos da consejos :baitylove:',
+    description: (
+      <Text>
+        Espacio para que el Baity lee los chisme de los Masturbaiters y nos da consejos{' '}
+        <Image alt="Baity" className="!cd-inline" h={20} src={EMOJIS.BAITY_LOVE} w={20} />
+      </Text>
+    ),
   },
   {
     image: Reddit,
@@ -40,7 +50,12 @@ const Cards: CardProps[] = [
     transitionClass: 'reddit-transition',
     comingSoon: true,
     href: ROUTES.REDDIT,
-    description: 'Actividad donde el Baity revisa memes del Reddit :baitymeme:',
+    description: (
+      <Text>
+        Actividad donde el Baity revisa memes del Reddit{' '}
+        <Image alt="Reddit" className="!cd-inline" h={20} src={EMOJIS.BAITY_MEME} w={20} />
+      </Text>
+    ),
   },
 ]
 
@@ -81,9 +96,11 @@ const Home = () => {
                 {card.title}
               </Text>
 
-              <Text c="dimmed" mt="xs" size="sm">
-                {card.description}
-              </Text>
+              {React.isValidElement(card.description) ? (
+                card.description
+              ) : (
+                <Text mt="sm">{card.description}</Text>
+              )}
             </Card>
           ))}
         </Flex>

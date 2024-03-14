@@ -1,4 +1,5 @@
 /* eslint-disable react/display-name */
+import React from 'react'
 import { Flex, Group, Text, Title } from '@mantine/core'
 
 import { $ } from '@src/utils/styles'
@@ -7,7 +8,7 @@ import { $ } from '@src/utils/styles'
 
 type OverlayScreenProps = {
   title: string
-  description: string
+  description: string | React.ReactNode
   children?: React.ReactNode
   styles: React.CSSProperties
 }
@@ -23,7 +24,13 @@ const OverlayScreen = (props: OverlayScreenProps) => {
       style={styles}
     >
       <Title c="white">{title}</Title>
-      <Text fz="xl">{description}</Text>
+      {React.isValidElement(description) ? (
+        description
+      ) : (
+        <Text c="white" mt={8} size="lg">
+          {description}
+        </Text>
+      )}
       {/* <Group pt={16}>
         {handleGoHome && (
           <Button variant="filled" onClick={handleGoHome}>

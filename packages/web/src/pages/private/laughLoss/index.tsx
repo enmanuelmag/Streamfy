@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
-import { Transition, Container, Select, Button, Center, Stack, Text } from '@mantine/core'
+import { Transition, Container, Select, Button, Center, Stack, Text, Image } from '@mantine/core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/laughLoss'
@@ -27,6 +27,7 @@ import { useSliderMedia } from '@hooks/slider'
 import { Logger } from '@global/utils/src'
 
 import { notifications } from '@mantine/notifications'
+import { EMOJIS } from '@src/constants/emoji'
 
 const DELAY_TRANSITION = 250
 
@@ -123,7 +124,12 @@ const LaughLoss = () => {
       <Transition duration={650} mounted={gameOver} timingFunction="ease" transition="fade">
         {(styles) => (
           <OverlayScreen
-            description="Has completado el reto, ahora paga :baitydedo:"
+            description={
+              <Text>
+                Has completado el reto, ahora paga{' '}
+                <Image alt="Baity" className="!cd-inline" h={20} src={EMOJIS.BAITY_DEDO} w={20} />
+              </Text>
+            }
             styles={styles}
             title="¡Felicidades!"
           >
@@ -151,7 +157,12 @@ const LaughLoss = () => {
       >
         {(styles) => (
           <OverlayScreen
-            description="¿Acaso Baity pausó la cadena de videos? :baitydedo:"
+            description={
+              <Text>
+                ¿Acaso Baity pausó la cadena de videos?{' '}
+                <Image alt="Baity" className="!cd-inline" h={20} src={EMOJIS.BAITY_DEDO} w={20} />
+              </Text>
+            }
             styles={styles}
             title="¡TONGO!"
           >
