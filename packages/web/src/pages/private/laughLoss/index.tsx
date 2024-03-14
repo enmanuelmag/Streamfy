@@ -127,7 +127,7 @@ const LaughLoss = () => {
             description={
               <Text>
                 Has completado el reto, ahora paga{' '}
-                <Image alt="Baity" className="!cd-inline" h={20} src={EMOJIS.BAITY_DEDO} w={20} />
+                <Image alt="Baity" className="!cd-inline" h={30} src={EMOJIS.BAITY_DEDO} w={30} />
               </Text>
             }
             styles={styles}
@@ -160,7 +160,7 @@ const LaughLoss = () => {
             description={
               <Text>
                 ¿Acaso Baity pausó la cadena de videos?{' '}
-                <Image alt="Baity" className="!cd-inline" h={20} src={EMOJIS.BAITY_DEDO} w={20} />
+                <Image alt="Baity" className="!cd-inline" h={30} src={EMOJIS.BAITY_DEDO} w={30} />
               </Text>
             }
             styles={styles}

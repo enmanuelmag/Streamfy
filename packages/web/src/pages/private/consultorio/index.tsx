@@ -131,7 +131,7 @@ const Consultorio = () => {
             description={
               <Text>
                 Espero que les haya funcionado los consejos o terapia{' '}
-                <Image alt="Reddit" className="!cd-inline" h={20} src={EMOJIS.BAITY_LOVE} w={20} />
+                <Image alt="Reddit" className="!cd-inline" h={30} src={EMOJIS.BAITY_LOVE} w={30} />
               </Text>
             }
             styles={styles}
