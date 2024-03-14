@@ -144,13 +144,13 @@ export default function Protected() {
       children: (
         <Stack className="cd-mb-[1rem]" gap="md">
           <Group className="cd-mt-[1rem]" justify="space-between">
-            <Text>Ir al siguiente video/mensaje</Text>
+            <Text>Ir al siguiente vídeo/mensaje</Text>
             <Box>
               <Kbd>Ctrl</Kbd> + <Kbd>.</Kbd>
             </Box>
           </Group>
           <Group className="cd-mt-[1rem]" justify="space-between">
-            <Text>Ir al anterior video/mensaje</Text>
+            <Text>Ir al anterior vídeo/mensaje</Text>
             <Box>
               <Kbd>Ctrl</Kbd> + <Kbd>,</Kbd>
             </Box>
@@ -159,13 +159,13 @@ export default function Protected() {
           <Group justify="space-between">
             <Text>Repetir vídeo</Text>
             <Box>
-              <Kbd>Ctrl</Kbd> + <Kbd>R</Kbd>
+              <Kbd>Ctrl</Kbd> + <Kbd>r</Kbd>
             </Box>
           </Group>
           <Group className="cd-mt-[1rem]" justify="space-between">
             <Text>Pausar/Reproducir vídeo</Text>
             <Box>
-              <Kbd>Ctrl</Kbd> + <Kbd>Space</Kbd>
+              <Kbd>Ctrl</Kbd> + <Kbd>p</Kbd>
             </Box>
           </Group>
         </Stack>

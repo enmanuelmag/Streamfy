@@ -31,7 +31,7 @@ const KEYBINDINGS = {
   NEXT: '.',
   PREV: ',',
   REPEAT: 'r',
-  PLAY_PAUSE: ' ',
+  PLAY_PAUSE: 'p',
 }
 
 type MediaProps = {
@@ -227,6 +227,7 @@ function VideoPlayer(props: MediaPlayerProps) {
   // Ctrl + R (repeat video), Ctrl + Space (play/pause)
   React.useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
+      console.log(event.key)
       if (event.ctrlKey && event.key === KEYBINDINGS.REPEAT) {
         refVideo.current?.seekTo(0)
       } else if (event.ctrlKey && event.key === KEYBINDINGS.PLAY_PAUSE) {
