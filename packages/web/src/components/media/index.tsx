@@ -28,14 +28,16 @@ import { useCounter, useDisclosure, useHover } from '@mantine/hooks'
 import { $ } from '@src/utils/styles'
 
 const KEYBINDINGS = {
-  NEXT: '.',
-  PREV: ',',
+  NEXT: 'ArrowRight', //'.',
+  PREV: 'ArrowLeft', //',',
   REPEAT: 'r',
   PLAY_PAUSE: 'p',
+  DEFAULT_TOGGLE: ' ',
 }
 
 type MediaProps = {
   autoPlay?: boolean
+  disableSkipVideos?: boolean
   message: MessageResponseType
   styles: React.CSSProperties
   useMediaControls?: boolean
@@ -48,6 +50,7 @@ type MediaProps = {
 
 const Media = (props: MediaProps) => {
   const {
+    disableSkipVideos,
     useMediaControls,
     autoPlay = false,
     styles,
@@ -67,11 +70,11 @@ const Media = (props: MediaProps) => {
         ? Boolean(attachments[0].contentType?.includes('video'))
         : false
 
-      if (isVideo) return
+      if (disableSkipVideos && isVideo) return
 
-      if (event.ctrlKey && event.key === KEYBINDINGS.PREV) {
+      if (event.key === KEYBINDINGS.PREV) {
         goPrevMessage()
-      } else if (event.ctrlKey && event.key === KEYBINDINGS.NEXT) {
+      } else if (event.key === KEYBINDINGS.NEXT) {
         goNextMessage()
       }
     }
@@ -79,7 +82,7 @@ const Media = (props: MediaProps) => {
     window.addEventListener('keydown', handleKeydown)
 
     return () => window.removeEventListener('keydown', handleKeydown)
-  }, [attachments, goNextMessage, goPrevMessage])
+  }, [disableSkipVideos, attachments, goNextMessage, goPrevMessage])
 
   let Component = null
 
@@ -224,13 +227,13 @@ function VideoPlayer(props: MediaPlayerProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mediaControlsHover])
 
-  // Ctrl + R (repeat video), Ctrl + Space (play/pause)
+  // R (repeat video), Space (play/pause)
   React.useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
-      console.log(event.key)
-      if (event.ctrlKey && event.key === KEYBINDINGS.REPEAT) {
+      if (event.key === KEYBINDINGS.REPEAT) {
         refVideo.current?.seekTo(0)
-      } else if (event.ctrlKey && event.key === KEYBINDINGS.PLAY_PAUSE) {
+        onVideoPlay?.()
+      } else if ([KEYBINDINGS.PLAY_PAUSE, KEYBINDINGS.DEFAULT_TOGGLE].includes(event.key)) {
         if (autoPlay) {
           onVideoPause?.()
         } else {

@@ -288,6 +288,7 @@ const LaughLoss = () => {
           >
             {(styles) => (
               <Media
+                disableSkipVideos
                 autoPlay={autoPlay}
                 goNextMessage={goNextMessage}
                 goPrevMessage={goPrevMessage}

@@ -144,28 +144,38 @@ export default function Protected() {
       children: (
         <Stack className="cd-mb-[1rem]" gap="md">
           <Group className="cd-mt-[1rem]" justify="space-between">
-            <Text>Ir al siguiente vídeo/mensaje</Text>
+            <Stack gap={0}>
+              <Text>Ir al siguiente vídeo/mensaje</Text>
+              <Text c="dimmed" size="xs">
+                Se deshabilita para la activad &quot;Si te ries pierdes&quot;
+              </Text>
+            </Stack>
             <Box>
-              <Kbd>Ctrl</Kbd> + <Kbd>.</Kbd>
+              <Kbd size="md">&rarr;</Kbd>
             </Box>
           </Group>
           <Group className="cd-mt-[1rem]" justify="space-between">
-            <Text>Ir al anterior vídeo/mensaje</Text>
+            <Stack gap={0}>
+              <Text>Ir al vídeo/mensaje anterior</Text>
+              <Text c="dimmed" size="xs">
+                Se deshabilita para la activad &quot;Si te ries pierdes&quot;
+              </Text>
+            </Stack>
             <Box>
-              <Kbd>Ctrl</Kbd> + <Kbd>,</Kbd>
+              <Kbd size="md">&larr;</Kbd>
             </Box>
           </Group>
           <Divider className="cd-my-[0.5rem]" />
           <Group justify="space-between">
             <Text>Repetir vídeo</Text>
             <Box>
-              <Kbd>Ctrl</Kbd> + <Kbd>r</Kbd>
+              <Kbd size="md">R</Kbd>
             </Box>
           </Group>
           <Group className="cd-mt-[1rem]" justify="space-between">
             <Text>Pausar/Reproducir vídeo</Text>
             <Box>
-              <Kbd>Ctrl</Kbd> + <Kbd>p</Kbd>
+              <Kbd size="md">Space</Kbd>
             </Box>
           </Group>
         </Stack>

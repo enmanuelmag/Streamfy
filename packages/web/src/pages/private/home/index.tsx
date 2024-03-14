@@ -9,6 +9,7 @@ import LaughLoss from '@assets/images/si_ries_pierdes.jpg'
 import { useNavigate } from 'react-router-dom'
 import { transitionView } from '@src/utils/viewTransition'
 import { EMOJIS } from '@src/constants/emoji'
+import { modals } from '@mantine/modals'
 
 type CardProps = {
   image: string
@@ -77,6 +78,20 @@ const Home = () => {
               shadow="sm"
               onClick={(e) => {
                 e.preventDefault()
+
+                if (card.comingSoon) {
+                  modals.open({
+                    centered: true,
+                    title: 'Próximamente',
+                    children: (
+                      <Text>
+                        Esta actividad estará disponible en el futuro, lo prometo asi como las
+                        promesas del Baity
+                      </Text>
+                    ),
+                  })
+                  return
+                }
                 transitionView(() => navigate(card.href))
               }}
             >
