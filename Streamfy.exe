@@ -1,7 +1,0 @@
-@echo
-cls
-echo "Building Streamfy"
-npm run build
-
-echo "Starting Streamfy"
-npm run start
