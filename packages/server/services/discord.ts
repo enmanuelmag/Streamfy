@@ -33,7 +33,6 @@ class DiscordClient {
     const GUILD_ID = process.env.VITE_DISCORD_GUILD_ID
 
     if (GUILD_ID) {
-      Logger.info('Getting guild client')
       const guilds = await this.instance.client.guilds.fetch()
       const guild = guilds.get(GUILD_ID)
 
@@ -46,6 +45,7 @@ class DiscordClient {
       return guild.client
     }
 
+    Logger.info('No guild id provided, returning default client')
     this.guildClient = this.instance.client
     return this.instance.client
   }
