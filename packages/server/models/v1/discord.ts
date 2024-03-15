@@ -70,7 +70,7 @@ export const getChannels = async (
 ): Promise<ChannelResponseType[]> => {
   const Discord = await DiscordClient.getInstance()
 
-  Logger.info('Getting channels')
+  Logger.info('Getting channels', JSON.stringify(params))
 
   const channels = Discord.channels.cache
     .filter((channel) => channel.type === params.channelType)
