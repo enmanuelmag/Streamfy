@@ -51,4 +51,4 @@ class DiscordClient {
   }
 }
 
-export default DiscordClient
+export default new DiscordClient()
