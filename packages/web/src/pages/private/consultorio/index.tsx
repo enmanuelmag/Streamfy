@@ -161,7 +161,7 @@ const Consultorio = () => {
         p={0}
         size="md"
       >
-        <Loading show={!gameOver && channelQuery.isLoading} text="Cargando canales" />
+        <Loading show={!gameOver && channelQuery.isLoading} text="Cargando información" />
 
         {!gameOver && !messages?.length && channelQuery.data && emojisQuery.data && (
           <form

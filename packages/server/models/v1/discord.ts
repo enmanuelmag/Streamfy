@@ -14,11 +14,13 @@ import DiscordClient from '../../services/discord'
 
 import { Logger } from '@global/utils'
 
-const Discord = DiscordClient.getInstance()
+const DiscordClass = new DiscordClient()
 
 const RANDOM_SEED = Number(process.env.VITE_RANDOM_SEED) || 7
 
 export const getEmojis = async (): Promise<EmojiType[]> => {
+  const Discord = await DiscordClass.getInstance()
+
   Logger.info('Getting emojis')
 
   const emojis = Discord.emojis.cache.toJSON()
@@ -36,6 +38,8 @@ export const getEmojis = async (): Promise<EmojiType[]> => {
 export const getMessages = async (
   params: GetMessagesParamsType,
 ): Promise<MessageResponseType[]> => {
+  const Discord = await DiscordClass.getInstance()
+
   Logger.info('Getting messages', JSON.stringify(params))
 
   const { channels, shuffle } = params
@@ -66,6 +70,8 @@ export const getMessages = async (
 export const getChannels = async (
   params: GetChannelsParamsType,
 ): Promise<ChannelResponseType[]> => {
+  const Discord = await DiscordClass.getInstance()
+
   Logger.info('Getting channels')
 
   const channels = Discord.channels.cache
