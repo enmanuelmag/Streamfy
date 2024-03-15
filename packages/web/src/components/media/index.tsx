@@ -37,6 +37,7 @@ const KEYBINDINGS = {
 }
 
 type MediaProps = {
+  index?: number
   autoPlay?: boolean
   disableSkipVideos?: boolean
   message: MessageResponseType
@@ -51,6 +52,7 @@ type MediaProps = {
 
 const Media = (props: MediaProps) => {
   const {
+    index,
     disableSkipVideos,
     useMediaControls,
     autoPlay = false,
@@ -128,6 +130,7 @@ const Media = (props: MediaProps) => {
         <VideoPlayer
           autoPlay={autoPlay}
           goNextMessage={goNextMessage}
+          index={index}
           styles={styles}
           url={url}
           useMediaControls={useMediaControls}
@@ -189,8 +192,9 @@ function ImageRenderer(props: ImageRendererProps) {
 }
 
 type MediaPlayerProps = {
-  autoPlay?: boolean
   url: string
+  index?: number
+  autoPlay?: boolean
   useMediaControls?: boolean
   onVideoEnd: () => void
   onVideoPause?: () => void
@@ -201,8 +205,9 @@ type MediaPlayerProps = {
 
 function VideoPlayer(props: MediaPlayerProps) {
   const {
-    autoPlay = false,
     url,
+    index,
+    autoPlay = false,
     useMediaControls,
     onVideoEnd,
     onVideoPause,
@@ -217,8 +222,8 @@ function VideoPlayer(props: MediaPlayerProps) {
 
   const mediaControlsHover = hoveredPlay || hoveredVolumen
 
-  const [showPlay, handlersShowPlay] = useDisclosure(false)
-  const [showVolume, handlersShowVolume] = useDisclosure(false)
+  const [showPlay, handlersShowPlay] = useDisclosure(index === 0)
+  const [showVolume, handlersShowVolume] = useDisclosure(index === 0)
 
   const [audio, handlers] = useCounter(33, { min: 0, max: 100 })
   const [videoProgress, handlersVideoProgress] = useCounter(0, { min: 0, max: 100 })
@@ -276,7 +281,7 @@ function VideoPlayer(props: MediaPlayerProps) {
               variant="subtle"
               onClick={autoPlay ? onVideoPause : onVideoPlay}
             >
-              {autoPlay ? <IconPlayerPauseFilled /> : <IconPlayerPlayFilled />}
+              {autoPlay ? <IconPlayerPauseFilled size={30} /> : <IconPlayerPlayFilled size={30} />}
             </ActionIcon>
           )}
         </Transition>
@@ -330,7 +335,7 @@ function VideoPlayer(props: MediaPlayerProps) {
         </Transition>
       </div>
       <Slider
-        className="cd-absolute cd-bottom-[0.4rem] cd-right-0 cd-w-full cd-z-50"
+        className="cd-absolute cd-bottom-[0.5rem] cd-right-0 cd-w-full cd-z-50"
         label={(value) => (value === 33 ? 'Me repites ese numerin?' : null)}
         size="md"
         value={videoProgress}

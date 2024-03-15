@@ -27,7 +27,7 @@ const Cards: CardProps[] = [
     transitionClass: 'laugh-loss-transition',
     href: ROUTES.LAUGH_LOSS,
     description: (
-      <Text>
+      <Text c="dimmed" size="sm">
         Actividad donde podemos sacarle dinero al Baity, esperemos que si cumpla{' '}
         <Image alt="Baity" className="!cd-inline" h={20} src={EMOJIS.BAITY_DEDO} w={20} />
       </Text>
@@ -39,7 +39,7 @@ const Cards: CardProps[] = [
     transitionClass: 'baity-consultorio-transition',
     href: ROUTES.BAITY_CONSULTORIO,
     description: (
-      <Text>
+      <Text c="dimmed" size="sm">
         Espacio para que el Baity lee los chisme de los Masturbaiters y nos da consejos{' '}
         <Image alt="Baity" className="!cd-inline" h={20} src={EMOJIS.BAITY_LOVE} w={20} />
       </Text>
@@ -52,7 +52,7 @@ const Cards: CardProps[] = [
     comingSoon: true,
     href: ROUTES.REDDIT,
     description: (
-      <Text>
+      <Text c="dimmed" size="sm">
         Actividad donde el Baity revisa memes del Reddit{' '}
         <Image alt="Reddit" className="!cd-inline" h={20} src={EMOJIS.BAITY_MEME} w={20} />
       </Text>
@@ -114,7 +114,9 @@ const Home = () => {
               {React.isValidElement(card.description) ? (
                 card.description
               ) : (
-                <Text mt="sm">{card.description}</Text>
+                <Text c="dimmed" mt="sm">
+                  {card.description}
+                </Text>
               )}
             </Card>
           ))}

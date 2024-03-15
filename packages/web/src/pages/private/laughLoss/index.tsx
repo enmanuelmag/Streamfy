@@ -2,7 +2,18 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import { useForm, zodResolver } from '@mantine/form'
-import { Transition, Container, Select, Button, Center, Stack, Text, Image } from '@mantine/core'
+import {
+  Transition,
+  Container,
+  Select,
+  Button,
+  Center,
+  Stack,
+  Text,
+  Image,
+  Divider,
+  Title,
+} from '@mantine/core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/laughLoss'
@@ -204,10 +215,11 @@ const LaughLoss = () => {
           >
             <Center className="cd-h-full">
               <Stack>
+                <Title order={2}>Si te ríes pierdes</Title>
+                <Divider orientation="horizontal" size="xs" />
                 <Select
                   clearable
                   searchable
-                  withAsterisk
                   className="cd-w-[450px]"
                   data={emojisQuery.data.map((e) => ({ value: e.name, label: e.name })) || []}
                   label="Emoji"
@@ -262,15 +274,10 @@ const LaughLoss = () => {
 
         <SliderHUD
           useShadowCorners
-          //autoPlay={autoPlay}
           currentIndex={currentIndex}
           currentMessage={currentMessage}
           goNextMessage={goNextMessage}
           goPrevMessage={goPrevMessage}
-          // handleAutoPlay={() => {
-          //   handlersPlay.toggle()
-          //   handlersPlayed.open()
-          // }}
           handleReset={handleReset}
           hasNext={hasNext}
           hasPrev={hasPrev}
@@ -292,6 +299,7 @@ const LaughLoss = () => {
                 autoPlay={autoPlay}
                 goNextMessage={goNextMessage}
                 goPrevMessage={goPrevMessage}
+                index={currentIndex}
                 message={currentMessage}
                 styles={styles}
                 onVideoEnd={() => {

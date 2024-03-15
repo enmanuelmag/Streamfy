@@ -14,6 +14,7 @@ import {
   Text,
   Divider,
   Image,
+  Title,
 } from '@mantine/core'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/consultorio'
@@ -183,10 +184,11 @@ const Consultorio = () => {
           >
             <Center className="cd-h-full">
               <Stack>
+                <Title order={2}>Baity consultorio</Title>
+                <Divider orientation="horizontal" size="xs" />
                 <Select
                   clearable
                   searchable
-                  withAsterisk
                   className="cd-w-[450px]"
                   data={emojisQuery.data.map((e) => ({ value: e.name, label: e.name })) || []}
                   label="Emoji"
@@ -217,7 +219,6 @@ const Consultorio = () => {
                 <Select
                   clearable
                   searchable
-                  withAsterisk
                   data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
                   label="Canal público"
                   placeholder="Selecciona un canal público"
@@ -227,11 +228,10 @@ const Consultorio = () => {
                   value={form.values.publicChannel?.id}
                   onChange={(channelId) => handleChannelChange('publicChannel', channelId)}
                 />
-                <Divider mt="xs" orientation="horizontal" size="xs" />
+                <Divider mt="xs" orientation="horizontal" size="xs" variant="dashed" />
                 <Select
                   clearable
                   searchable
-                  withAsterisk
                   data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
                   label="Canal privado"
                   placeholder="Selecciona un canal privado"
@@ -243,7 +243,10 @@ const Consultorio = () => {
                 />
                 <Button
                   className="cd-mt-4"
-                  disabled={!form.isValid()}
+                  disabled={
+                    !form.isValid() ||
+                    Boolean(!form.values.privateChannel && !form.values.publicChannel)
+                  }
                   loaderProps={{ type: 'dots' }}
                   loading={messagesMutation.isPending && !messagesMutation.isIdle}
                   type="submit"
