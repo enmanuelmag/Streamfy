@@ -37,6 +37,8 @@ import SliderHUD from '@components/shared/SliderHUD'
 import { useSliderMedia } from '@hooks/slider'
 
 import { Logger } from '@global/utils/src'
+import { transitionView } from '@src/utils/viewTransition'
+
 import { notifications } from '@mantine/notifications'
 import { EMOJIS } from '@src/constants/emoji'
 
@@ -142,7 +144,7 @@ const Consultorio = () => {
               <Button
                 onClick={() => {
                   handleReset()
-                  navigate(ROUTES.HOME)
+                  transitionView(() => navigate(ROUTES.HOME))
                 }}
               >
                 Ir a Inicio
