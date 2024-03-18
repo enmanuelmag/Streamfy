@@ -42,6 +42,8 @@ import { notifications } from '@mantine/notifications'
 import { EMOJIS } from '@src/constants/emoji'
 import { IconChevronLeft } from '@tabler/icons-react'
 
+import LaughLossImg from '@assets/images/si_ries_pierdes.jpg'
+
 const DELAY_TRANSITION = 250
 
 const LaughLoss = () => {
@@ -133,7 +135,7 @@ const LaughLoss = () => {
   }, [channelQuery.isError])
 
   return (
-    <Container fluid className="cd-w-full cd-h-full cd-relative laugh-loss-transition" p={0}>
+    <Container fluid className="cd-w-full cd-h-full cd-relative" p={0}>
       {!messages?.length && (
         <Button
           className="!cd-absolute"
@@ -228,9 +230,14 @@ const LaughLoss = () => {
               ]),
             )}
           >
-            <Center className="cd-h-full">
+            <Center className="cd-pt-[4rem]">
               <Stack>
                 <Title order={2}>Si te ríes pierdes</Title>
+                <img
+                  alt="Si te ríes pierdes"
+                  className="cd-w-full cd-h-[250px] cd-object-cover laugh-loss-transition cd-rounded-md"
+                  src={LaughLossImg}
+                />
                 <Divider orientation="horizontal" size="xs" />
                 <Select
                   clearable

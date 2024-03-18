@@ -69,7 +69,7 @@ const Home = () => {
           {Cards.map((card, index) => (
             <Card
               withBorder
-              className={`cd-w-[450px] ${card.transitionClass}`}
+              className="cd-w-[450px]"
               component="a"
               href={card.href}
               key={`card-${index}`}
@@ -96,7 +96,7 @@ const Home = () => {
               }}
             >
               <Card.Section>
-                <Image alt="No way!" h={225} src={card.image} />
+                <Image alt="No way!" className={card.transitionClass} h={225} src={card.image} />
               </Card.Section>
               {card.comingSoon && (
                 <Overlay backgroundOpacity={0.6} color="dark">

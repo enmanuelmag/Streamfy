@@ -43,6 +43,8 @@ import { notifications } from '@mantine/notifications'
 import { EMOJIS } from '@src/constants/emoji'
 import { IconChevronLeft } from '@tabler/icons-react'
 
+import Doctor from '@assets/images/consultorio.png'
+
 const Consultorio = () => {
   const {
     emoji,
@@ -128,7 +130,7 @@ const Consultorio = () => {
   }, [channelQuery.isError])
 
   return (
-    <Container fluid className="cd-w-full cd-h-full cd-relative baity-consultorio-transition" p={0}>
+    <Container fluid className="cd-w-full cd-h-full cd-relative" p={0}>
       {!messages?.length && (
         <Button
           className="!cd-absolute"
@@ -198,9 +200,14 @@ const Consultorio = () => {
               return messagesMutation.mutate(channels)
             })}
           >
-            <Center className="cd-h-full">
+            <Center className="cd-pt-[4rem]">
               <Stack>
                 <Title order={2}>Baity consultorio</Title>
+                <img
+                  alt="Baity consultorio"
+                  className="cd-w-full cd-h-[250px] cd-object-cover baity-consultorio-transition cd-rounded-md"
+                  src={Doctor}
+                />
                 <Divider orientation="horizontal" size="xs" />
                 <Select
                   clearable
