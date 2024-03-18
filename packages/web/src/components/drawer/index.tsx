@@ -102,7 +102,7 @@ export default function Protected() {
       <AppShell.Header>
         <div className="cd-h-full cd-flex cd-justify-between cd-items-center cd-px-[1rem]">
           <Flex align="center" gap="xs" justify="flex-start">
-            <Burger opened={opened} onClick={open} />
+            <Burger opened={opened} size="sm" onClick={open} />
             <Link
               className="home-link-transition"
               to={ROUTES.HOME}
