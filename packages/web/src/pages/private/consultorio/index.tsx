@@ -203,9 +203,12 @@ const Consultorio = () => {
             <Center className="cd-pt-[4rem]">
               <Stack>
                 <Title order={2}>Baity consultorio</Title>
-                <img
-                  alt="Baity consultorio"
-                  className="cd-w-full cd-h-[250px] cd-object-cover baity-consultorio-transition cd-rounded-md"
+                <Image
+                  alt="Consultorio"
+                  className="baity-consultorio-transition"
+                  fit="cover"
+                  h={250}
+                  radius="md"
                   src={Doctor}
                 />
                 <Divider orientation="horizontal" size="xs" />

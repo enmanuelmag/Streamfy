@@ -233,9 +233,12 @@ const LaughLoss = () => {
             <Center className="cd-pt-[4rem]">
               <Stack>
                 <Title order={2}>Si te ríes pierdes</Title>
-                <img
+                <Image
                   alt="Si te ríes pierdes"
-                  className="cd-w-full cd-h-[250px] cd-object-cover laugh-loss-transition cd-rounded-md"
+                  className="laugh-loss-transition"
+                  fit="cover"
+                  h={250}
+                  radius="md"
                   src={LaughLossImg}
                 />
                 <Divider orientation="horizontal" size="xs" />

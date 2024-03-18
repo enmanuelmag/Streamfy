@@ -96,7 +96,7 @@ const Home = () => {
               }}
             >
               <Card.Section>
-                <Image alt="No way!" className={card.transitionClass} h={225} src={card.image} />
+                <Image alt="No way!" className={card.transitionClass} h={210} src={card.image} />
               </Card.Section>
               {card.comingSoon && (
                 <Overlay backgroundOpacity={0.6} color="dark">
