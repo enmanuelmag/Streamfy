@@ -40,6 +40,7 @@ import { transitionView } from '@src/utils/viewTransition'
 
 import { notifications } from '@mantine/notifications'
 import { EMOJIS } from '@src/constants/emoji'
+import { IconChevronLeft } from '@tabler/icons-react'
 
 const DELAY_TRANSITION = 250
 
@@ -133,6 +134,18 @@ const LaughLoss = () => {
 
   return (
     <Container fluid className="cd-w-full cd-h-full cd-relative laugh-loss-transition" p={0}>
+      {!messages?.length && (
+        <Button
+          leftSection={<IconChevronLeft />}
+          variant="transparent"
+          onClick={() => {
+            handleReset()
+            transitionView(() => navigate(ROUTES.HOME))
+          }}
+        >
+          Volver
+        </Button>
+      )}
       <Transition duration={650} mounted={gameOver} timingFunction="ease" transition="fade">
         {(styles) => (
           <OverlayScreen
