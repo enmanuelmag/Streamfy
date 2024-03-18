@@ -131,6 +131,7 @@ const Consultorio = () => {
     <Container fluid className="cd-w-full cd-h-full cd-relative baity-consultorio-transition" p={0}>
       {!messages?.length && (
         <Button
+          className="!cd-absolute"
           leftSection={<IconChevronLeft />}
           variant="transparent"
           onClick={() => {
