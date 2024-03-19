@@ -75,7 +75,7 @@ const Home = () => {
               key={`card-${index}`}
               padding="lg"
               radius="md"
-              shadow="sm"
+              shadow="lg"
               onClick={(e) => {
                 e.preventDefault()
 

@@ -26,8 +26,8 @@ class DiscordClient {
       this.instance = new DiscordClient()
     }
 
-    if (this.instance.guildClient) {
-      return this.instance.guildClient
+    if (this.guildClient) {
+      return this.guildClient
     }
 
     const GUILD_ID = process.env.VITE_DISCORD_GUILD_ID
@@ -41,7 +41,7 @@ class DiscordClient {
       }
 
       Logger.info('Got guild client', guild.name)
-      this.instance.guildClient = guild.client
+      this.guildClient = guild.client
       return guild.client
     }
 

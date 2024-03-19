@@ -138,7 +138,7 @@ const LaughLoss = () => {
     <Container fluid className="cd-w-full cd-h-full cd-relative" p={0}>
       {!messages?.length && (
         <Button
-          className="!cd-absolute"
+          className="!cd-absolute cd-z-50"
           leftSection={<IconChevronLeft />}
           variant="transparent"
           onClick={() => {
