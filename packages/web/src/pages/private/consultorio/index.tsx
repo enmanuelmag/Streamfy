@@ -207,7 +207,8 @@ const Consultorio = () => {
                   alt="Consultorio"
                   className="baity-consultorio-transition"
                   fit="cover"
-                  h={250}
+                  mah={300}
+                  mih={300}
                   radius="md"
                   src={Doctor}
                 />

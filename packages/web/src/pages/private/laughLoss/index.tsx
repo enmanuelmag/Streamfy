@@ -237,7 +237,8 @@ const LaughLoss = () => {
                   alt="Si te ríes pierdes"
                   className="laugh-loss-transition"
                   fit="cover"
-                  h={250}
+                  mah={300}
+                  mih={300}
                   radius="md"
                   src={LaughLossImg}
                 />
