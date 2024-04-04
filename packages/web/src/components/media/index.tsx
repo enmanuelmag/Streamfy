@@ -15,6 +15,7 @@ import {
   Image,
   ScrollArea,
   Slider,
+  Stack,
   Text,
   Transition,
 } from '@mantine/core'
@@ -103,18 +104,6 @@ const Media = (props: MediaProps) => {
           tweetId={tweetId}
         />
       )
-    } else {
-      Component = (
-        <Container className="cd-h-[80%]" size="lg">
-          <Center className="cd-h-full">
-            <ScrollArea.Autosize mah="90%">
-              <Text className="cd-whitespace-pre-wrap !cd-mx-[1rem]" size="lg">
-                {content}
-              </Text>
-            </ScrollArea.Autosize>
-          </Center>
-        </Container>
-      )
     }
   } else {
     const [{ contentType = '', url, description }] = attachments
@@ -140,17 +129,22 @@ const Media = (props: MediaProps) => {
         />
       )
     } else {
-      Component = (
-        <Container className="cd-h-full" size="lg">
-          <Text size="lg">Media type {contentType} not supported</Text>
-        </Container>
-      )
+      Component = <Text size="lg">Media type {contentType} not supported</Text>
     }
   }
 
   return (
     <Center className="cd-relative cd-w-full cd-h-full" style={styles}>
-      {Component}
+      <ScrollArea.Autosize mah="90%">
+        {Boolean(content.length) && (
+          <Container className="cd-h-[80%] cd-mb-[2rem]" size="lg">
+            <Text className="cd-whitespace-pre-wrap !cd-mx-[1rem]" size="lg">
+              {content}
+            </Text>
+          </Container>
+        )}
+        {Component}
+      </ScrollArea.Autosize>
     </Center>
   )
 
