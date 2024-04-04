@@ -9,15 +9,14 @@ import {
 } from '@tabler/icons-react'
 import {
   ActionIcon,
-  Center,
-  Container,
-  Group,
-  Image,
   ScrollArea,
-  Slider,
-  Stack,
-  Text,
   Transition,
+  Container,
+  Slider,
+  Center,
+  Image,
+  Group,
+  Text,
 } from '@mantine/core'
 import { TwitterTweetEmbed } from 'react-twitter-embed'
 
