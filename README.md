@@ -19,6 +19,11 @@
 
 # Running the project
 
+## Requeriments
+
+- Install [NodeJs](https://nodejs.org/en) >= v20.
+- Add the .env file inside the folder `global/env`, you see the template with the required variables in the file env.template that's in the sabe folder `global/env`.
+
 ## Installation
 
 Here are three npm projects, to install all the dependencies run the following command in the root folder:
