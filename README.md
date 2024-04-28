@@ -1,7 +1,5 @@
 # Streamfy
 
-# Running the project
-
 ## Requeriments
 
 IMPORTANT 🚨
