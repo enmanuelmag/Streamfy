@@ -2,7 +2,7 @@
 
 ## Requeriments
 
-IMPORTANT 🚨
+🚨🚨 IMPORTANT 🚨🚨
 
 You need to create an account or using a Google account to register. The unique information used from email account or Google account will be tje email, any other information won't be saved o used.
 
