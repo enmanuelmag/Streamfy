@@ -43,9 +43,9 @@ Then to start the built project:
 npm run start
 ```
 
-> Boilerplate for React/Typescript/Express/Zustand, built on top of Vite ⚡️
-
 # What's in the boilerplate
+
+> Boilerplate for React/Typescript/Express/Zustand, built on top of Vite ⚡️
 
 - [Vite](https://vitejs.dev/)
 - [React](https://reactjs.org/)
