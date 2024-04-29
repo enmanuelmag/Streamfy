@@ -18,8 +18,6 @@ The login screen is just for have ready the project when it can be deployed in i
 Here are three npm projects, to install all the dependencies run the following command in the root folder:
 
 ```Bash
-npm install 
-# or
 npm i
 ```
 
@@ -37,7 +35,11 @@ To build the project, run:
 
 ```Bash
 npm run build
-# then execute
+```
+
+Then to start the built project:
+
+```Bash
 npm run start
 ```
 
