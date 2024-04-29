@@ -15,7 +15,7 @@ The login screen is just for have ready the project when it can be deployed in i
 
 ## Installation
 
-Here are three npm projects, to install all the dependencies run the following command in the root folder:
+Here are three npm projects, to install all the dependencies run the following command in the only root folder, no more commands are required after this:
 
 ```Bash
 npm i
