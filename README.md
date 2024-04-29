@@ -4,7 +4,9 @@
 
 🚨🚨 IMPORTANT 🚨🚨
 
-You need to create an account by email or using a Google account to register and use the app. The unique information used from email account or Google account will be the email, **any other information won't be saved o used, you can check the code and confirmn it.**
+You need to create an account by email or using a Google account to register and use the app.
+
+The unique information used from email account or Google account will be the email, **any other information won't be saved o used, you can check the code and confirmn it.**
 
 The login screen is just for have ready the project when it can be deployed in internet and not locally. 
 
