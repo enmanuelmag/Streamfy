@@ -25,7 +25,13 @@ npm i
 
 ## Development mode
 
-Then, to start the development server, run:
+Then, to start the development server, first is necessary to run build global deps:
+
+```Bash
+npm run global:build
+```
+
+Then, run the following command:
 
 ```Bash
 npm run dev
@@ -33,7 +39,7 @@ npm run dev
 
 ## Production mode
 
-To build the project, run:
+To build the project, is necessary to build the whole project:
 
 ```Bash
 npm run build
