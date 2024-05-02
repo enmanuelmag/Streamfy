@@ -134,10 +134,10 @@ const Media = (props: MediaProps) => {
 
   return (
     <Center className="cd-relative cd-w-full cd-h-full" style={styles}>
-      <ScrollArea.Autosize mah="90%">
+      <ScrollArea.Autosize mah="90%" type="always">
         {Boolean(content.length) && (
           <Container className="cd-h-[80%] cd-mb-[2rem]" size="lg">
-            <Text className="cd-whitespace-pre-wrap !cd-mx-[1rem]" size="lg">
+            <Text className="cd-whitespace-pre-wrap" size="lg">
               {content}
             </Text>
           </Container>
