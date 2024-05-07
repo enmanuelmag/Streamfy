@@ -22,10 +22,10 @@ import {
 } from '@mantine/core'
 
 import { ROUTES } from '@src/constants/routes'
-import { UserType } from '@global/types/src/user'
+import { UserDiscordType } from '@global/types/src/discord'
 import { useStoreBase, useStoreLaughLoss } from '@src/store'
 
-import { DataRepo } from '@src/db'
+import { DataRepo, DiscordRepo } from '@src/db'
 import { transitionView } from '@src/utils/viewTransition'
 
 import { Logger } from '@global/utils/src'
@@ -38,10 +38,10 @@ export default function Protected() {
   const { user, setUser } = useStoreBase((state) => state)
   const [opened, { open, close }] = useDisclosure()
 
-  const userQuery = useQuery<UserType | null, Error>({
+  const userQuery = useQuery<UserDiscordType | null, Error>({
     //enabled: !user,
     queryKey: ['user'],
-    queryFn: async () => await DataRepo.getUser(),
+    queryFn: async () => await DiscordRepo.getUser(),
   })
 
   React.useEffect(() => {

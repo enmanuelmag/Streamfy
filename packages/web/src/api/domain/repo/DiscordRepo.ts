@@ -1,11 +1,11 @@
 import type {
   EmojiType,
+  UserDiscordType,
   ChannelResponseType,
   GetChannelsParamsType,
   MessageResponseType,
   GetMessagesParamsType,
 } from '@global/types/src/discord'
-import { UserType } from '@global/types/src/user'
 
 export default abstract class DiscordRepo {
   abstract getEmojis(): Promise<EmojiType[]>
@@ -14,5 +14,7 @@ export default abstract class DiscordRepo {
 
   abstract getChannels(params: GetChannelsParamsType): Promise<ChannelResponseType[] | null>
 
-  abstract loginWithCode(code: string): Promise<UserType>
+  abstract loginWithCode(code: string): Promise<UserDiscordType>
+
+  abstract getUser(): Promise<UserDiscordType>
 }

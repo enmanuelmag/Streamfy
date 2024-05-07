@@ -83,3 +83,39 @@ export const ChannelResponseSchema = zod.object({
 })
 
 export type ChannelResponseType = zod.infer<typeof ChannelResponseSchema>
+
+export const DiscordTokenSchema = zod.object({
+  tokenType: zod.string(),
+  accessToken: zod.string(),
+  expiresIn: zod.number(),
+  refreshToken: zod.string(),
+  scope: zod.string(),
+})
+
+export type DiscordTokenType = zod.infer<typeof DiscordTokenSchema>
+
+export const DiscordGuildsSchema = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  icon: zod.string().optional().nullable(),
+  owner: zod.boolean(),
+  features: zod.array(zod.string()),
+})
+
+export type DiscordGuildsType = zod.infer<typeof DiscordGuildsSchema>
+
+export const UserDiscordSchema = zod.object({
+  id: zod.string(),
+  username: zod.string(),
+  email: zod.string().optional().nullable(),
+  guilds: zod.array(DiscordGuildsSchema),
+  credentials: zod.object({
+    accessToken: zod.string(),
+    refreshToken: zod.string(),
+    tokenType: zod.string(),
+    expiresIn: zod.number(),
+    scope: zod.string(),
+  }),
+})
+
+export type UserDiscordType = zod.infer<typeof UserDiscordSchema>

@@ -33,6 +33,18 @@ router.get('/emojis', async (_, res) => {
   }
 })
 
+router.post('/user', async (req, res) => {
+  try {
+    const user = await Discord.getUser(req.body)
+    return res.json(Response(200, 'User retrieved', user))
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.json(Response(400, error.message, null))
+    }
+    return res.json(Response(500, 'Error retrieving user', null))
+  }
+})
+
 router.post(
   '/messages',
   validate({

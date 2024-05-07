@@ -1,7 +1,5 @@
 import { GetChannelsParamsType, GetMessagesParamsType } from '@global/types/src/discord'
 
-import type { UserType } from '@global/types/src/user'
-
 import DiscordDS from '@api/domain/ds/DiscordDS'
 import DiscordRepo from '@api/domain/repo/DiscordRepo'
 
@@ -25,7 +23,11 @@ export default class DiscordRepoImpl extends DiscordRepo {
     return this.ds.getChannels(params)
   }
 
-  loginWithCode(code: string): Promise<UserType> {
+  loginWithCode(code: string) {
     return this.ds.loginWithCode(code)
+  }
+
+  getUser() {
+    return this.ds.getUser()
   }
 }

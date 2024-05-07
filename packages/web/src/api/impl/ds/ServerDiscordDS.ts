@@ -2,17 +2,19 @@ import axios, { type AxiosInstance } from 'axios'
 
 import type {
   EmojiType,
+  UserDiscordType,
   ChannelResponseType,
   GetChannelsParamsType,
   MessageResponseType,
   GetMessagesParamsType,
 } from '@global/types/src/discord'
-import type { UserType } from '@global/types/src/user'
 import type { ResponseType } from '@global/types/src/response'
 
 import { Logger } from '@global/utils/src'
 
 import DiscordDS from '@api/domain/ds/DiscordDS'
+
+const KEY_CREDENTIALS = 'credentials'
 
 export default class ServerDS extends DiscordDS {
   private axiosInstance: AxiosInstance
@@ -24,29 +26,51 @@ export default class ServerDS extends DiscordDS {
     })
   }
 
-  async loginWithCode(code: string): Promise<UserType> {
-    console.log('loginWithCode', code)
-
+  async loginWithCode(code: string): Promise<UserDiscordType> {
     try {
-      const response = await this.axiosInstance.post<ResponseType<UserType>>('/discord/login', {
-        code,
-      })
+      const response = await this.axiosInstance.post<ResponseType<UserDiscordType>>(
+        '/discord/login',
+        {
+          code,
+        },
+      )
 
       if (response.data.status !== 200) {
         Logger.error('Error from server login with code', response.data.message)
         throw new Error(response.data.message)
       }
 
+      localStorage.setItem(KEY_CREDENTIALS, JSON.stringify(response.data.data.credentials))
+
       return response.data.data
     } catch (error) {
       Logger.error('Error login with code', error)
       throw new Error('Error login with code')
     }
+  }
 
-    return {
-      id: '',
-      email: '',
-      password: '',
+  async getUser(): Promise<UserDiscordType> {
+    const credentials = localStorage.getItem(KEY_CREDENTIALS)
+
+    if (!credentials) {
+      throw new Error('No credentials found')
+    }
+
+    try {
+      const response = await this.axiosInstance.post<ResponseType<UserDiscordType>>(
+        '/discord/user',
+        JSON.parse(credentials),
+      )
+
+      if (response.data.status !== 200) {
+        Logger.error('Error from server getting user', response.data.message)
+        throw new Error(response.data.message)
+      }
+
+      return response.data.data
+    } catch (error) {
+      Logger.error('Error getting user', error)
+      throw new Error('Error getting user')
     }
   }
 

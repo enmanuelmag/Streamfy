@@ -1,27 +1,36 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-import type { UserType } from '@global/types/src/user'
-import type { ChannelResponseType, EmojiType, MessageResponseType } from '@global/types/src/discord'
+import type {
+  UserDiscordType,
+  EmojiType,
+  DiscordGuildsType,
+  ChannelResponseType,
+  MessageResponseType,
+} from '@global/types/src/discord'
 
-const VERSION_STORAGE = 2
+const VERSION_STORAGE = 3
 
 type StoreState = {
   volume: number
-  user?: UserType | null
+  user?: UserDiscordType | null
+  selectedGuild: DiscordGuildsType | null
 }
 
 type Action = {
   setVolume: (volume: StoreState['volume']) => void
   setUser: (user: StoreState['user'] | null) => void
+  setSelectedGuild: (guild: StoreState['selectedGuild'] | null) => void
 }
 export const useStoreBase = create(
   persist<StoreState & Action>(
     (set) => ({
       user: null,
+      selectedGuild: null,
       volume: 0.1,
       setUser: (user) => set(() => ({ user })),
       setVolume: (volume) => set(() => ({ volume })),
+      setSelectedGuild: (selectedGuild) => set(() => ({ selectedGuild })),
     }),
     {
       name: `storage-base-${VERSION_STORAGE}`,
