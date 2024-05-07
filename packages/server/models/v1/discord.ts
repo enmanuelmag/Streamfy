@@ -8,6 +8,8 @@ import type {
   MessageFiltersType,
 } from '@global/types/dist/discord'
 
+import type { UserType } from '@global/types/dist/user'
+
 import shuffleArray from 'knuth-shuffle-seeded'
 
 import DiscordClient from '../../services/discord'
@@ -15,6 +17,35 @@ import DiscordClient from '../../services/discord'
 import { Logger } from '@global/utils'
 
 const RANDOM_SEED = Number(process.env.VITE_RANDOM_SEED) || 7
+
+// Public methods
+export const loginWithCode = async (code: string): Promise<UserType> => {
+  Logger.info('Logging in with code', code)
+
+  const data = {
+    code,
+    grant_type: 'authorization_code',
+    redirect_uri: 'http://localhost:3500/login',
+    client_id: process.env.VITE_DISCORD_CLIENT_ID,
+    client_secret: process.env.VITE_DISCORD_CLIENT_SECRET,
+  }
+
+  const encodedData = encodeParams(data)
+
+  const response = await fetch('https://discord.com/api/v10/oauth2/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: encodedData,
+  })
+
+  const user = await response.json()
+
+  Logger.info('Logged in with code', user)
+
+  return user as UserType
+}
 
 export const getEmojis = async (): Promise<EmojiType[]> => {
   const Discord = await DiscordClient.getInstance()
@@ -32,7 +63,6 @@ export const getEmojis = async (): Promise<EmojiType[]> => {
   }))
 }
 
-// Public methods
 export const getMessages = async (
   params: GetMessagesParamsType,
 ): Promise<MessageResponseType[]> => {
@@ -87,6 +117,16 @@ export const getChannels = async (
 }
 
 // Internal methods
+function encodeParams(obj: Record<string, unknown>) {
+  let string = ''
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (!value) continue
+    string += `&${encodeURIComponent(key)}=${encodeURIComponent(value as string)}`
+  }
+
+  return string.substring(1)
+}
 
 function parseMessage(message: Message): MessageResponseType {
   return {

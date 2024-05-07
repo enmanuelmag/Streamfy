@@ -1,12 +1,13 @@
+import React from 'react'
 import { useForm } from '@mantine/form'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { IconBrandGoogle } from '@tabler/icons-react'
+import { IconBrandDiscordFilled } from '@tabler/icons-react'
 import { notifications } from '@mantine/notifications'
 import { zodResolver } from 'mantine-form-zod-resolver'
 import { Text, Title, Paper, Button, Center, Divider, Anchor } from '@mantine/core'
 
-import { DataRepo } from '@src/db'
+import { DataRepo, DiscordRepo } from '@src/db'
 import { useStoreBase } from '@src/store'
 import { LoginUserSchema, LoginUserType, UserType } from '@global/types/src/user'
 
@@ -25,6 +26,19 @@ export default function Login() {
       password: '',
     },
   })
+
+  React.useEffect(() => {
+    //get hash from url
+    const discordCode = getCode(window.location.toString())
+    console.log('Discord code', discordCode)
+    if (discordCode) {
+      DiscordRepo.loginWithCode(discordCode)
+        .then((user) => {
+          console.log('user', user)
+        })
+        .catch((e) => console.log('error', e))
+    }
+  }, [])
 
   const loginMutation = useMutation<UserType, Error, LoginUserType, LoginUserType>({
     networkMode: 'always',
@@ -95,16 +109,32 @@ export default function Login() {
               Iniciar sesión
             </Button>
           </div>
-          <Button
+          {/* <Button
             fullWidth
-            leftSection={<IconBrandGoogle />}
-            loading={loginMutation.isPending && !form.values.email && !form.values.password}
+            leftSection={<IconBrandGoogleFilled />}
+            loading={isLoadingAccountButton('google')}
             mt="sm"
             size="md"
             variant="default"
             onClick={() => loginMutation.mutate({ withGoogle: true, email: '', password: '' })}
           >
             Continuar con Google
+          </Button> */}
+          <Button
+            fullWidth
+            component="a"
+            href={import.meta.env.VITE_LOGIN_WITH_DISCORD}
+            leftSection={<IconBrandDiscordFilled />}
+            loading={isLoadingAccountButton('discord')}
+            mt="sm"
+            size="md"
+            variant="default"
+            onClick={() => {
+              //e.preventDefault()
+              //loginMutation.mutate({ withDiscord: true, email: '', password: '' })
+            }}
+          >
+            Continuar con Discord
           </Button>
         </form>
         <Divider my="xl" />
@@ -116,4 +146,27 @@ export default function Login() {
       </Paper>
     </Center>
   )
+
+  function getCode(link: string) {
+    const url = new URL(link)
+    return url.searchParams.get('code')
+  }
+
+  function isLoadingAccountButton(type: 'google' | 'discord') {
+    if (type === 'google') {
+      return (
+        form.values.withGoogle &&
+        loginMutation.isPending &&
+        !form.values.email &&
+        !form.values.password
+      )
+    }
+
+    return (
+      form.values.withDiscord &&
+      loginMutation.isPending &&
+      !form.values.email &&
+      !form.values.password
+    )
+  }
 }
