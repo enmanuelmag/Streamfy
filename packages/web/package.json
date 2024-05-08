@@ -61,6 +61,7 @@
     "react-dom": "^18.x",
     "react-player": "^2.14.1",
     "react-router-dom": "^6.22.0",
+    "react-type-animation": "^3.2.0",
     "recharts": "^2.11.0",
     "zod": "^3.22.4",
     "zustand": "^4.5.0"

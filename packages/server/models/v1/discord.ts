@@ -47,11 +47,13 @@ export const getUser = async ({
   const ownerGuilds = allGuilds.filter((guild) => guild.owner)
 
   const discordUser = (await responseUser.json()) as User & { email: string; global_name: string }
+
   return {
     id: discordUser.id,
     email: discordUser.email,
     username: discordUser.global_name || discordUser.username,
     guilds: ownerGuilds,
+    avatar: `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`,
     credentials: {
       accessToken,
       refreshToken: '',
@@ -103,6 +105,7 @@ export const loginWithCode = async (code: string): Promise<UserDiscordType> => {
   return {
     id: discordUser.id,
     email: discordUser.email,
+    avatar: discordUser.avatar,
     username: discordUser.username,
     guilds: discordUser.guilds,
     credentials,

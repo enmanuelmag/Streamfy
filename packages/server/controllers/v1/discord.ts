@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { Response } from '@global/utils'
+import { Logger, Response } from '@global/utils'
 import { GetChannelsParamsSchema, GetMessagesParamsSchema } from '@global/types/dist/discord'
 
 import * as Discord from '../../models/v1/discord'
@@ -14,6 +14,7 @@ router.post('/login', async (req, res) => {
     const user = await Discord.loginWithCode(req.body.code)
     return res.json(Response(200, 'Logged in with code', user))
   } catch (error) {
+    Logger.error('Error retrieving user', error)
     if (error instanceof Error) {
       return res.json(Response(400, error.message, null))
     }
@@ -26,6 +27,7 @@ router.post('/emojis', async (req, res) => {
     const emojis = await Discord.getEmojis(req.body)
     return res.json(Response(200, 'Emojis retrieved', emojis))
   } catch (error) {
+    Logger.error('Error retrieving user', error)
     if (error instanceof Error) {
       return res.json(Response(400, error.message, null))
     }
@@ -38,6 +40,7 @@ router.post('/user', async (req, res) => {
     const user = await Discord.getUser(req.body)
     return res.json(Response(200, 'User retrieved', user))
   } catch (error) {
+    Logger.error('Error retrieving user', error)
     if (error instanceof Error) {
       return res.json(Response(400, error.message, null))
     }
@@ -56,6 +59,7 @@ router.post(
       const messages = await Discord.getMessages(req.body)
       return res.send(Response(200, 'Messages retrieved', messages))
     } catch (error) {
+      Logger.error('Error retrieving user', error)
       if (error instanceof Error) {
         return res.send(Response(400, error.message, null))
       }
@@ -75,6 +79,7 @@ router.post(
       const channels = await Discord.getChannels(req.body)
       return res.json(Response(200, 'Channels retrieved', channels))
     } catch (error) {
+      Logger.error('Error retrieving user', error)
       if (error instanceof Error) {
         return res.json(Response(400, error.message, null))
       }

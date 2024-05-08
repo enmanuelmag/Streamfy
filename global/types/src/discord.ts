@@ -123,6 +123,7 @@ export const UserDiscordSchema = zod.object({
   username: zod.string(),
   email: zod.string().optional().nullable(),
   guilds: zod.array(DiscordGuildsSchema),
+  avatar: zod.string().optional().nullable(),
   credentials: zod.object({
     accessToken: zod.string(),
     refreshToken: zod.string(),
