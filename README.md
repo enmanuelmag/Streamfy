@@ -6,7 +6,7 @@
 
 🚨🚨 IMPORTANT 🚨🚨
 
-You need to login with a Discord account to use the app. The reason is to fetch the user's guilds that the user is part of, and then fetch the channels of the guilds to show the user the channels that the user can join to watch the stream.
+You need to login with a Discord account to use the app. The reason is to fetch the user's guilds that the user is part of, and then fetch the channels of the guilds to show the user the channels that the user can join to watch the stream. Also the Streamfy's bot must be in the guild to fetch the data.
 
 The unique information used from Discord account is: email, username, avatar and the guilds that the user is part of.
 
