@@ -19,13 +19,14 @@ import {
   Box,
   Group,
   Divider,
+  Breadcrumbs,
 } from '@mantine/core'
 
 import { ROUTES } from '@src/constants/routes'
-import { UserType } from '@global/types/src/user'
+import { UserDiscordType } from '@global/types/src/discord'
 import { useStoreBase, useStoreLaughLoss } from '@src/store'
 
-import { DataRepo } from '@src/db'
+import { DataRepo, DiscordRepo } from '@src/db'
 import { transitionView } from '@src/utils/viewTransition'
 
 import { Logger } from '@global/utils/src'
@@ -35,13 +36,13 @@ export const HEIGHT_DRAWER = 50
 export default function Protected() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { user, setUser } = useStoreBase((state) => state)
+  const { user, selectedGuild, setUser } = useStoreBase((state) => state)
   const [opened, { open, close }] = useDisclosure()
 
-  const userQuery = useQuery<UserType | null, Error>({
-    //enabled: !user,
+  const userQuery = useQuery<UserDiscordType | null, Error>({
+    enabled: !user,
     queryKey: ['user'],
-    queryFn: async () => await DataRepo.getUser(),
+    queryFn: async () => await DiscordRepo.getUser(),
   })
 
   React.useEffect(() => {
@@ -111,12 +112,7 @@ export default function Protected() {
                 transitionView(() => navigate(ROUTES.HOME))
               }}
             >
-              <Title className="cd-title-form cd-text-white" order={3}>
-                Stream
-                <Text inherit c="violet" component="span">
-                  fy
-                </Text>
-              </Title>
+              <Breadcrumbs>{buildDrawerTitle()}</Breadcrumbs>
             </Link>
           </Flex>
           <Flex align="center" gap="md" justify="flex-end">
@@ -136,6 +132,29 @@ export default function Protected() {
       </AppShell.Main>
     </AppShell>
   )
+
+  function buildDrawerTitle() {
+    const items: JSX.Element[] = []
+
+    items.push(
+      <Title className="cd-title-form cd-text-white" key="main-title" order={3}>
+        Stream
+        <Text inherit c="violet" component="span">
+          fy
+        </Text>
+      </Title>,
+    )
+
+    if (selectedGuild && user) {
+      items.push(
+        <Text c="white" key="info-user" size="md">
+          {user.username} @ {selectedGuild.name}
+        </Text>,
+      )
+    }
+
+    return items
+  }
 
   function handleHelpModal() {
     modals.open({

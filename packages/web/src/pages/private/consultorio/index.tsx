@@ -21,7 +21,7 @@ import { type Step1Type, Step1Schema } from '@global/types/src/consultorio'
 
 import { DiscordRepo } from '@src/db'
 import { ROUTES } from '@src/constants/routes'
-import { useStoreConsultorio } from '@src/store'
+import { useStoreBase, useStoreConsultorio } from '@src/store'
 import {
   ChannelResponseType,
   EmojiType,
@@ -46,6 +46,7 @@ import { IconChevronLeft } from '@tabler/icons-react'
 import Doctor from '@assets/images/consultorio.png'
 
 const Consultorio = () => {
+  const { selectedGuild } = useStoreBase((state) => state)
   const {
     emoji,
     messages,
@@ -74,14 +75,14 @@ const Consultorio = () => {
 
   const emojisQuery = useQuery<EmojiType[] | null, Error>({
     queryKey: ['discordEmojis'],
-    queryFn: async () => DiscordRepo.getEmojis(),
+    queryFn: async () => DiscordRepo.getEmojis({ guildId: selectedGuild!.id }),
     enabled: !messages,
   })
 
   const channelQuery = useQuery<ChannelResponseType[] | null, Error>({
     queryKey: ['discordChannels'],
     enabled: !messages,
-    queryFn: () => DiscordRepo.getChannels({ channelType: 0 }),
+    queryFn: () => DiscordRepo.getChannels({ guildId: selectedGuild!.id, channelType: 0 }),
   })
 
   const messagesMutation = useMutation<
@@ -92,6 +93,7 @@ const Consultorio = () => {
   >({
     mutationFn: async (channels) =>
       await DiscordRepo.getMessages({
+        guildId: selectedGuild!.id,
         shuffle: true,
         channels,
       }),

@@ -26,6 +26,7 @@ export const LoginUserSchema = UserSchema.omit({
   id: true,
 }).extend({
   withGoogle: zod.boolean().optional(),
+  withDiscord: zod.boolean().optional(),
 })
 
 export type LoginUserType = zod.infer<typeof LoginUserSchema>

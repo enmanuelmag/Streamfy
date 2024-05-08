@@ -1,6 +1,12 @@
 import zod from 'zod'
 import { ChannelType } from 'discord.js'
 
+export const BasicParamsSchema = zod.object({
+  guildId: zod.string(),
+})
+
+export type BasicParamsType = zod.infer<typeof BasicParamsSchema>
+
 export const EmojiSchema = zod.object({
   id: zod.string(),
   name: zod.string(),
@@ -22,6 +28,10 @@ export const AttachmentSchema = zod.object({
 
 export type AttachmentType = zod.infer<typeof AttachmentSchema>
 
+export const GetEmojisParamsSchema = zod.object({}).merge(BasicParamsSchema)
+
+export type GetEmojisParamsType = zod.infer<typeof GetEmojisParamsSchema>
+
 export const MessageFiltersSchema = zod.object({
   authorId: zod.string().optional().nullable(),
   emojiName: zod.string().optional().nullable(),
@@ -30,19 +40,21 @@ export const MessageFiltersSchema = zod.object({
 
 export type MessageFiltersType = zod.infer<typeof MessageFiltersSchema>
 
-export const GetMessagesParamsSchema = zod.object({
-  shuffle: zod.boolean().optional(),
-  channels: zod.array(
-    zod.object({
-      id: zod.string(),
-      limit: zod.number().optional(),
-      before: zod.string().optional(),
-      after: zod.string().optional(),
-      around: zod.string().optional(),
-      filters: MessageFiltersSchema.optional(),
-    }),
-  ),
-})
+export const GetMessagesParamsSchema = zod
+  .object({
+    shuffle: zod.boolean().optional(),
+    channels: zod.array(
+      zod.object({
+        id: zod.string(),
+        limit: zod.number().optional(),
+        before: zod.string().optional(),
+        after: zod.string().optional(),
+        around: zod.string().optional(),
+        filters: MessageFiltersSchema.optional(),
+      }),
+    ),
+  })
+  .merge(BasicParamsSchema)
 
 export type GetMessagesParamsType = zod.infer<typeof GetMessagesParamsSchema>
 
@@ -69,9 +81,11 @@ export const ChannelTypeSchema = zod.number().min(0).max(16)
 
 export type ChannelTypeType = ChannelType
 
-export const GetChannelsParamsSchema = zod.object({
-  channelType: ChannelTypeSchema,
-})
+export const GetChannelsParamsSchema = zod
+  .object({
+    channelType: ChannelTypeSchema,
+  })
+  .merge(BasicParamsSchema)
 
 export type GetChannelsParamsType = zod.infer<typeof GetChannelsParamsSchema>
 
@@ -83,3 +97,39 @@ export const ChannelResponseSchema = zod.object({
 })
 
 export type ChannelResponseType = zod.infer<typeof ChannelResponseSchema>
+
+export const DiscordTokenSchema = zod.object({
+  tokenType: zod.string(),
+  accessToken: zod.string(),
+  expiresIn: zod.number(),
+  refreshToken: zod.string(),
+  scope: zod.string(),
+})
+
+export type DiscordTokenType = zod.infer<typeof DiscordTokenSchema>
+
+export const DiscordGuildsSchema = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  icon: zod.string().optional().nullable(),
+  owner: zod.boolean(),
+  features: zod.array(zod.string()),
+})
+
+export type DiscordGuildsType = zod.infer<typeof DiscordGuildsSchema>
+
+export const UserDiscordSchema = zod.object({
+  id: zod.string(),
+  username: zod.string(),
+  email: zod.string().optional().nullable(),
+  guilds: zod.array(DiscordGuildsSchema),
+  credentials: zod.object({
+    accessToken: zod.string(),
+    refreshToken: zod.string(),
+    tokenType: zod.string(),
+    expiresIn: zod.number(),
+    scope: zod.string(),
+  }),
+})
+
+export type UserDiscordType = zod.infer<typeof UserDiscordSchema>

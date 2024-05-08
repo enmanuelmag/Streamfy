@@ -2,15 +2,13 @@
 
 [![CI](https://github.com/enmanuelmag/Streamfy/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/enmanuelmag/Streamfy/actions/workflows/ci.yml)
 
-## Requeriments
+## Requirements
 
 🚨🚨 IMPORTANT 🚨🚨
 
-You need to create an account by email or using a Google account to register and use the app.
+You need to login with a Discord account to use the app. The reason is to fetch the user's guilds that the user is part of, and then fetch the channels of the guilds to show the user the channels that the user can join to watch the stream.
 
-The unique information used from email account or Google account will be the email, **any other information won't be saved o used, you can check the code and confirmn it.**
-
-The login screen is just for have ready the project when it can be deployed in internet and not locally. 
+The unique information used from Discord account is: email, username, avatar and the guilds that the user is part of.
 
 - Install [NodeJs](https://nodejs.org/en) >= v20.
 - Add the .env file inside the folder `global/env`, you see the template with the required variables in the file env.template that's in the sabe folder `global/env`.

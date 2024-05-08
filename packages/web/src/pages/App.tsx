@@ -15,8 +15,8 @@ import { UserType } from '@global/types/src/user'
 import { ROUTES } from '@constants/routes'
 
 import Login from '@pages/auth/login'
+import LoginCallback from '@pages/auth/loginCallback'
 import Drawer from '@components/drawer'
-import Register from '@pages/auth/register'
 
 //Private
 import Home from '@pages/private/home'
@@ -44,7 +44,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route element={<Login />} path={ROUTES.LOGIN} />
-          <Route element={<Register />} path={ROUTES.REGISTER} />
+          <Route element={<LoginCallback />} path={ROUTES.LOGIN_CALLBACK} />
           <Route element={<Drawer />}>
             <Route element={<Home />} path={ROUTES.HOME} />
             <Route element={<LaughLoss />} path={ROUTES.LAUGH_LOSS} />

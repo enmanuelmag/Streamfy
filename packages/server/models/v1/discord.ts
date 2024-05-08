@@ -1,11 +1,15 @@
-import type { TextChannel, Message } from 'discord.js'
+import type { TextChannel, Message, User } from 'discord.js'
 import type {
   EmojiType,
+  UserDiscordType,
+  DiscordTokenType,
+  DiscordGuildsType,
   ChannelResponseType,
   GetChannelsParamsType,
+  MessageFiltersType,
   MessageResponseType,
   GetMessagesParamsType,
-  MessageFiltersType,
+  GetEmojisParamsType,
 } from '@global/types/dist/discord'
 
 import shuffleArray from 'knuth-shuffle-seeded'
@@ -16,8 +20,97 @@ import { Logger } from '@global/utils'
 
 const RANDOM_SEED = Number(process.env.VITE_RANDOM_SEED) || 7
 
-export const getEmojis = async (): Promise<EmojiType[]> => {
-  const Discord = await DiscordClient.getInstance()
+// Public methods
+export const getUser = async ({
+  accessToken,
+  tokenType,
+}: {
+  accessToken: string
+  tokenType: string
+}): Promise<UserDiscordType> => {
+  Logger.info('Getting user')
+
+  const responseUser = await fetch(`${process.env.VITE_DISCORD_API_URL}/users/@me`, {
+    headers: {
+      Authorization: `${tokenType} ${accessToken}`,
+    },
+  })
+
+  const responseGuilds = await fetch(`${process.env.VITE_DISCORD_API_URL}/users/@me/guilds`, {
+    headers: {
+      Authorization: `${tokenType} ${accessToken}`,
+    },
+  })
+
+  const allGuilds = (await responseGuilds.json()) as DiscordGuildsType[]
+
+  const ownerGuilds = allGuilds.filter((guild) => guild.owner)
+
+  const discordUser = (await responseUser.json()) as User & { email: string; global_name: string }
+  return {
+    id: discordUser.id,
+    email: discordUser.email,
+    username: discordUser.global_name || discordUser.username,
+    guilds: ownerGuilds,
+    credentials: {
+      accessToken,
+      refreshToken: '',
+      tokenType,
+      expiresIn: 0,
+      scope: '',
+    },
+  } as UserDiscordType
+}
+
+export const loginWithCode = async (code: string): Promise<UserDiscordType> => {
+  Logger.info('Logging in with code', code)
+
+  const data = {
+    code,
+    grant_type: 'authorization_code',
+    redirect_uri: 'http://localhost:3500/loginCallback',
+    client_id: process.env.VITE_DISCORD_CLIENT_ID,
+    client_secret: process.env.VITE_DISCORD_CLIENT_SECRET,
+  }
+
+  const encodedData = encodeParams(data)
+
+  const responseToken = await fetch(`${process.env.VITE_DISCORD_API_URL}/oauth2/token`, {
+    method: 'POST',
+    body: encodedData,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  })
+
+  const rawCredentials = await responseToken.json()
+
+  const credentials: DiscordTokenType = {
+    accessToken: rawCredentials.access_token,
+    refreshToken: rawCredentials.refresh_token,
+    tokenType: rawCredentials.token_type,
+    expiresIn: rawCredentials.expires_in,
+    scope: rawCredentials.scope,
+  }
+
+  Logger.info('Credentials received', credentials)
+
+  const discordUser = await getUser({
+    accessToken: credentials.accessToken,
+    tokenType: credentials.tokenType,
+  })
+
+  return {
+    id: discordUser.id,
+    email: discordUser.email,
+    username: discordUser.username,
+    guilds: discordUser.guilds,
+    credentials,
+  } as UserDiscordType
+}
+
+export const getEmojis = async (params: GetEmojisParamsType): Promise<EmojiType[]> => {
+  const Discord = await DiscordClient.getInstance(params.guildId)
 
   Logger.info('Getting emojis')
 
@@ -32,11 +125,10 @@ export const getEmojis = async (): Promise<EmojiType[]> => {
   }))
 }
 
-// Public methods
 export const getMessages = async (
   params: GetMessagesParamsType,
 ): Promise<MessageResponseType[]> => {
-  const Discord = await DiscordClient.getInstance()
+  const Discord = await DiscordClient.getInstance(params.guildId)
 
   Logger.info('Getting messages', JSON.stringify(params))
 
@@ -68,7 +160,7 @@ export const getMessages = async (
 export const getChannels = async (
   params: GetChannelsParamsType,
 ): Promise<ChannelResponseType[]> => {
-  const Discord = await DiscordClient.getInstance()
+  const Discord = await DiscordClient.getInstance(params.guildId)
 
   Logger.info('Getting channels', JSON.stringify(params))
 
@@ -87,6 +179,16 @@ export const getChannels = async (
 }
 
 // Internal methods
+function encodeParams(obj: Record<string, unknown>) {
+  let string = ''
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (!value) continue
+    string += `&${encodeURIComponent(key)}=${encodeURIComponent(value as string)}`
+  }
+
+  return string.substring(1)
+}
 
 function parseMessage(message: Message): MessageResponseType {
   return {
