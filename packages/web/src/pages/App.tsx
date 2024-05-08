@@ -17,7 +17,6 @@ import { ROUTES } from '@constants/routes'
 import Login from '@pages/auth/login'
 import LoginCallback from '@pages/auth/loginCallback'
 import Drawer from '@components/drawer'
-import Register from '@pages/auth/register'
 
 //Private
 import Home from '@pages/private/home'
@@ -46,7 +45,6 @@ const App = () => {
         <Routes>
           <Route element={<Login />} path={ROUTES.LOGIN} />
           <Route element={<LoginCallback />} path={ROUTES.LOGIN_CALLBACK} />
-          <Route element={<Register />} path={ROUTES.REGISTER} />
           <Route element={<Drawer />}>
             <Route element={<Home />} path={ROUTES.HOME} />
             <Route element={<LaughLoss />} path={ROUTES.LAUGH_LOSS} />
