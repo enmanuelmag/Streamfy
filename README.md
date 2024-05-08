@@ -2,13 +2,15 @@
 
 [![CI](https://github.com/enmanuelmag/Streamfy/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/enmanuelmag/Streamfy/actions/workflows/ci.yml)
 
-## Requirements
+## 🚨🚨 IMPORTANT 🚨🚨
 
-🚨🚨 IMPORTANT 🚨🚨
-
-You need to login with a Discord account to use the app. The reason is to fetch the user's guilds that the user is part of, and then fetch the channels of the guilds to show the user the channels that the user can join to watch the stream. Also the Streamfy's bot must be in the guild to fetch the data. You can invite the bot to your guild with the following link: [Invite Streamfy](https://discord.com/api/oauth2/authorize?client_id=1204867795813404703&permissions=74816&scope=bot)
+You need to login with a Discord account to use the app. The reason is to fetch the user's guilds that the user is part of, and then fetch the channels of the guilds to show the user the channels that the user can join to watch the stream.
 
 The unique information used from Discord account is: email, username, avatar and the guilds that the user is part of.
+
+Also the Streamfy's bot must be in the guild to fetch the data. You can invite the bot to your guild with the following link: [Invite Streamfy](https://discord.com/api/oauth2/authorize?client_id=1204867795813404703&permissions=74816&scope=bot)
+
+## Requirements
 
 - Install [NodeJs](https://nodejs.org/en) >= v20.
 - Add the .env file inside the folder `global/env`, you see the template with the required variables in the file env.template that's in the sabe folder `global/env`.
