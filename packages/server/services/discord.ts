@@ -1,11 +1,11 @@
-import { Client, Events, GatewayIntentBits } from 'discord.js'
+import { Client, Events, GatewayIntentBits, Guild } from 'discord.js'
 
 import { Logger } from '@global/utils'
 
 class DiscordClient {
   private client: Client
   private instance: DiscordClient | null = null
-  private guildClient: Client | null = null
+  private guildClient: Guild | null = null
 
   private BOT_TOKEN = process.env.VITE_DISCORD_BOT_TOKEN
 
@@ -21,33 +21,14 @@ class DiscordClient {
     )
   }
 
-  async getInstance() {
+  async getInstance(guildId: string) {
     if (!this.instance) {
       this.instance = new DiscordClient()
     }
 
-    if (this.guildClient) {
-      return this.guildClient
-    }
-
-    const GUILD_ID = process.env.VITE_DISCORD_GUILD_ID
-
-    if (GUILD_ID) {
-      const guilds = await this.instance.client.guilds.fetch()
-      const guild = guilds.get(GUILD_ID)
-
-      if (!guild) {
-        throw new Error(`Guild with id ${GUILD_ID} not found`)
-      }
-
-      Logger.info('Got guild client', guild.name)
-      this.guildClient = guild.client
-      return guild.client
-    }
-
-    Logger.info('No guild id provided, returning default client')
-    this.guildClient = this.instance.client
-    return this.instance.client
+    const guilds = this.instance.client.guilds.cache
+    this.guildClient = guilds.get(guildId)!
+    return this.guildClient
   }
 }
 

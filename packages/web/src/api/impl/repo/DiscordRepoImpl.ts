@@ -1,4 +1,8 @@
-import { GetChannelsParamsType, GetMessagesParamsType } from '@global/types/src/discord'
+import {
+  GetChannelsParamsType,
+  GetEmojisParamsType,
+  GetMessagesParamsType,
+} from '@global/types/src/discord'
 
 import DiscordDS from '@api/domain/ds/DiscordDS'
 import DiscordRepo from '@api/domain/repo/DiscordRepo'
@@ -10,9 +14,8 @@ export default class DiscordRepoImpl extends DiscordRepo {
     super()
     this.ds = ds
   }
-
-  getEmojis() {
-    return this.ds.getEmojis()
+  getEmojis(params: GetEmojisParamsType) {
+    return this.ds.getEmojis(params)
   }
 
   getMessages(params: GetMessagesParamsType) {

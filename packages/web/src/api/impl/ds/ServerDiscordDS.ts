@@ -7,6 +7,7 @@ import type {
   GetChannelsParamsType,
   MessageResponseType,
   GetMessagesParamsType,
+  GetEmojisParamsType,
 } from '@global/types/src/discord'
 import type { ResponseType } from '@global/types/src/response'
 
@@ -57,15 +58,20 @@ export default class ServerDS extends DiscordDS {
     }
 
     try {
+      const parsedCredentials = JSON.parse(credentials)
       const response = await this.axiosInstance.post<ResponseType<UserDiscordType>>(
         '/discord/user',
-        JSON.parse(credentials),
+        parsedCredentials,
       )
 
       if (response.data.status !== 200) {
         Logger.error('Error from server getting user', response.data.message)
         throw new Error(response.data.message)
       }
+
+      const user = response.data.data
+
+      user.credentials = parsedCredentials
 
       return response.data.data
     } catch (error) {
@@ -74,9 +80,12 @@ export default class ServerDS extends DiscordDS {
     }
   }
 
-  async getEmojis() {
+  async getEmojis(params: GetEmojisParamsType) {
     try {
-      const response = await this.axiosInstance.get<ResponseType<EmojiType[]>>('/discord/emojis')
+      const response = await this.axiosInstance.post<ResponseType<EmojiType[]>>(
+        '/discord/emojis',
+        params,
+      )
 
       if (response.data.status !== 200) {
         Logger.error('Error from server getting emojis', response.data.message)

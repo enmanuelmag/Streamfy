@@ -18,7 +18,7 @@ const theme = createTheme({
 const AppWrapper = () => (
   <MantineProvider defaultColorScheme="auto" theme={theme}>
     <ModalsProvider>
-      <Notifications />
+      <Notifications position="top-right" />
       <App />
     </ModalsProvider>
   </MantineProvider>

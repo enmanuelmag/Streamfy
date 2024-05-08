@@ -9,6 +9,7 @@ import type {
   MessageFiltersType,
   MessageResponseType,
   GetMessagesParamsType,
+  GetEmojisParamsType,
 } from '@global/types/dist/discord'
 
 import shuffleArray from 'knuth-shuffle-seeded'
@@ -45,12 +46,11 @@ export const getUser = async ({
 
   const ownerGuilds = allGuilds.filter((guild) => guild.owner)
 
-  const discordUser = (await responseUser.json()) as User & { email: string }
-
+  const discordUser = (await responseUser.json()) as User & { email: string; global_name: string }
   return {
     id: discordUser.id,
     email: discordUser.email,
-    username: discordUser.username,
+    username: discordUser.global_name || discordUser.username,
     guilds: ownerGuilds,
     credentials: {
       accessToken,
@@ -109,8 +109,8 @@ export const loginWithCode = async (code: string): Promise<UserDiscordType> => {
   } as UserDiscordType
 }
 
-export const getEmojis = async (): Promise<EmojiType[]> => {
-  const Discord = await DiscordClient.getInstance()
+export const getEmojis = async (params: GetEmojisParamsType): Promise<EmojiType[]> => {
+  const Discord = await DiscordClient.getInstance(params.guildId)
 
   Logger.info('Getting emojis')
 
@@ -128,7 +128,7 @@ export const getEmojis = async (): Promise<EmojiType[]> => {
 export const getMessages = async (
   params: GetMessagesParamsType,
 ): Promise<MessageResponseType[]> => {
-  const Discord = await DiscordClient.getInstance()
+  const Discord = await DiscordClient.getInstance(params.guildId)
 
   Logger.info('Getting messages', JSON.stringify(params))
 
@@ -160,7 +160,7 @@ export const getMessages = async (
 export const getChannels = async (
   params: GetChannelsParamsType,
 ): Promise<ChannelResponseType[]> => {
-  const Discord = await DiscordClient.getInstance()
+  const Discord = await DiscordClient.getInstance(params.guildId)
 
   Logger.info('Getting channels', JSON.stringify(params))
 

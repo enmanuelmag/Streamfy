@@ -21,9 +21,9 @@ router.post('/login', async (req, res) => {
   }
 })
 
-router.get('/emojis', async (_, res) => {
+router.post('/emojis', async (req, res) => {
   try {
-    const emojis = await Discord.getEmojis()
+    const emojis = await Discord.getEmojis(req.body)
     return res.json(Response(200, 'Emojis retrieved', emojis))
   } catch (error) {
     if (error instanceof Error) {

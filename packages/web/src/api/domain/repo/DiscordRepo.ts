@@ -5,10 +5,11 @@ import type {
   GetChannelsParamsType,
   MessageResponseType,
   GetMessagesParamsType,
+  GetEmojisParamsType,
 } from '@global/types/src/discord'
 
 export default abstract class DiscordRepo {
-  abstract getEmojis(): Promise<EmojiType[]>
+  abstract getEmojis(params: GetEmojisParamsType): Promise<EmojiType[]>
 
   abstract getMessages(params: GetMessagesParamsType): Promise<MessageResponseType[] | null>
 
