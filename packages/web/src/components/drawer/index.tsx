@@ -2,7 +2,7 @@ import React from 'react'
 import { modals } from '@mantine/modals'
 import { useDisclosure } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
-import { IconHelp, IconLogout } from '@tabler/icons-react'
+import { IconHelp, IconLogout, IconBrandDiscordFilled } from '@tabler/icons-react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
   AppShell,
@@ -22,6 +22,8 @@ import {
   Breadcrumbs,
 } from '@mantine/core'
 
+import SelectModal from '@components/shared/ServerModal'
+
 import { ROUTES } from '@src/constants/routes'
 import { UserDiscordType } from '@global/types/src/discord'
 import { useStoreBase, useStoreLaughLoss } from '@src/store'
@@ -36,7 +38,7 @@ export const HEIGHT_DRAWER = 50
 export default function Protected() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { user, selectedGuild, setUser } = useStoreBase((state) => state)
+  const { user, selectedGuild, setUser, setSelectedGuild } = useStoreBase((state) => state)
   const [opened, { open, close }] = useDisclosure()
 
   const userQuery = useQuery<UserDiscordType | null, Error>({
@@ -84,7 +86,16 @@ export default function Protected() {
       >
         <Flex direction="column" gap="md">
           <Button
-            fullWidth
+            leftSection={<IconBrandDiscordFilled />}
+            variant="subtle"
+            onClick={() => {
+              close()
+              setSelectedGuild(null)
+            }}
+          >
+            Cambiar servidor de Discord
+          </Button>
+          <Button
             color="red"
             leftSection={<IconLogout />}
             variant="subtle"
@@ -93,7 +104,7 @@ export default function Protected() {
               useStoreLaughLoss.persist.clearStorage()
               useStoreBase.persist.clearStorage()
               close()
-              navigate(ROUTES.LOGIN)
+              navigate(ROUTES.HOME)
             }}
           >
             Cerrar sesión
@@ -128,6 +139,7 @@ export default function Protected() {
         pt={HEIGHT_DRAWER}
         px={0}
       >
+        <SelectModal />
         <Outlet />
       </AppShell.Main>
     </AppShell>
