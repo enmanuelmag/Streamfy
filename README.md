@@ -1,6 +1,6 @@
 # Streamfy
 
-[![Build Action Status](https://github.com/enmanuelmag/Streamfy/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/enmanuelmag/Streamfy/actions/workflows/ci.yml)
+[![Build & Test](https://github.com/enmanuelmag/Streamfy/actions/workflows/ci.yml/badge.svg)](https://github.com/enmanuelmag/Streamfy/actions/workflows/ci.yml)
 
 ## 🚨🚨 IMPORTANT 🚨🚨
 
