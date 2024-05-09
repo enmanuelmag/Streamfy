@@ -4,6 +4,8 @@
 
 ## 🚨🚨 IMPORTANT 🚨🚨
 
+[Video tutorial here](https://youtu.be/AGYT0751dtE)
+
 You need to login with a Discord account to use the app. The reason is to fetch the user's guilds that the user is part of, and then fetch the channels of the guilds to show the user the channels that the user can join to watch the stream.
 
 The unique information used from Discord account is: email, username, avatar and the guilds that the user is part of.
@@ -17,7 +19,7 @@ Also the Streamfy's bot must be in the guild to fetch the data. You can invite t
 
 ## Installation
 
-Here are three npm projects, to install all the dependencies run the following command in the only root folder, no more commands are required after this:
+Here are three npm projects, to install all the dependencies run the following command in the only root folder, no more commands for installation are required after this:
 
 ```Bash
 npm i
