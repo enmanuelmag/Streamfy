@@ -1,8 +1,19 @@
-import { Anchor, AppShell, Avatar, Button, Text, Title, Container } from '@mantine/core'
-import { ROUTES } from '@src/constants/routes'
 import { useStoreBase } from '@src/store'
+import { ROUTES } from '@src/constants/routes'
 import { useNavigate } from 'react-router-dom'
 import { TypeAnimation } from 'react-type-animation'
+import { IconBrandDiscordFilled } from '@tabler/icons-react'
+import {
+  Anchor,
+  AppShell,
+  Avatar,
+  Button,
+  Text,
+  Title,
+  Container,
+  Center,
+  Paper,
+} from '@mantine/core'
 
 import '../styles.scss'
 
@@ -43,59 +54,71 @@ function Root() {
         </div>
       </AppShell.Header>
       <AppShell.Main>
-        <Container>
-          <div className="cd-mt-[4rem] cd-flex cd-flex-col cd-items-center cd-gap-[2rem]">
+        <Container size="lg">
+          <div className="cd-mt-[6rem] cd-flex cd-flex-col cd-items-center cd-gap-[2rem]">
             <div className="cd-flex cd-flex-col cd-items-center">
-              <TypeAnimation
-                className="cd-text-violet-400 !cd-text-[2.125rem] !cd-font-bold text-animation-transition"
-                repeat={Infinity}
-                sequence={[
-                  'La manera mas sencilla',
-                  1000,
-                  'La manera mas divertida',
-                  1000,
-                  'La manera mas fácil',
-                  1000,
-                  'La manera mas rápida',
-                  1000,
-                ]}
-                speed={50}
-                style={{ fontSize: '2em' }}
-              />
-
-              <Title c="white">de realizar actividades en stream!</Title>
-            </div>
-            <div>
-              <Text c="gray" fz="xl" mt="xl">
-                <Title c="white" mt="xl">
-                  ¿Qué es Streamfy?
+              <div className="cd-flex cd-flex-col md:cd-flex-row cd-items-center cd-gap-[0.75rem]">
+                <Title c="white" className="!cd-text-[3rem] cd-text-center">
+                  La manera mas
                 </Title>
+                <TypeAnimation
+                  className="cd-text-violet-400 !cd-text-[3rem] !cd-font-bold text-animation-transition"
+                  repeat={Infinity}
+                  sequence={['sencilla', 1000, 'divertida', 1000, 'fácil', 1000, 'rápida', 1000]}
+                  speed={50}
+                  style={{ fontSize: '2em' }}
+                />
+              </div>
+              <Title c="white" className="!cd-text-[3rem] cd-text-center">
+                de realizar actividades en stream!
+              </Title>
+            </div>
+            <div className="cd-text-center lg:cd-px-[6rem] md:cd-px-[3rem] sm:cd-px-[1rem]">
+              <Text c="gray" fz="xl" mt="md">
                 Streamfy es una plataforma que te permite realizar actividades en stream de manera
-                divertida y sencilla. Tales como Si te ríes pierdes, Reddit, entre otros.
+                divertida y sencilla. Tales como Si te ríes pierdes, Reddit, entre otros. Todo esto
+                a través de la API de Discord.
               </Text>
+              <Center className="cd-mt-[3rem]">
+                <Button
+                  component="a"
+                  href={import.meta.env.VITE_LOGIN_WITH_DISCORD}
+                  leftSection={<IconBrandDiscordFilled />}
+                  mt="sm"
+                  size="lg"
+                  variant="filled"
+                >
+                  Iniciar sesión con Discord
+                </Button>
+              </Center>
             </div>
-            <div>
-              <Title c="white" mt="xl">
-                ¿Qué esperas para comenzar?
-              </Title>
-              <Text c="gray" fz="xl">
-                Streamfy usa la API de Discord para poder realizar actividades en stream. Por lo que
-                los videos, imágenes y mensajes deben estar en un canal de Discord que luego puedes
-                especificar en la plataforma.
-              </Text>
-            </div>
-            <div>
-              <Title c="white" mt="xl">
-                Contacto
-              </Title>
-              <Text c="gray" fz="xl">
-                Tiene alguna duda, sugerencia o petición. No dudes en contactarme a través de mi
-                correo{' '}
-                <Anchor c="violet.3" href="mailto:enmanuelmag@cardor.dev" size="xl">
-                  enmanuelmag@cardor.dev
-                </Anchor>
-              </Text>
-            </div>
+            <Paper
+              withBorder
+              className="cd-mt-[3rem] lg:!cd-px-[6rem] lg:!cd-py-[4rem] md:!cd-px-[3rem] md:!cd-py-[2rem] sm:!cd-px-[1rem] sm:!cd-py-[1rem]"
+              p="xl"
+              radius="md"
+            >
+              <div>
+                <Title c="white">¿Qué esperas para comenzar?</Title>
+                <Text c="gray" fz="xl">
+                  Streamfy usa la API de Discord para poder realizar actividades en stream. Por lo
+                  que los videos, imágenes y mensajes deben estar en un canal de Discord que luego
+                  puedes especificar en la plataforma.
+                </Text>
+              </div>
+              <div>
+                <Title c="white" mt="xl">
+                  Contacto
+                </Title>
+                <Text c="gray" fz="xl">
+                  Tiene alguna duda, sugerencia o petición. No dudes en contactarme a través de mi
+                  correo{' '}
+                  <Anchor c="violet.3" href="mailto:enmanuelmag@cardor.dev" size="xl">
+                    enmanuelmag@cardor.dev
+                  </Anchor>
+                </Text>
+              </div>
+            </Paper>
           </div>
         </Container>
       </AppShell.Main>
