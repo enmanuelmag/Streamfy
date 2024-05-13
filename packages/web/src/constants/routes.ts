@@ -8,4 +8,6 @@ export const ROUTES = {
   LAUGH_LOSS: '/laugh-loss',
   BAITY_CONSULTORIO: '/baity-consultorio',
   REDDIT: '/reddit',
+  //Public
+  ROOT: '/',
 }

@@ -26,9 +26,9 @@ import SelectModal from '@components/shared/ServerModal'
 
 import { ROUTES } from '@src/constants/routes'
 import { UserDiscordType } from '@global/types/src/discord'
-import { useStoreBase, useStoreLaughLoss } from '@src/store'
+import { useStoreBase, useStoreLaughLoss, useStoreConsultorio } from '@src/store'
 
-import { DataRepo, DiscordRepo } from '@src/db'
+import { DiscordRepo } from '@src/db'
 import { transitionView } from '@src/utils/viewTransition'
 
 import { Logger } from '@global/utils/src'
@@ -38,7 +38,15 @@ export const HEIGHT_DRAWER = 50
 export default function Protected() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { user, selectedGuild, setUser, setSelectedGuild } = useStoreBase((state) => state)
+  const {
+    user,
+    selectedGuild,
+    setUser,
+    setSelectedGuild,
+    reset: resetBase,
+  } = useStoreBase((state) => state)
+  const { reset: resetLaughLoss } = useStoreLaughLoss((state) => state)
+  const { reset: resetConsultorio } = useStoreConsultorio((state) => state)
   const [opened, { open, close }] = useDisclosure()
 
   const userQuery = useQuery<UserDiscordType | null, Error>({
@@ -100,11 +108,9 @@ export default function Protected() {
             leftSection={<IconLogout />}
             variant="subtle"
             onClick={() => {
-              DataRepo.logoutUser()
-              useStoreLaughLoss.persist.clearStorage()
-              useStoreBase.persist.clearStorage()
               close()
-              navigate(ROUTES.HOME)
+              reset()
+              navigate(ROUTES.ROOT)
             }}
           >
             Cerrar sesión
@@ -144,6 +150,14 @@ export default function Protected() {
       </AppShell.Main>
     </AppShell>
   )
+
+  function reset() {
+    resetBase()
+    resetLaughLoss()
+    resetConsultorio()
+    localStorage.clear()
+    navigate(ROUTES.ROOT)
+  }
 
   function buildDrawerTitle() {
     const items: JSX.Element[] = []

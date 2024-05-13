@@ -21,6 +21,7 @@ type Action = {
   setVolume: (volume: StoreState['volume']) => void
   setUser: (user: StoreState['user'] | null) => void
   setSelectedGuild: (guild: StoreState['selectedGuild'] | null) => void
+  reset: () => void
 }
 export const useStoreBase = create(
   persist<StoreState & Action>(
@@ -31,6 +32,7 @@ export const useStoreBase = create(
       setUser: (user) => set(() => ({ user })),
       setVolume: (volume) => set(() => ({ volume })),
       setSelectedGuild: (selectedGuild) => set(() => ({ selectedGuild })),
+      reset: () => set(() => ({ user: null, selectedGuild: null })),
     }),
     {
       name: `storage-base-${VERSION_STORAGE}`,

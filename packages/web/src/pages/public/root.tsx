@@ -20,7 +20,7 @@ import '../styles.scss'
 function Root() {
   const { user } = useStoreBase((state) => state)
   const navigate = useNavigate()
-  console.log(user)
+  console.log('user', !!user)
 
   return (
     <AppShell
@@ -64,7 +64,7 @@ function Root() {
                 <TypeAnimation
                   className="cd-text-violet-400 !cd-text-[3rem] !cd-font-bold text-animation-transition"
                   repeat={Infinity}
-                  sequence={['sencilla', 1000, 'divertida', 1000, 'fácil', 1000, 'rápida', 1000]}
+                  sequence={buildSequence()}
                   speed={50}
                   style={{ fontSize: '2em' }}
                 />
@@ -124,6 +124,24 @@ function Root() {
       </AppShell.Main>
     </AppShell>
   )
+
+  function buildSequence() {
+    const sequence = ['sencilla', 'divertida', 'fácil', 'rápida']
+
+    const last = sequence[sequence.length - 1]
+
+    let idx = 0
+    let current = null
+    const newSequence = []
+
+    while (current !== last) {
+      current = sequence[idx]
+      newSequence.push(current, 1000, '', 500)
+      idx++
+    }
+
+    return newSequence
+  }
 
   function handleButtonLeft() {
     if (user) {
