@@ -36,21 +36,23 @@ function Root() {
               Streamfy
             </Title>
           </div>
-          <div className="cd-h-full cd-flex cd-justify-end cd-items-center cd-pr-[2rem]">
-            <Button
-              leftSection={
-                user && (
-                  <Avatar alt={user.username} color="white" radius="xl" src={user?.avatar}>
-                    {user?.username.charAt(0)}
-                  </Avatar>
-                )
-              }
-              variant="subtle"
-              onClick={handleButtonLeft}
-            >
-              <Text c="white">{user ? 'Dashboard' : 'Iniciar sesión'}</Text>
-            </Button>
-          </div>
+          {Boolean(user) && (
+            <div className="cd-h-full cd-flex cd-justify-end cd-items-center cd-pr-[2rem]">
+              <Button
+                leftSection={
+                  user && (
+                    <Avatar alt={user.username} color="white" radius="xl" src={user?.avatar}>
+                      {user?.username.charAt(0)}
+                    </Avatar>
+                  )
+                }
+                variant="subtle"
+                onClick={handleButtonLeft}
+              >
+                <Text c="white">{user ? 'Dashboard' : 'Iniciar sesión'}</Text>
+              </Button>
+            </div>
+          )}
         </div>
       </AppShell.Header>
       <AppShell.Main>
