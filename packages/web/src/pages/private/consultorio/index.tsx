@@ -181,9 +181,7 @@ const Consultorio = () => {
         p={0}
         size="md"
       >
-        <Loading show={!gameOver && channelQuery.isLoading} text="Cargando información" />
-
-        {!gameOver && !messages?.length && channelQuery.data && emojisQuery.data && (
+        {!gameOver && !messages?.length && (
           <form
             className="cd-h-full cd-w-full"
             onSubmit={form.onSubmit(({ emoji, privateChannel, publicChannel }) => {
@@ -214,75 +212,84 @@ const Consultorio = () => {
                   radius="md"
                   src={Doctor}
                 />
+
                 <Divider orientation="horizontal" size="xs" />
-                <Select
-                  clearable
-                  searchable
-                  className="cd-w-[450px]"
-                  data={emojisQuery.data.map((e) => ({ value: e.name, label: e.name })) || []}
-                  label="Emoji"
-                  {...form.getInputProps('emoji')}
-                  leftSection={
-                    form.values.emoji?.imageURL ? (
-                      <img
-                        alt="emoji"
-                        className="cd-w-6 cd-h-6"
-                        src={form.values.emoji?.imageURL || ''}
-                      />
-                    ) : undefined
-                  }
-                  placeholder="Selecciona un emoji que será el sello de calidad"
-                  renderOption={({ option: { value } }) => {
-                    const e = emojisQuery.data!.find((e) => e.name === value)
-                    if (!e) return null
-                    return (
-                      <div className="cd-flex cd-items-center cd-justify-start cd-gap-[0.5rem]">
-                        <img alt={e.name} className="cd-w-8 cd-h-8" src={e.imageURL || ''} />
-                        <Text fz="sm">{e.name}</Text>
-                      </div>
-                    )
-                  }}
-                  value={form.values.emoji?.name}
-                  onChange={handleEmojiChange}
-                />
-                <Select
-                  clearable
-                  searchable
-                  data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
-                  label="Canal público"
-                  placeholder="Selecciona un canal público"
-                  {...form.getInputProps('discordChannels')}
-                  className="cd-w-[450px]"
-                  comboboxProps={{ transitionProps: { transition: 'pop', duration: 250 } }}
-                  value={form.values.publicChannel?.id}
-                  onChange={(channelId) => handleChannelChange('publicChannel', channelId)}
-                />
-                <Divider mt="xs" orientation="horizontal" size="xs" variant="dashed" />
-                <Select
-                  clearable
-                  searchable
-                  data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
-                  label="Canal privado"
-                  placeholder="Selecciona un canal privado"
-                  {...form.getInputProps('discordChannels')}
-                  className="cd-w-[450px]"
-                  comboboxProps={{ transitionProps: { transition: 'pop', duration: 250 } }}
-                  value={form.values.privateChannel?.id}
-                  onChange={(channelId) => handleChannelChange('privateChannel', channelId)}
-                />
-                <Button
-                  className="cd-mt-4"
-                  disabled={
-                    !form.isValid() ||
-                    Boolean(!form.values.privateChannel && !form.values.publicChannel)
-                  }
-                  loaderProps={{ type: 'dots' }}
-                  loading={messagesMutation.isPending && !messagesMutation.isIdle}
-                  type="submit"
-                  variant="filled"
-                >
-                  Obtener mensajes
-                </Button>
+
+                <Loading show={!gameOver && channelQuery.isLoading} text="Cargando información" />
+
+                {!gameOver && !messages?.length && channelQuery.data && emojisQuery.data && (
+                  <React.Fragment>
+                    <Select
+                      clearable
+                      searchable
+                      className="cd-w-[450px]"
+                      data={emojisQuery.data.map((e) => ({ value: e.name, label: e.name })) || []}
+                      label="Emoji"
+                      {...form.getInputProps('emoji')}
+                      leftSection={
+                        form.values.emoji?.imageURL ? (
+                          <img
+                            alt="emoji"
+                            className="cd-w-6 cd-h-6"
+                            src={form.values.emoji?.imageURL || ''}
+                          />
+                        ) : undefined
+                      }
+                      placeholder="Selecciona un emoji que será el sello de calidad"
+                      renderOption={({ option: { value } }) => {
+                        const e = emojisQuery.data!.find((e) => e.name === value)
+                        if (!e) return null
+                        return (
+                          <div className="cd-flex cd-items-center cd-justify-start cd-gap-[0.5rem]">
+                            <img alt={e.name} className="cd-w-8 cd-h-8" src={e.imageURL || ''} />
+                            <Text fz="sm">{e.name}</Text>
+                          </div>
+                        )
+                      }}
+                      value={form.values.emoji?.name}
+                      onChange={handleEmojiChange}
+                    />
+                    <Select
+                      clearable
+                      searchable
+                      data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
+                      label="Canal público"
+                      placeholder="Selecciona un canal público"
+                      {...form.getInputProps('discordChannels')}
+                      className="cd-w-[450px] cd-mt-[1rem]"
+                      comboboxProps={{ transitionProps: { transition: 'pop', duration: 250 } }}
+                      value={form.values.publicChannel?.id}
+                      onChange={(channelId) => handleChannelChange('publicChannel', channelId)}
+                    />
+                    <Divider mt="lg" orientation="horizontal" size="xs" variant="dashed" />
+                    <Select
+                      clearable
+                      searchable
+                      data={channelQuery.data.map((c) => ({ value: c.id, label: c.name })) || []}
+                      label="Canal privado"
+                      placeholder="Selecciona un canal privado"
+                      {...form.getInputProps('discordChannels')}
+                      className="cd-w-[450px]"
+                      comboboxProps={{ transitionProps: { transition: 'pop', duration: 250 } }}
+                      value={form.values.privateChannel?.id}
+                      onChange={(channelId) => handleChannelChange('privateChannel', channelId)}
+                    />
+                    <Button
+                      fullWidth
+                      className="cd-mt-4 cd-w-[1.5rem]"
+                      disabled={
+                        !form.isValid() ||
+                        Boolean(!form.values.privateChannel && !form.values.publicChannel)
+                      }
+                      loaderProps={{ type: 'dots' }}
+                      loading={messagesMutation.isPending && !messagesMutation.isIdle}
+                      type="submit"
+                      variant="filled"
+                    >
+                      Obtener mensajes
+                    </Button>
+                  </React.Fragment>
+                )}
               </Stack>
             </Center>
           </form>
