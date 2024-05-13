@@ -113,7 +113,7 @@ function Root() {
                   Contacto
                 </Title>
                 <Text c="gray" fz="xl">
-                  Tiene alguna duda, sugerencia o petición. No dudes en contactarme a través de mi
+                  Tienes alguna duda, sugerencia o petición. No dudes en contactarme a través de mi
                   correo{' '}
                   <Anchor c="violet.3" href="mailto:enmanuelmag@cardor.dev" size="xl">
                     enmanuelmag@cardor.dev
