@@ -33,6 +33,7 @@ export default function SelectModal() {
       }}
     >
       <Select
+        allowDeselect={false}
         data={listGuilds.map((guild) => ({ value: guild.id, label: guild.name }))}
         placeholder="Escribe para buscar"
         size="md"

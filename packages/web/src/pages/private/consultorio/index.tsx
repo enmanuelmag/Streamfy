@@ -256,12 +256,12 @@ const Consultorio = () => {
                       label="Canal público"
                       placeholder="Selecciona un canal público"
                       {...form.getInputProps('discordChannels')}
-                      className="cd-w-[450px] cd-mt-[1rem]"
+                      className="cd-w-[450px]"
                       comboboxProps={{ transitionProps: { transition: 'pop', duration: 250 } }}
                       value={form.values.publicChannel?.id}
                       onChange={(channelId) => handleChannelChange('publicChannel', channelId)}
                     />
-                    <Divider mt="lg" orientation="horizontal" size="xs" variant="dashed" />
+                    <Divider mt="sm" orientation="horizontal" size="xs" variant="dashed" />
                     <Select
                       clearable
                       searchable
@@ -276,7 +276,7 @@ const Consultorio = () => {
                     />
                     <Button
                       fullWidth
-                      className="cd-mt-4 cd-w-[1.5rem]"
+                      className="cd-mt-[1rem]"
                       disabled={
                         !form.isValid() ||
                         Boolean(!form.values.privateChannel && !form.values.publicChannel)

@@ -287,12 +287,12 @@ const LaughLoss = () => {
                       placeholder="Selecciona un canal"
                       value={form.values.discordChannel.id}
                       {...form.getInputProps('discordChannel.id')}
-                      className="cd-w-[450px] cd-mt-[1rem]"
+                      className="cd-w-[450px]"
                       onChange={handleChannelChange}
                     />
                     <Button
                       fullWidth
-                      className="cd-mt-[1.5rem]"
+                      className="cd-mt-[1rem]"
                       disabled={!form.isValid()}
                       loaderProps={{ type: 'dots' }}
                       loading={messagesMutation.isPending && !messagesMutation.isIdle}

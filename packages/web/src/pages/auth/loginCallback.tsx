@@ -19,11 +19,6 @@ export default function LoginCallback() {
       DiscordRepo.loginWithCode(discordCode)
         .then((data) => {
           setUser(data)
-          notifications.show({
-            color: 'green',
-            title: 'Bienvenido',
-            message: data.username,
-          })
           setTimeout(() => navigate(ROUTES.HOME), 500)
         })
         .catch((e) => {
