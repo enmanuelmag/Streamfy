@@ -10,17 +10,49 @@ import type {
   MessageResponseType,
   GetMessagesParamsType,
   GetEmojisParamsType,
+  UserAccessType,
+  UserAccessFirebaseType,
 } from '@global/types/dist/discord'
 
 import shuffleArray from 'knuth-shuffle-seeded'
+import { doc, getDoc } from 'firebase/firestore'
 
+import { db } from '../../services/firebase'
 import DiscordClient from '../../services/discord'
 
 import { Logger } from '@global/utils'
 
 const RANDOM_SEED = Number(process.env.VITE_RANDOM_SEED) || 7
 
+const USER_ACCESS_COLLECTION = 'user-access'
+
+const CONTACT_EMAIL = 'enmanuelmag@cardor.dev'
+
 // Public methods
+export const getUserAccess = async (username: string): Promise<UserAccessType> => {
+  Logger.info('Getting user access')
+
+  const docRef = doc(db, USER_ACCESS_COLLECTION, username)
+
+  const docSnap = await getDoc(docRef)
+
+  if (!docSnap.exists()) {
+    Logger.info(`Username ${username} has no access yet`)
+    throw new Error(`El ${username} no tiene acceso, por favor contactar a ${CONTACT_EMAIL}`)
+  }
+
+  Logger.info(`Username ${username} has access`)
+
+  const firebaseData = docSnap.data() as UserAccessFirebaseType
+
+  const data: UserAccessType = {
+    dueDate: firebaseData.dueDate.toDate().valueOf(),
+    lastPayment: firebaseData.lastPayment.toDate().valueOf(),
+  }
+
+  return data
+}
+
 export const getUser = async ({
   accessToken,
   tokenType,
@@ -48,7 +80,10 @@ export const getUser = async ({
 
   const discordUser = (await responseUser.json()) as User & { email: string; global_name: string }
 
+  const access = await getUserAccess(discordUser.username)
+
   return {
+    access,
     id: discordUser.id,
     email: discordUser.email,
     username: discordUser.global_name || discordUser.username,
@@ -103,11 +138,7 @@ export const loginWithCode = async (code: string): Promise<UserDiscordType> => {
   })
 
   return {
-    id: discordUser.id,
-    email: discordUser.email,
-    avatar: discordUser.avatar,
-    username: discordUser.username,
-    guilds: discordUser.guilds,
+    ...discordUser,
     credentials,
   } as UserDiscordType
 }

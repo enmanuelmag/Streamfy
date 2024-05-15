@@ -46,7 +46,7 @@ export default class ServerDS extends DiscordDS {
       return response.data.data
     } catch (error) {
       Logger.error('Error login with code', error)
-      throw new Error('Error login with code')
+      throw error
     }
   }
 
@@ -76,7 +76,7 @@ export default class ServerDS extends DiscordDS {
       return response.data.data
     } catch (error) {
       Logger.error('Error getting user', error)
-      throw new Error('Error getting user')
+      throw error
     }
   }
 
@@ -95,7 +95,7 @@ export default class ServerDS extends DiscordDS {
       return response.data.data
     } catch (error) {
       Logger.error('Error getting emojis', error)
-      throw new Error('Error getting emojis')
+      throw error
     }
   }
 
@@ -113,7 +113,7 @@ export default class ServerDS extends DiscordDS {
       return response.data.data
     } catch (error) {
       Logger.error('Error getting messages', error)
-      throw new Error('Error getting messages')
+      throw error
     }
   }
 
@@ -132,7 +132,7 @@ export default class ServerDS extends DiscordDS {
       return response.data.data
     } catch (error) {
       Logger.error('Error getting channels', error)
-      throw new Error('Error getting channels')
+      throw error
     }
   }
 }

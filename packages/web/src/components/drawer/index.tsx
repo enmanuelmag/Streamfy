@@ -32,6 +32,7 @@ import { DiscordRepo } from '@src/db'
 import { transitionView } from '@src/utils/viewTransition'
 
 import { Logger } from '@global/utils/src'
+import { validateUserAccess } from '@src/utils/access'
 
 export const HEIGHT_DRAWER = 50
 
@@ -66,6 +67,15 @@ export default function Protected() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userQuery.isPending, userQuery.data, userQuery.isSuccess, userQuery.isError])
+
+  React.useEffect(() => {
+    if (!user) return
+
+    if (!validateUserAccess(user.access)) {
+      reset()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (!user) {
     return (

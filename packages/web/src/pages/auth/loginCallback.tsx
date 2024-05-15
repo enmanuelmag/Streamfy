@@ -5,29 +5,36 @@ import { notifications } from '@mantine/notifications'
 import Loading from '@components/shared/Loading'
 
 import { DiscordRepo } from '@src/db'
-import { useStoreBase } from '@src/store'
+import { useStoreBase, useStoreConsultorio, useStoreLaughLoss } from '@src/store'
 
 import { ROUTES } from '@constants/routes'
+import { validateUserAccess } from '@src/utils/access'
 
 export default function LoginCallback() {
   const navigate = useNavigate()
-  const { setUser } = useStoreBase((state) => state)
+  const { setUser, reset: resetBase } = useStoreBase((state) => state)
+  const { reset: resetLaughLoss } = useStoreLaughLoss((state) => state)
+  const { reset: resetConsultorio } = useStoreConsultorio((state) => state)
 
   React.useEffect(() => {
     const discordCode = getCode(window.location.toString())
     if (discordCode) {
       DiscordRepo.loginWithCode(discordCode)
-        .then((data) => {
-          setUser(data)
-          setTimeout(() => navigate(ROUTES.HOME), 500)
+        .then((user) => {
+          if (validateUserAccess(user.access)) {
+            setUser(user)
+            setTimeout(() => navigate(ROUTES.HOME), 500)
+          } else {
+            reset()
+          }
         })
         .catch((e) => {
           notifications.show({
             color: 'red',
             title: 'Error',
-            message: 'Error al iniciar sesión',
+            message: e?.message ?? 'Error al iniciar sesión',
           })
-          console.log('Error', e)
+          navigate(ROUTES.ROOT)
         })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -38,5 +45,13 @@ export default function LoginCallback() {
   function getCode(link: string) {
     const url = new URL(link)
     return url.searchParams.get('code')
+  }
+
+  function reset() {
+    resetBase()
+    resetLaughLoss()
+    resetConsultorio()
+    localStorage.clear()
+    navigate(ROUTES.ROOT)
   }
 }
