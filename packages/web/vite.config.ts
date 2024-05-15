@@ -12,7 +12,7 @@ const manifest = {
   short_name: 'Streamfy',
   description:
     'Streamfy is a web app to help streamers to make activities more easily and fun for their audience.',
-  theme_color: '#845EF7',
+  theme_color: '#251C2E',
   background_color: '#ffffff',
   display: 'standalone',
   start_url: '/',
