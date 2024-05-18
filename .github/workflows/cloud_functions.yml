@@ -1,9 +1,14 @@
 name: Deploy Firebase Functions
 
+# on:
+#   push:
+#     paths:
+#       - 'packages/functions/**'
+
 on:
   push:
-    paths:
-      - 'packages/functions/**'
+    branches:
+      - 'feat/online-access'
 
 # cancel in-progress runs on new commits to same PR (gitub.event.number)
 concurrency:
@@ -37,5 +42,4 @@ jobs:
       - name: Deploy
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: |
-          npm run functions:deploy -- --token $FIREBASE_TOKEN
+        run: npm run functions:deploy -- --token $FIREBASE_TOKEN
