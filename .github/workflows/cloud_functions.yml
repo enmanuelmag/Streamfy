@@ -1,0 +1,41 @@
+name: Build & Test
+
+on:
+  push:
+    paths:
+      - packages/functions
+
+# cancel in-progress runs on new commits to same PR (gitub.event.number)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & Deploy to Firebase Functions
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node and install project dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+      
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/package.json') }}    
+      
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          npm run functions:deploy -- --token $FIREBASE_TOKEN
