@@ -40,6 +40,10 @@ jobs:
           credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
 
       - name: Deploy
+        env:
+          VITE_DISCORD_CLIENT_ID: ${{ secrets.VITE_DISCORD_CLIENT_ID }}
+          VITE_DISCORD_BOT_TOKEN: ${{ secrets.VITE_DISCORD_BOT_TOKEN }}
+          VITE_DISCORD_CLIENT_SECRET: ${{ secrets.VITE_DISCORD_CLIENT_SECRET }}
         run: |
           npm run global:build
           npm install -g firebase-tools
