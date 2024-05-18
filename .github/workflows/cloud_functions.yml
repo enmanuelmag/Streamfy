@@ -45,6 +45,6 @@ jobs:
           npm install -g firebase-tools
           cd packages/functions
           pwd
-          ls
           npm run build
+          ls
           npm run deploy
