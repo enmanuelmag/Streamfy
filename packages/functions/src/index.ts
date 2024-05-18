@@ -17,7 +17,7 @@ import * as Discord from './models/v1/discord'
 import { validateCloud } from './middlewares/validation'
 
 setGlobalOptions({
-  maxInstances: 2,
+  maxInstances: 1,
   timeoutSeconds: 300,
 })
 
