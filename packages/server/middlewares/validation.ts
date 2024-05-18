@@ -19,3 +19,12 @@ export const validate =
       return res.status(400).json(error)
     }
   }
+
+export const validateCloud = (params: ValidateParams) => async (data: boolean) => {
+  try {
+    await params.schema.parseAsync(data)
+    return true
+  } catch (error) {
+    return false
+  }
+}
