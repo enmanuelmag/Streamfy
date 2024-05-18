@@ -17,8 +17,8 @@ import * as Discord from './models/v1/discord'
 import { validateCloud } from './middlewares/validation'
 
 setGlobalOptions({
-  maxInstances: 2,
-  timeoutSeconds: 180,
+  maxInstances: 1,
+  timeoutSeconds: 300,
 })
 
 export const login = onRequest({ cors: true }, async (req, res) => {
