@@ -52,9 +52,8 @@ jobs:
           echo "VITE_DISCORD_BOT_TOKEN=$VITE_DISCORD_BOT_TOKEN" >> packages/functions/.env
           echo "VITE_DISCORD_CLIENT_SECRET=$VITE_DISCORD_CLIENT_SECRET" >> packages/functions/.env
 
+          more packages/functions/.env
+
           npm run functions:deploy
 
           rm packages/functions/.env
-#          cd packages/functions
-#          npm run build
-#          npm run deploy

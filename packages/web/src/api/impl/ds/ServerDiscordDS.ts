@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance } from 'axios'
+import axios from 'axios'
 
 import type {
   EmojiType,
@@ -17,24 +17,29 @@ import DiscordDS from '@api/domain/ds/DiscordDS'
 
 const KEY_CREDENTIALS = 'credentials'
 
+const REPLACE_TOKEN = '{{functions}}'
+
 export default class ServerDS extends DiscordDS {
-  private axiosInstance: AxiosInstance
+  //private axiosInstance: AxiosInstance
 
   constructor() {
     super()
-    this.axiosInstance = axios.create({
-      baseURL: import.meta.env.VITE_SERVER_API_URL,
-    })
+    // this.axiosInstance = axios.create({
+    //   baseURL: import.meta.env.VITE_SERVER_API_URL,
+    // })
+  }
+
+  getURL(endpoint: string) {
+    const url: string = import.meta.env.VITE_SERVER_API_CLOUD || ''
+
+    return url.replace(REPLACE_TOKEN, endpoint)
   }
 
   async loginWithCode(code: string): Promise<UserDiscordType> {
     try {
-      const response = await this.axiosInstance.post<ResponseType<UserDiscordType>>(
-        '/discord/login',
-        {
-          code,
-        },
-      )
+      const response = await axios.post<ResponseType<UserDiscordType>>(this.getURL('login'), {
+        code,
+      })
 
       if (response.data.status !== 200) {
         Logger.error('Error from server login with code', response.data.message)
@@ -59,8 +64,9 @@ export default class ServerDS extends DiscordDS {
 
     try {
       const parsedCredentials = JSON.parse(credentials)
-      const response = await this.axiosInstance.post<ResponseType<UserDiscordType>>(
-        '/discord/user',
+
+      const response = await axios.post<ResponseType<UserDiscordType>>(
+        this.getURL('user'),
         parsedCredentials,
       )
 
@@ -82,10 +88,7 @@ export default class ServerDS extends DiscordDS {
 
   async getEmojis(params: GetEmojisParamsType) {
     try {
-      const response = await this.axiosInstance.post<ResponseType<EmojiType[]>>(
-        '/discord/emojis',
-        params,
-      )
+      const response = await axios.post<ResponseType<EmojiType[]>>(this.getURL('emojis'), params)
 
       if (response.data.status !== 200) {
         Logger.error('Error from server getting emojis', response.data.message)
@@ -101,8 +104,8 @@ export default class ServerDS extends DiscordDS {
 
   async getMessages(params: GetMessagesParamsType): Promise<MessageResponseType[]> {
     try {
-      const response = await this.axiosInstance.post<ResponseType<MessageResponseType[]>>(
-        '/discord/messages',
+      const response = await axios.post<ResponseType<MessageResponseType[]>>(
+        this.getURL('messages'),
         params,
       )
 
@@ -119,8 +122,8 @@ export default class ServerDS extends DiscordDS {
 
   async getChannels(params: GetChannelsParamsType): Promise<ChannelResponseType[]> {
     try {
-      const response = await this.axiosInstance.post<ResponseType<ChannelResponseType[]>>(
-        '/discord/channels',
+      const response = await axios.post<ResponseType<ChannelResponseType[]>>(
+        this.getURL('channels'),
         params,
       )
 
