@@ -38,7 +38,7 @@ export const getUserAccess = async (username: string): Promise<UserAccessType> =
 
   const userAccess = await db.collection(USER_ACCESS_COLLECTION).doc(username).get()
 
-  if (userAccess.exists) {
+  if (!userAccess.exists) {
     Logger.info(`Username ${username} has no access yet`)
     throw new Error(`El ${username} no tiene acceso, por favor contactar a ${CONTACT_EMAIL}`)
   }

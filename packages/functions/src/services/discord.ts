@@ -19,8 +19,6 @@ class DiscordClient {
     this.client.login(this.BOT_TOKEN)
     this.client.once(Events.ClientReady, (readyClient) => {
       Logger.info(`Ready! Logged in as ${readyClient.user.tag}`)
-      Logger.info(`RANDOM_SEED ${process.env.VITE_RANDOM_SEED}`)
-      Logger.info(`API_URL ${process.env.VITE_DISCORD_API_URL?.substring(0, 20)}`)
     })
   }
 
