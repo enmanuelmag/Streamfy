@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'packages/functions/**'
+      - '.github/workflows/cloud_functions.yml'
 
 # cancel in-progress runs on new commits to same PR (gitub.event.number)
 concurrency:
@@ -41,18 +42,21 @@ jobs:
 
       - name: Deploy
         env:
+          VITE_RANDOM_SEED: ${{ secrets.VITE_RANDOM_SEED }}
+          VITE_DISCORD_API_URL: ${{ secrets.VITE_DISCORD_API_URL }}
           VITE_DISCORD_CLIENT_ID: ${{ secrets.VITE_DISCORD_CLIENT_ID }}
           VITE_DISCORD_BOT_TOKEN: ${{ secrets.VITE_DISCORD_BOT_TOKEN }}
           VITE_DISCORD_CLIENT_SECRET: ${{ secrets.VITE_DISCORD_CLIENT_SECRET }}
+
         run: |
           npm run global:build
           npm install -g firebase-tools
 
+          echo "VITE_RANDOM_SEED=$VITE_RANDOM_SEED" > packages/functions/.env
+          echo "VITE_DISCORD_API_URL=$VITE_DISCORD_API_URL" >> packages/functions/.env
           echo "VITE_DISCORD_CLIENT_ID=$VITE_DISCORD_CLIENT_ID" > packages/functions/.env
           echo "VITE_DISCORD_BOT_TOKEN=$VITE_DISCORD_BOT_TOKEN" >> packages/functions/.env
           echo "VITE_DISCORD_CLIENT_SECRET=$VITE_DISCORD_CLIENT_SECRET" >> packages/functions/.env
-
-          more packages/functions/.env
 
           npm run functions:deploy
 
