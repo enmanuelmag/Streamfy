@@ -14,15 +14,17 @@ import type {
   UserAccessFirebaseType,
 } from '@global/types/dist/discord'
 
-import shuffleArray from 'knuth-shuffle-seeded'
-import { doc, getDoc } from 'firebase/firestore'
+import { initializeApp } from 'firebase-admin/app'
+import { getFirestore } from 'firebase-admin/firestore'
+import { shuffle as shuffleArray } from 'shuffle-seed'
 
-import { db } from '../../services/firebase'
 import DiscordClient from '../../services/discord'
 
-import { Logger } from '@global/utils'
+import * as Logger from 'firebase-functions/logger'
 
-const RANDOM_SEED = Number(process.env.VITE_RANDOM_SEED) || 7
+const db = getFirestore(initializeApp())
+
+const RANDOM_SEED = Number(process.env.VITE_RANDOM_SEED) || 42
 
 const USER_ACCESS_COLLECTION = 'user-access'
 
@@ -32,18 +34,18 @@ const CONTACT_EMAIL = 'enmanuelmag@cardor.dev'
 export const getUserAccess = async (username: string): Promise<UserAccessType> => {
   Logger.info('Getting user access')
 
-  const docRef = doc(db, USER_ACCESS_COLLECTION, username)
+  //const docRef = doc(db, USER_ACCESS_COLLECTION, username)
 
-  const docSnap = await getDoc(docRef)
+  const userAccess = await db.collection(USER_ACCESS_COLLECTION).doc(username).get()
 
-  if (!docSnap.exists()) {
+  if (!userAccess.exists) {
     Logger.info(`Username ${username} has no access yet`)
     throw new Error(`El ${username} no tiene acceso, por favor contactar a ${CONTACT_EMAIL}`)
   }
 
   Logger.info(`Username ${username} has access`)
 
-  const firebaseData = docSnap.data() as UserAccessFirebaseType
+  const firebaseData = userAccess.data() as UserAccessFirebaseType
 
   const data: UserAccessType = {
     dueDate: firebaseData.dueDate.toDate().valueOf(),
@@ -105,7 +107,7 @@ export const loginWithCode = async (code: string): Promise<UserDiscordType> => {
   const data = {
     code,
     grant_type: 'authorization_code',
-    redirect_uri: 'http://localhost:3500/loginCallback',
+    redirect_uri: process.env.VITE_DISCORD_REDIRECT_URI,
     client_id: process.env.VITE_DISCORD_CLIENT_ID,
     client_secret: process.env.VITE_DISCORD_CLIENT_SECRET,
   }
@@ -173,7 +175,7 @@ export const getMessages = async (
   for (const item of channels) {
     const { id, after, around, before, filters, limit } = item
 
-    const channel = Discord.channels.cache.get(id) as TextChannel
+    const channel = (await Discord.channels.fetch(id)) as TextChannel
 
     const fetchedMessages = await channel.messages.fetch({ limit, before, after, around })
 
@@ -198,8 +200,10 @@ export const getChannels = async (
 
   Logger.info('Getting channels', JSON.stringify(params))
 
-  const channels = Discord.channels.cache
-    .filter((channel) => channel.type === params.channelType)
+  const fetchChannels = await Discord.channels.fetch()
+
+  const channels = fetchChannels
+    .filter((channel) => channel?.type === params.channelType)
     .toJSON() as TextChannel[]
 
   Logger.info('Got channels', channels.length)

@@ -2,9 +2,12 @@ name: Build & Test
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
+#    branches:
+#      - main
+    paths:
+      - 'global/**'
+      - 'packages/web/**'
+
 
 # cancel in-progress runs on new commits to same PR (gitub.event.number)
 concurrency:
@@ -16,6 +19,8 @@ jobs:
     name: Build, lint, and test on Node
 
     runs-on: ubuntu-latest
+
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout repo

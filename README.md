@@ -4,7 +4,7 @@
 
 ## 🚨🚨 IMPORTANT 🚨🚨
 
-[Video tutorial here](https://youtu.be/AGYT0751dtE)
+[Video tutorial](https://youtu.be/3pEWZ9V5Wh0)
 
 You need to login with a Discord account to use the app. The reason is to fetch the user's guilds that the user is part of, and then fetch the channels of the guilds to show the user the channels that the user can join to watch the stream.
 

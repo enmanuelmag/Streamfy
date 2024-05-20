@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "es2016",
+    /* Modules */
+    "module": "CommonJS",
+    // "rootDir": "./",                                  /* Specify the root folder within your source files. */
+    "moduleResolution": "node",
+    "allowJs": true,
+    "outDir": "lib",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Type Checking */
+    "strict": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@models/*": ["models/*"],
+      "@controllers/*": ["controllers/*"],
+      "@middlewares/*": ["middlewares/*"]
+    },
+    "typeRoots": ["node_modules/@types", "node_modules/discord.js"]
+  }
+}

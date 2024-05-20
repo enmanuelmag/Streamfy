@@ -37,7 +37,7 @@
     "prettier": "prettier . --write"
   },
   "dependencies": {
-    "@formkit/tempo": "^0.0.13",
+    "@formkit/tempo": "^0.1.1",
     "@global/types": "1.0.0",
     "@global/utils": "1.0.0",
     "@mantine/carousel": "7.6.2",

@@ -1,5 +1,6 @@
 import zod from 'zod'
 import { ChannelType } from 'discord.js'
+import type { Timestamp } from 'firebase/firestore'
 
 export const BasicParamsSchema = zod.object({
   guildId: zod.string(),
@@ -118,19 +119,35 @@ export const DiscordGuildsSchema = zod.object({
 
 export type DiscordGuildsType = zod.infer<typeof DiscordGuildsSchema>
 
+export type UserAccessFirebaseType = {
+  lastPayment: Timestamp
+  dueDate: Timestamp
+}
+
+export const UserAccessSchema = zod.object({
+  lastPayment: zod.number().optional().nullable(),
+  dueDate: zod.number().optional().nullable(),
+})
+
+export type UserAccessType = zod.infer<typeof UserAccessSchema>
+
 export const UserDiscordSchema = zod.object({
   id: zod.string(),
   username: zod.string(),
   email: zod.string().optional().nullable(),
   guilds: zod.array(DiscordGuildsSchema),
   avatar: zod.string().optional().nullable(),
-  credentials: zod.object({
-    accessToken: zod.string(),
-    refreshToken: zod.string(),
-    tokenType: zod.string(),
-    expiresIn: zod.number(),
-    scope: zod.string(),
-  }),
+  credentials: zod
+    .object({
+      accessToken: zod.string(),
+      refreshToken: zod.string(),
+      tokenType: zod.string(),
+      expiresIn: zod.number(),
+      scope: zod.string(),
+    })
+    .optional()
+    .nullable(),
+  access: UserAccessSchema,
 })
 
 export type UserDiscordType = zod.infer<typeof UserDiscordSchema>
