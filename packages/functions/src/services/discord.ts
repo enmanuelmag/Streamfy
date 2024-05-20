@@ -3,7 +3,7 @@ import { Client, Events, GatewayIntentBits, Guild } from 'discord.js'
 import { Logger } from '@global/utils'
 
 class DiscordClient {
-  private client?: Client
+  private client: Client
   private instance: DiscordClient | null = null
   private guildClient: Guild | null = null
 
@@ -11,8 +11,7 @@ class DiscordClient {
 
   constructor() {
     if (!this.BOT_TOKEN && process.env.GITHUB_USER) {
-      Logger.error('Skipping Discord login, missing BOT_TOKEN on GitHub Actions')
-      return
+      throw new Error('No bot token found')
     }
 
     this.client = new Client({ intents: [GatewayIntentBits.Guilds] })
@@ -25,10 +24,6 @@ class DiscordClient {
   async getInstance(guildId: string) {
     if (!this.instance) {
       this.instance = new DiscordClient()
-    }
-
-    if (!this.instance.client) {
-      throw new Error('Discord client not initialized')
     }
 
     const guilds = this.instance.client.guilds.cache
