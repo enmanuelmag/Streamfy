@@ -114,7 +114,7 @@ function Root() {
                 </Title>
                 <Text c="gray" fz="xl">
                   Tienes alguna duda, sugerencia o petición para solicitar el uso de la plataforma?
-                  No dudes en contactarme a través de mi correo{' '}
+                  Contáctame a través de mi correo{' '}
                   <Anchor c="violet.3" href="mailto:enmanuelmag@cardor.dev" size="xl">
                     enmanuelmag@cardor.dev
                   </Anchor>
