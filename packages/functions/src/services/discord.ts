@@ -22,26 +22,19 @@ class DiscordClient {
   }
 
   async getInstance(guildId: string) {
-    return new Promise<Guild>((resolve, reject) => {
-      try {
-        if (!this.instance) {
-          Logger.info('Creating new instance')
-          this.instance = new DiscordClient()
-        }
+    if (!this.instance) {
+      Logger.info('Creating new instance')
+      this.instance = new DiscordClient()
+    }
 
-        Logger.info('Getting guild client')
+    Logger.info('Getting guild client')
 
-        const guilds = this.instance.client.guilds.cache
-        this.guildClient = guilds.get(guildId)!
+    const guild = await this.instance.client.guilds.fetch(guildId)
+    this.guildClient = guild
 
-        Logger.info('Guild client result', this.guildClient)
+    Logger.info('Guild client result', this.guildClient.name)
 
-        resolve(this.guildClient)
-      } catch (error) {
-        Logger.error('Error getting guild client', error)
-        reject(error)
-      }
-    })
+    return this.guildClient
   }
 }
 
