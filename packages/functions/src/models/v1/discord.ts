@@ -150,7 +150,9 @@ export const getEmojis = async (params: GetEmojisParamsType): Promise<EmojiType[
 
   Logger.info('Getting emojis')
 
-  const emojis = Discord.emojis.cache.toJSON()
+  const fetchEmojis = await Discord.emojis.fetch()
+
+  const emojis = fetchEmojis.toJSON()
 
   Logger.info('Got emojis', emojis.length)
 
