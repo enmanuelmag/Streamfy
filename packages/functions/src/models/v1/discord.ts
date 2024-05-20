@@ -107,7 +107,7 @@ export const loginWithCode = async (code: string): Promise<UserDiscordType> => {
   const data = {
     code,
     grant_type: 'authorization_code',
-    redirect_uri: 'http://localhost:3500/loginCallback',
+    redirect_uri: process.env.VITE_DISCORD_REDIRECT_URI,
     client_id: process.env.VITE_DISCORD_CLIENT_ID,
     client_secret: process.env.VITE_DISCORD_CLIENT_SECRET,
   }
