@@ -175,7 +175,7 @@ export const getMessages = async (
   for (const item of channels) {
     const { id, after, around, before, filters, limit } = item
 
-    const channel = Discord.channels.cache.get(id) as TextChannel
+    const channel = (await Discord.channels.fetch(id)) as TextChannel
 
     const fetchedMessages = await channel.messages.fetch({ limit, before, after, around })
 
@@ -200,8 +200,10 @@ export const getChannels = async (
 
   Logger.info('Getting channels', JSON.stringify(params))
 
-  const channels = Discord.channels.cache
-    .filter((channel) => channel.type === params.channelType)
+  const fetchChannels = await Discord.channels.fetch()
+
+  const channels = fetchChannels
+    .filter((channel) => channel?.type === params.channelType)
     .toJSON() as TextChannel[]
 
   Logger.info('Got channels', channels.length)
