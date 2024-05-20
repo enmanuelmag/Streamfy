@@ -46,6 +46,7 @@ jobs:
           VITE_DISCORD_API_URL: ${{ secrets.VITE_DISCORD_API_URL }}
           VITE_DISCORD_CLIENT_ID: ${{ secrets.VITE_DISCORD_CLIENT_ID }}
           VITE_DISCORD_BOT_TOKEN: ${{ secrets.VITE_DISCORD_BOT_TOKEN }}
+          VITE_DISCORD_REDIRECT_URI: ${{ secrets.VITE_DISCORD_REDIRECT_URI }}
           VITE_DISCORD_CLIENT_SECRET: ${{ secrets.VITE_DISCORD_CLIENT_SECRET }}
 
         run: |
@@ -56,6 +57,7 @@ jobs:
           echo "VITE_DISCORD_API_URL=$VITE_DISCORD_API_URL" >> packages/functions/.env
           echo "VITE_DISCORD_CLIENT_ID=$VITE_DISCORD_CLIENT_ID" >> packages/functions/.env
           echo "VITE_DISCORD_BOT_TOKEN=$VITE_DISCORD_BOT_TOKEN" >> packages/functions/.env
+          echo "VITE_DISCORD_REDIRECT_URI=$VITE_DISCORD_REDIRECT_URI" >> packages/functions/.env
           echo "VITE_DISCORD_CLIENT_SECRET=$VITE_DISCORD_CLIENT_SECRET" >> packages/functions/.env
 
           npm run functions:deploy
