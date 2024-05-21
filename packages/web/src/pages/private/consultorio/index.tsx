@@ -36,7 +36,7 @@ import SliderHUD from '@components/shared/SliderHUD'
 
 import { useSliderMedia } from '@hooks/slider'
 
-import { Logger } from '@global/utils/src'
+import { ErrorService, Logger } from '@global/utils/src'
 import { transitionView } from '@src/utils/viewTransition'
 
 import { notifications } from '@mantine/notifications'
@@ -73,13 +73,13 @@ const Consultorio = () => {
     },
   })
 
-  const emojisQuery = useQuery<EmojiType[] | null, Error>({
+  const emojisQuery = useQuery<EmojiType[] | null, ErrorService>({
     queryKey: ['discordEmojis'],
     queryFn: async () => DiscordRepo.getEmojis({ guildId: selectedGuild!.id }),
     enabled: !messages,
   })
 
-  const channelQuery = useQuery<ChannelResponseType[] | null, Error>({
+  const channelQuery = useQuery<ChannelResponseType[] | null, ErrorService>({
     queryKey: ['discordChannels'],
     enabled: !messages,
     queryFn: () => DiscordRepo.getChannels({ guildId: selectedGuild!.id, channelType: 0 }),
@@ -87,7 +87,7 @@ const Consultorio = () => {
 
   const messagesMutation = useMutation<
     MessageResponseType[] | null,
-    Error,
+    ErrorService,
     GetMessagesParamsType['channels'],
     GetMessagesParamsType['channels']
   >({
@@ -106,7 +106,7 @@ const Consultorio = () => {
       notifications.show({
         color: 'red',
         title: 'Error al obtener mensajes',
-        message: error.message || 'Error al obtener mensajes',
+        message: ErrorService.getMessageFromCode(error.code) || 'Error al obtener mensajes',
       })
     },
   })
@@ -125,7 +125,8 @@ const Consultorio = () => {
       notifications.show({
         color: 'red',
         title: 'Error al obtener canales',
-        message: channelQuery.error.message || 'Error al obtener canales',
+        message:
+          ErrorService.getMessageFromCode(channelQuery.error.code) || 'Error al obtener canales',
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -9,6 +9,7 @@ import { useStoreBase, useStoreConsultorio, useStoreLaughLoss } from '@src/store
 
 import { ROUTES } from '@constants/routes'
 import { validateUserAccess } from '@src/utils/access'
+import { ErrorService } from '@global/utils'
 
 export default function LoginCallback() {
   const navigate = useNavigate()
@@ -28,11 +29,11 @@ export default function LoginCallback() {
             reset()
           }
         })
-        .catch((e) => {
+        .catch((e: ErrorService) => {
           notifications.show({
             color: 'red',
             title: 'Error',
-            message: e?.message ?? 'Error al iniciar sesión',
+            message: ErrorService.getMessageFromCode(e.code) ?? 'Error al iniciar sesión',
           })
           navigate(ROUTES.ROOT)
         })

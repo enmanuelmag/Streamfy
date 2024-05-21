@@ -20,7 +20,6 @@ import '../styles.scss'
 function Root() {
   const { user } = useStoreBase((state) => state)
   const navigate = useNavigate()
-  console.log('user', !!user)
 
   return (
     <AppShell
