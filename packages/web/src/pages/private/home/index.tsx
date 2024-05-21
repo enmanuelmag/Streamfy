@@ -13,7 +13,7 @@ import { modals } from '@mantine/modals'
 import { useStoreBase } from '@src/store'
 
 type CardProps = {
-  image: string
+  image: string | null
   href: string
   title: string
   description: string | React.ReactNode
@@ -56,6 +56,19 @@ const Cards: CardProps[] = [
       <Text c="dimmed" size="sm">
         Actividad donde el Baity revisa memes del Reddit{' '}
         <Image alt="Reddit" className="!cd-inline" h={20} src={EMOJIS.BAITY_MEME} w={20} />
+      </Text>
+    ),
+  },
+  {
+    image: null,
+    title: 'Bingo',
+    transitionClass: 'bingo-transition',
+    comingSoon: true,
+    href: ROUTES.BINGO,
+    description: (
+      <Text c="dimmed" size="sm">
+        Creación de cartillas de bingo para eventos especiales{' '}
+        <Image alt="Reddit" className="!cd-inline" h={20} src={EMOJIS.BAITY_DORITOS} w={20} />
       </Text>
     ),
   },

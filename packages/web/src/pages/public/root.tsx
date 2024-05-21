@@ -135,14 +135,14 @@ function Root() {
   function buildSequence(): Sequence {
     const sequence = ['sencilla', 'divertida', 'fácil', 'rápida']
 
-    const last = sequence[sequence.length - 1]
+    const last = sequence.at(-1)
 
     let idx = 0
     let current = null
     const newSequence: Sequence = []
 
     while (current !== last) {
-      current = sequence[idx]
+      current = sequence.at(idx) as string
       newSequence.push(
         current,
         (el) => el?.classList.remove(CURSOR_CLASS_NAME),
