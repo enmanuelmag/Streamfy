@@ -40,7 +40,7 @@ export const getUser = async ({
   accessToken: string
   tokenType: string
 }): Promise<UserDiscordType> => {
-  Logger.info('Getting user')
+  Logger.info('Getting user', accessToken, tokenType)
 
   let responseUser: Response
   try {
@@ -61,6 +61,7 @@ export const getUser = async ({
         Authorization: `${tokenType} ${accessToken}`,
       },
     })
+    Logger.info('Got guilds', responseGuilds.status)
   } catch (error) {
     Logger.error('Error getting guilds', error)
     throw new ErrorService(ErrorCodes.ERROR_GETTING_USER.code, 'Error getting guilds')
@@ -100,7 +101,7 @@ export const getUser = async ({
 }
 
 export const loginWithCode = async (code: string, isDev?: boolean): Promise<UserDiscordType> => {
-  Logger.info('Logging in with code', code)
+  Logger.info('Logging in with code', code, isDev)
 
   const data = {
     code,
@@ -109,6 +110,8 @@ export const loginWithCode = async (code: string, isDev?: boolean): Promise<User
     client_id: process.env.VITE_DISCORD_CLIENT_ID,
     client_secret: process.env.VITE_DISCORD_CLIENT_SECRET,
   }
+
+  Logger.info('Getting discord credentials with', data)
 
   const encodedData = encodeParams(data)
 
