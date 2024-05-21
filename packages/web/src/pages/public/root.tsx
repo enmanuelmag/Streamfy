@@ -17,6 +17,11 @@ import {
 
 import '../styles.scss'
 
+const CURSOR_CLASS_NAME = 'custom-type-animation-cursor'
+
+type SequenceElement = string | number | ((element: HTMLElement | null) => void | Promise<void>)
+type Sequence = Array<SequenceElement>
+
 function Root() {
   const { user } = useStoreBase((state) => state)
   const navigate = useNavigate()
@@ -63,7 +68,8 @@ function Root() {
                   La manera mas
                 </Title>
                 <TypeAnimation
-                  className="cd-text-violet-400 !cd-text-[3rem] !cd-font-bold text-animation-transition"
+                  className={`cd-text-violet-400 !cd-text-[3rem] !cd-font-bold text-animation-transition ${CURSOR_CLASS_NAME}`}
+                  cursor={false}
                   repeat={Infinity}
                   sequence={buildSequence()}
                   speed={50}
@@ -126,18 +132,23 @@ function Root() {
     </AppShell>
   )
 
-  function buildSequence() {
+  function buildSequence(): Sequence {
     const sequence = ['sencilla', 'divertida', 'fácil', 'rápida']
 
     const last = sequence[sequence.length - 1]
 
     let idx = 0
     let current = null
-    const newSequence = []
+    const newSequence: Sequence = []
 
     while (current !== last) {
       current = sequence[idx]
-      newSequence.push(current, 1000, '', 500)
+      newSequence.push(
+        current,
+        (el) => el?.classList.remove(CURSOR_CLASS_NAME),
+        1750,
+        (el) => el?.classList.add(CURSOR_CLASS_NAME),
+      )
       idx++
     }
 
