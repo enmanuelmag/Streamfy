@@ -3,6 +3,7 @@ import { Card, Center, Container, Flex, Image, Modal, Overlay, Text } from '@man
 
 import { ROUTES } from '@src/constants/routes'
 
+import Bingo from '@assets/images/bingo.png'
 import Reddit from '@assets/images/reddit.png'
 import Doctor from '@assets/images/consultorio.png'
 import LaughLoss from '@assets/images/si_ries_pierdes.jpg'
@@ -60,7 +61,7 @@ const Cards: CardProps[] = [
     ),
   },
   {
-    image: null,
+    image: Bingo,
     title: 'Bingo',
     transitionClass: 'bingo-transition',
     comingSoon: true,

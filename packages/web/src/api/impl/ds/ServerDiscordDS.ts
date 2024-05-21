@@ -39,6 +39,7 @@ export default class ServerDS extends DiscordDS {
     try {
       const response = await axios.post<ResponseType<UserDiscordType>>(this.getURL('login'), {
         code,
+        isDev: import.meta.env.DEV,
       })
 
       if (response.data.status !== 200) {

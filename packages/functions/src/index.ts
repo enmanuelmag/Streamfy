@@ -23,7 +23,7 @@ setGlobalOptions({
 
 export const login = onRequest({ cors: true }, async (req, res) => {
   try {
-    const user = await Discord.loginWithCode(req.body.code)
+    const user = await Discord.loginWithCode(req.body.code, req.body.isDev)
     res.json(Response(200, 'Logged in with code', user))
   } catch (error) {
     Logger.error('Error retrieving user', error)

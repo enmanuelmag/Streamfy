@@ -99,13 +99,13 @@ export const getUser = async ({
   } as UserDiscordType
 }
 
-export const loginWithCode = async (code: string): Promise<UserDiscordType> => {
+export const loginWithCode = async (code: string, isDev?: boolean): Promise<UserDiscordType> => {
   Logger.info('Logging in with code', code)
 
   const data = {
     code,
     grant_type: 'authorization_code',
-    redirect_uri: process.env.VITE_DISCORD_REDIRECT_URI,
+    redirect_uri: !isDev ? process.env.VITE_DISCORD_REDIRECT_URI : 'http://localhost:3500',
     client_id: process.env.VITE_DISCORD_CLIENT_ID,
     client_secret: process.env.VITE_DISCORD_CLIENT_SECRET,
   }
