@@ -18,6 +18,8 @@ import { initializeApp } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
 import { shuffle as shuffleArray } from 'shuffle-seed'
 
+import { ErrorService, ErrorCodes } from '@global/utils'
+
 import DiscordClient from '../../services/discord'
 
 import * as Logger from 'firebase-functions/logger'
@@ -30,31 +32,7 @@ const USER_ACCESS_COLLECTION = 'user-access'
 
 const CONTACT_EMAIL = 'enmanuelmag@cardor.dev'
 
-// Public methods
-export const getUserAccess = async (username: string): Promise<UserAccessType> => {
-  Logger.info('Getting user access')
-
-  //const docRef = doc(db, USER_ACCESS_COLLECTION, username)
-
-  const userAccess = await db.collection(USER_ACCESS_COLLECTION).doc(username).get()
-
-  if (!userAccess.exists) {
-    Logger.info(`Username ${username} has no access yet`)
-    throw new Error(`El ${username} no tiene acceso, por favor contactar a ${CONTACT_EMAIL}`)
-  }
-
-  Logger.info(`Username ${username} has access`)
-
-  const firebaseData = userAccess.data() as UserAccessFirebaseType
-
-  const data: UserAccessType = {
-    dueDate: firebaseData.dueDate.toDate().valueOf(),
-    lastPayment: firebaseData.lastPayment.toDate().valueOf(),
-  }
-
-  return data
-}
-
+// Public methods to controllers
 export const getUser = async ({
   accessToken,
   tokenType,
@@ -64,23 +42,43 @@ export const getUser = async ({
 }): Promise<UserDiscordType> => {
   Logger.info('Getting user')
 
-  const responseUser = await fetch(`${process.env.VITE_DISCORD_API_URL}/users/@me`, {
-    headers: {
-      Authorization: `${tokenType} ${accessToken}`,
-    },
-  })
+  let responseUser: Response
+  try {
+    responseUser = await fetch(`${process.env.VITE_DISCORD_API_URL}/users/@me`, {
+      headers: {
+        Authorization: `${tokenType} ${accessToken}`,
+      },
+    })
+  } catch (error) {
+    Logger.error('Error getting user', error)
+    throw new ErrorService(ErrorCodes.ERROR_GETTING_USER.code, 'Error getting user')
+  }
 
-  const responseGuilds = await fetch(`${process.env.VITE_DISCORD_API_URL}/users/@me/guilds`, {
-    headers: {
-      Authorization: `${tokenType} ${accessToken}`,
-    },
-  })
+  let responseGuilds: Response
+  try {
+    responseGuilds = await fetch(`${process.env.VITE_DISCORD_API_URL}/users/@me/guilds`, {
+      headers: {
+        Authorization: `${tokenType} ${accessToken}`,
+      },
+    })
+  } catch (error) {
+    Logger.error('Error getting guilds', error)
+    throw new ErrorService(ErrorCodes.ERROR_GETTING_USER.code, 'Error getting guilds')
+  }
 
-  const allGuilds = (await responseGuilds.json()) as DiscordGuildsType[]
+  let allGuilds: DiscordGuildsType[] = []
+  let ownerGuilds: DiscordGuildsType[] = []
+  let discordUser: User & { email: string; global_name: string }
+  try {
+    allGuilds = await responseGuilds.json()
 
-  const ownerGuilds = allGuilds.filter((guild) => guild.owner)
+    ownerGuilds = allGuilds.filter((guild) => guild.owner)
 
-  const discordUser = (await responseUser.json()) as User & { email: string; global_name: string }
+    discordUser = await responseUser.json()
+  } catch (error) {
+    Logger.error('Error mapping user data', error)
+    throw new ErrorService(ErrorCodes.ERROR_MAPPING_USER_DATA.code, 'Error mapping user data')
+  }
 
   const access = await getUserAccess(discordUser.username)
 
@@ -114,13 +112,22 @@ export const loginWithCode = async (code: string): Promise<UserDiscordType> => {
 
   const encodedData = encodeParams(data)
 
-  const responseToken = await fetch(`${process.env.VITE_DISCORD_API_URL}/oauth2/token`, {
-    method: 'POST',
-    body: encodedData,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-  })
+  let responseToken: Response
+  try {
+    responseToken = await fetch(`${process.env.VITE_DISCORD_API_URL}/oauth2/token`, {
+      method: 'POST',
+      body: encodedData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+  } catch (error) {
+    Logger.error('Error getting discord credentials', error)
+    throw new ErrorService(
+      ErrorCodes.ERROR_GET_DISCORD_CREDS.code,
+      'Error getting discord credentials',
+    )
+  }
 
   const rawCredentials = await responseToken.json()
 
@@ -150,17 +157,22 @@ export const getEmojis = async (params: GetEmojisParamsType): Promise<EmojiType[
 
   Logger.info('Getting emojis')
 
-  const fetchEmojis = await Discord.emojis.fetch()
+  try {
+    const fetchEmojis = await Discord.emojis.fetch()
 
-  const emojis = fetchEmojis.toJSON()
+    const emojis = fetchEmojis.toJSON()
 
-  Logger.info('Got emojis', emojis.length)
+    Logger.info('Got emojis', emojis.length)
 
-  return emojis.map((e) => ({
-    id: e.id,
-    imageURL: e.imageURL(),
-    name: e.name || e.id,
-  }))
+    return emojis.map((e) => ({
+      id: e.id,
+      imageURL: e.imageURL(),
+      name: e.name || e.id,
+    }))
+  } catch (error) {
+    Logger.error('Error getting emojis', error)
+    throw new ErrorService(ErrorCodes.ERROR_GETTING_EMOJIS.code, 'Error getting emojis')
+  }
 }
 
 export const getMessages = async (
@@ -174,16 +186,21 @@ export const getMessages = async (
 
   let messages: Message[] = []
 
-  for (const item of channels) {
-    const { id, after, around, before, filters, limit } = item
+  try {
+    for (const item of channels) {
+      const { id, after, around, before, filters, limit } = item
 
-    const channel = (await Discord.channels.fetch(id)) as TextChannel
+      const channel = (await Discord.channels.fetch(id)) as TextChannel
 
-    const fetchedMessages = await channel.messages.fetch({ limit, before, after, around })
+      const fetchedMessages = await channel.messages.fetch({ limit, before, after, around })
 
-    const filteredMessages = filterMessages(fetchedMessages.toJSON(), filters)
+      const filteredMessages = filterMessages(fetchedMessages.toJSON(), filters)
 
-    messages.push(...filteredMessages)
+      messages.push(...filteredMessages)
+    }
+  } catch (error) {
+    Logger.error('Error getting messages', error)
+    throw new ErrorService(ErrorCodes.ERROR_GETTING_MESSAGES.code, 'Error getting messages')
   }
 
   Logger.info('All messages fetched', messages.length)
@@ -202,23 +219,56 @@ export const getChannels = async (
 
   Logger.info('Getting channels', JSON.stringify(params))
 
-  const fetchChannels = await Discord.channels.fetch()
+  try {
+    const fetchChannels = await Discord.channels.fetch()
 
-  const channels = fetchChannels
-    .filter((channel) => channel?.type === params.channelType)
-    .toJSON() as TextChannel[]
+    const channels = fetchChannels
+      .filter((channel) => channel?.type === params.channelType)
+      .toJSON() as TextChannel[]
 
-  Logger.info('Got channels', channels.length)
+    Logger.info('Got channels', channels.length)
 
-  return channels.map((channel) => ({
-    id: channel.id,
-    name: channel.name,
-    type: channel.type,
-    url: channel.url,
-  }))
+    return channels.map((channel) => ({
+      id: channel.id,
+      name: channel.name,
+      type: channel.type,
+      url: channel.url,
+    }))
+  } catch (error) {
+    Logger.error('Error getting channels', error)
+    throw new ErrorService(ErrorCodes.ERROR_GETTING_CHANNELS.code, 'Error getting channels')
+  }
 }
 
-// Internal methods
+/*
+  Internal methods
+*/
+async function getUserAccess(username: string): Promise<UserAccessType> {
+  try {
+    Logger.info('Getting user access')
+    const userAccess = await db.collection(USER_ACCESS_COLLECTION).doc(username).get()
+
+    if (!userAccess.exists) {
+      Logger.info(`Username ${username} has no access yet`)
+      throw new Error(`El ${username} no tiene acceso, por favor contactar a ${CONTACT_EMAIL}`)
+    }
+
+    Logger.info(`Username ${username} has access`)
+
+    const firebaseData = userAccess.data() as UserAccessFirebaseType
+
+    const data: UserAccessType = {
+      dueDate: firebaseData.dueDate.toDate().valueOf(),
+      lastPayment: firebaseData.lastPayment.toDate().valueOf(),
+    }
+
+    return data
+  } catch (error) {
+    Logger.error('Error getting user access', error)
+    throw new ErrorService(ErrorCodes.ERROR_GETTING_ACCESS.code, 'Error getting user access')
+  }
+}
+
 function encodeParams(obj: Record<string, unknown>) {
   let string = ''
 

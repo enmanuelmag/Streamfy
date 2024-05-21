@@ -10,7 +10,7 @@ import {
   GetChannelsParamsSchema,
   GetMessagesParamsSchema,
 } from '@global/types/dist/discord'
-import { Response } from '@global/utils'
+import { ErrorService, Response } from '@global/utils'
 
 import * as Discord from './models/v1/discord'
 
@@ -27,11 +27,11 @@ export const login = onRequest({ cors: true }, async (req, res) => {
     res.json(Response(200, 'Logged in with code', user))
   } catch (error) {
     Logger.error('Error retrieving user', error)
-    if (error instanceof Error) {
-      res.json(Response(400, error.message, null))
-    } else {
-      res.json(Response(500, 'Error logging in with code', null))
+    if (error instanceof ErrorService) {
+      res.json(Response(400, error.message, null, error.code))
+      return
     }
+    res.json(Response(500, 'Error logging in with code', null))
   }
 })
 
@@ -52,11 +52,10 @@ export const emojis = onRequest({ cors: true }, async (req, res) => {
   } catch (error) {
     Logger.error('Error retrieving user', error)
 
-    if (error instanceof Error) {
-      res.json(Response(400, error.message, null))
+    if (error instanceof ErrorService) {
+      res.json(Response(400, error.message, null, error.code))
       return
     }
-
     res.json(Response(500, 'Error retrieving emojis', null))
   }
 })
@@ -68,11 +67,10 @@ export const user = onRequest({ cors: true }, async (req, res) => {
   } catch (error) {
     Logger.error('Error retrieving user', error)
 
-    if (error instanceof Error) {
-      res.json(Response(400, error.message, null))
+    if (error instanceof ErrorService) {
+      res.json(Response(400, error.message, null, error.code))
       return
     }
-
     res.json(Response(500, 'Error retrieving user', null))
   }
 })
@@ -94,11 +92,10 @@ export const messages = onRequest({ cors: true }, async (req, res) => {
   } catch (error) {
     Logger.error('Error retrieving user', error)
 
-    if (error instanceof Error) {
-      res.json(Response(400, error.message, null))
+    if (error instanceof ErrorService) {
+      res.json(Response(400, error.message, null, error.code))
       return
     }
-
     res.json(Response(500, 'Error retrieving messages', null))
   }
 })
@@ -120,11 +117,10 @@ export const channels = onRequest({ cors: true }, async (req, res) => {
   } catch (error) {
     Logger.error('Error retrieving user', error)
 
-    if (error instanceof Error) {
-      res.json(Response(400, error.message, null))
+    if (error instanceof ErrorService) {
+      res.json(Response(400, error.message, null, error.code))
       return
     }
-
     res.json(Response(500, 'Error retrieving channels', null))
   }
 })
