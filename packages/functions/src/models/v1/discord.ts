@@ -40,7 +40,7 @@ export const getUser = async ({
   accessToken: string
   tokenType: string
 }): Promise<UserDiscordType> => {
-  Logger.info('Getting user', accessToken, tokenType)
+  Logger.info('Getting user', accessToken.length, tokenType.length)
 
   let responseUser: Response
   try {
@@ -101,7 +101,7 @@ export const getUser = async ({
 }
 
 export const loginWithCode = async (code: string, isDev?: boolean): Promise<UserDiscordType> => {
-  Logger.info('Logging in with code', code, isDev)
+  Logger.info('Logging in with code', code.length, isDev)
 
   const data = {
     code,
@@ -113,9 +113,9 @@ export const loginWithCode = async (code: string, isDev?: boolean): Promise<User
     client_secret: process.env.VITE_DISCORD_CLIENT_SECRET,
   }
 
-  Logger.info('Getting discord credentials with', data)
-
   const encodedData = encodeParams(data)
+
+  Logger.info('Getting discord credentials with', encodedData)
 
   let responseToken: Response
   try {
@@ -137,8 +137,6 @@ export const loginWithCode = async (code: string, isDev?: boolean): Promise<User
 
   const rawCredentials = await responseToken.json()
 
-  Logger.info('Credentials raw', rawCredentials)
-
   const credentials: DiscordTokenType = {
     accessToken: rawCredentials.access_token,
     refreshToken: rawCredentials.refresh_token,
@@ -146,8 +144,6 @@ export const loginWithCode = async (code: string, isDev?: boolean): Promise<User
     expiresIn: rawCredentials.expires_in,
     scope: rawCredentials.scope,
   }
-
-  Logger.info('Credentials received', credentials)
 
   const discordUser = await getUser({
     accessToken: credentials.accessToken,
