@@ -124,6 +124,7 @@ export const loginWithCode = async (code: string, isDev?: boolean): Promise<User
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     })
+    Logger.info('Got discord credentials', responseToken.status)
   } catch (error) {
     Logger.error('Error getting discord credentials', error)
     throw new ErrorService(
@@ -133,6 +134,8 @@ export const loginWithCode = async (code: string, isDev?: boolean): Promise<User
   }
 
   const rawCredentials = await responseToken.json()
+
+  Logger.info('Credentials raw', rawCredentials)
 
   const credentials: DiscordTokenType = {
     accessToken: rawCredentials.access_token,
