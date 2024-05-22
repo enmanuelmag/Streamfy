@@ -48,6 +48,18 @@ const Cards: CardProps[] = [
     ),
   },
   {
+    image: Bingo,
+    title: 'Bingo',
+    transitionClass: 'bingo-transition',
+    href: ROUTES.BINGO,
+    description: (
+      <Text c="dimmed" size="sm">
+        Creación de cartillas de bingo para eventos especiales{' '}
+        <Image alt="Reddit" className="!cd-inline" h={20} src={EMOJIS.BAITY_DORITOS} w={20} />
+      </Text>
+    ),
+  },
+  {
     image: Reddit,
     title: 'Reddit',
     transitionClass: 'reddit-transition',
@@ -57,19 +69,6 @@ const Cards: CardProps[] = [
       <Text c="dimmed" size="sm">
         Actividad donde el Baity revisa memes del Reddit{' '}
         <Image alt="Reddit" className="!cd-inline" h={20} src={EMOJIS.BAITY_MEME} w={20} />
-      </Text>
-    ),
-  },
-  {
-    image: Bingo,
-    title: 'Bingo',
-    transitionClass: 'bingo-transition',
-    comingSoon: true,
-    href: ROUTES.BINGO,
-    description: (
-      <Text c="dimmed" size="sm">
-        Creación de cartillas de bingo para eventos especiales{' '}
-        <Image alt="Reddit" className="!cd-inline" h={20} src={EMOJIS.BAITY_DORITOS} w={20} />
       </Text>
     ),
   },
@@ -87,7 +86,7 @@ const Home = () => {
         centered
         opened={Boolean(!selectedGuild && !listGuilds.length)}
         title="No tienes servidores de Discord"
-        onClose={() => navigate(ROUTES.LOGIN)}
+        onClose={() => navigate(ROUTES.ROOT)}
       >
         <Text>
           Para poder acceder a las actividades, necesitas seleccionar un servidor de Discord en el
@@ -129,7 +128,7 @@ const Home = () => {
                 >
                   <Card.Section>
                     <Image
-                      alt="No way!"
+                      alt={card.title}
                       className={card.transitionClass}
                       h={210}
                       src={card.image}
