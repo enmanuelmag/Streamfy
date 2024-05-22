@@ -37,9 +37,9 @@ export const ErrorCodes = {
     message: 'Error getting channels from Discord',
   },
   //Credentials
-  ERROR_CREDENTIALS: {
+  ERROR_CREDENTIALS_LOCAL_STORAGE: {
     code: 'ERROR_CREDENTIALS',
-    message: 'Error getting credentials',
+    message: 'Error getting credentials from local storage',
   },
 }
 

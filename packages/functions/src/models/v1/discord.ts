@@ -51,7 +51,8 @@ export const getUser = async ({
     })
   } catch (error) {
     Logger.error('Error getting user', error)
-    throw new ErrorService(ErrorCodes.ERROR_GETTING_USER.code, 'Error getting user')
+    const { code, message } = ErrorCodes.ERROR_GETTING_USER
+    throw new ErrorService(code, message)
   }
 
   let responseGuilds: Response
@@ -64,7 +65,8 @@ export const getUser = async ({
     Logger.info('Got guilds', responseGuilds.status)
   } catch (error) {
     Logger.error('Error getting guilds', error)
-    throw new ErrorService(ErrorCodes.ERROR_GETTING_USER.code, 'Error getting guilds')
+    const { code, message } = ErrorCodes.ERROR_GETTING_GUILDS
+    throw new ErrorService(code, message)
   }
 
   let allGuilds: DiscordGuildsType[] = []
@@ -78,7 +80,8 @@ export const getUser = async ({
     discordUser = await responseUser.json()
   } catch (error) {
     Logger.error('Error mapping user data', error)
-    throw new ErrorService(ErrorCodes.ERROR_MAPPING_USER_DATA.code, 'Error mapping user data')
+    const { code, message } = ErrorCodes.ERROR_MAPPING_USER_DATA
+    throw new ErrorService(code, message)
   }
 
   const access = await getUserAccess(discordUser.username)
@@ -129,10 +132,8 @@ export const loginWithCode = async (code: string, isDev?: boolean): Promise<User
     Logger.info('Got discord credentials', responseToken.status)
   } catch (error) {
     Logger.error('Error getting discord credentials', error)
-    throw new ErrorService(
-      ErrorCodes.ERROR_GET_DISCORD_CREDS.code,
-      'Error getting discord credentials',
-    )
+    const { code, message } = ErrorCodes.ERROR_GET_DISCORD_CREDS
+    throw new ErrorService(code, message)
   }
 
   const rawCredentials = await responseToken.json()
@@ -175,7 +176,8 @@ export const getEmojis = async (params: GetEmojisParamsType): Promise<EmojiType[
     }))
   } catch (error) {
     Logger.error('Error getting emojis', error)
-    throw new ErrorService(ErrorCodes.ERROR_GETTING_EMOJIS.code, 'Error getting emojis')
+    const { code, message } = ErrorCodes.ERROR_GETTING_EMOJIS
+    throw new ErrorService(code, message)
   }
 }
 
@@ -204,7 +206,8 @@ export const getMessages = async (
     }
   } catch (error) {
     Logger.error('Error getting messages', error)
-    throw new ErrorService(ErrorCodes.ERROR_GETTING_MESSAGES.code, 'Error getting messages')
+    const { code, message } = ErrorCodes.ERROR_GETTING_MESSAGES
+    throw new ErrorService(code, message)
   }
 
   Logger.info('All messages fetched', messages.length)
@@ -240,7 +243,8 @@ export const getChannels = async (
     }))
   } catch (error) {
     Logger.error('Error getting channels', error)
-    throw new ErrorService(ErrorCodes.ERROR_GETTING_CHANNELS.code, 'Error getting channels')
+    const { code, message } = ErrorCodes.ERROR_GETTING_CHANNELS
+    throw new ErrorService(code, message)
   }
 }
 
@@ -269,7 +273,8 @@ async function getUserAccess(username: string): Promise<UserAccessType> {
     return data
   } catch (error) {
     Logger.error('Error getting user access', error)
-    throw new ErrorService(ErrorCodes.ERROR_GETTING_ACCESS.code, 'Error getting user access')
+    const { code, message } = ErrorCodes.ERROR_GETTING_ACCESS
+    throw new ErrorService(code, message)
   }
 }
 

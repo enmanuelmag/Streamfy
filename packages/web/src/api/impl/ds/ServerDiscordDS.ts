@@ -60,7 +60,8 @@ export default class ServerDS extends DiscordDS {
     const credentials = localStorage.getItem(KEY_CREDENTIALS)
 
     if (!credentials) {
-      throw new ErrorService(ErrorCodes.ERROR_CREDENTIALS.code, 'No credentials found')
+      const { code, message } = ErrorCodes.ERROR_CREDENTIALS_LOCAL_STORAGE
+      throw new ErrorService(code, message)
     }
 
     try {
