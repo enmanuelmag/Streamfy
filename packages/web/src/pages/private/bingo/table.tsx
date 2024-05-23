@@ -21,9 +21,9 @@ const Table = (props: TableProps) => {
 
   const parsedLayout = parseInt(layout)
 
-  const tableRef = React.useRef<HTMLDivElement>(null)
+  console.log('layout', layout, parsedLayout)
 
-  const [span] = React.useState(Math.floor(12 / parsedLayout))
+  const tableRef = React.useRef<HTMLDivElement>(null)
 
   const [markers, setMarkers] = React.useState<number[]>([])
 
@@ -40,7 +40,7 @@ const Table = (props: TableProps) => {
                 className={$(generated && '!cd-cursor-pointer')}
                 h={175}
                 key={index}
-                span={span}
+                span={12 / parsedLayout}
                 onClick={handleMarker.bind(null, index)}
               >
                 <div className="cd-relative cd-flex cd-items-center cd-justify-center cd-h-full cd-w-ful cd-border-gray-500 cd-border-solid cd-border-[1px] cd-rounded-lg">

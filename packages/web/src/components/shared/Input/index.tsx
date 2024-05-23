@@ -63,6 +63,7 @@ export default function Input({ name, label, component, ...rest }: InputProps) {
         label={label}
         placeholder={rest.placeholder}
         withAsterisk={rest.required}
+        {...rest.inputsProps}
       />
     )
   }

@@ -67,9 +67,9 @@ const Bingo = () => {
   const form = useForm<Step1Type>({
     validate: zodResolver(Step1Schema),
     initialValues: {
-      title: 'Bingo no-E3',
-      description: 'Cartilla de bingo para el evento no-E3',
-      sentences: SENTENCES_PLACEHOLDER.split('\n'),
+      title: '',
+      description: '',
+      sentences: [],
       layout: '3',
     },
   })
@@ -116,7 +116,7 @@ const Bingo = () => {
     },
   })
 
-  Logger.info('Bingo page', bingoCreateMutation.data)
+  Logger.info('Bingo page', form.values)
 
   return (
     <Container fluid className="cd-w-full cd-h-full cd-relative" p={0}>
@@ -126,12 +126,13 @@ const Bingo = () => {
         variant="transparent"
         onClick={() => {
           transitionView(() => navigate(ROUTES.HOME))
+          form.reset()
         }}
       >
         Volver
       </Button>
 
-      <Container className="cd-w-full cd-h-full cd-relative" p={0} size="lg">
+      <Container className="cd-w-full cd-h-full cd-relative" p={0} size="xl">
         <Center className="cd-pt-[4rem] cd-min-w-[200px]">
           <Stack className="cd-w-full">
             <Title order={2}>Bingo!</Title>
