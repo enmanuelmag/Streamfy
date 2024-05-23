@@ -13,7 +13,7 @@ const Loading = ({ show, className, text, loadingSize = 'xl' }: LoadingProps) =>
   return (
     <Center className={`${className} cd-h-full cd-w-full`}>
       <Flex align="center" direction="column" justify="center">
-        <Loader size={loadingSize} />
+        <Loader size={loadingSize} type="dots" />
         {React.isValidElement(text) ? (
           text
         ) : (

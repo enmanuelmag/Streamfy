@@ -11,7 +11,7 @@ import { $ } from '@src/utils/styles'
 import Kojima from '@assets/images/Kojima.webp'
 
 type TableProps = {
-  table: Step1Type
+  table: Step1Type & { id?: string }
   generated?: boolean
 }
 

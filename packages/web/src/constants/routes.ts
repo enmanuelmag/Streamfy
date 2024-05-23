@@ -11,4 +11,5 @@ export const ROUTES = {
   BINGO: '/bingo',
   //Public
   ROOT: '/',
+  BINGO_PLAY: '/bingoPlay/:id',
 }

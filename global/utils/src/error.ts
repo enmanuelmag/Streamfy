@@ -41,6 +41,15 @@ export const ErrorCodes = {
     code: 'ERROR_CREDENTIALS',
     message: 'Error getting credentials from local storage',
   },
+  //Bingo
+  ERROR_CREATING_BINGO_TABLE: {
+    code: 'ERROR_CREATING_TABLE',
+    message: 'Error creating bingo table',
+  },
+  ERROR_REQUESTING_BINGO_TABLE: {
+    code: 'ERROR_REQUESTING_TABLE',
+    message: 'Error requesting bingo table',
+  },
 }
 
 export class ErrorService extends Error {

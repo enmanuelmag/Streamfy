@@ -168,6 +168,8 @@ export const BingoSchema = zod.object({
 export type BingoType = zod.infer<typeof BingoSchema>
 
 export const BingoExtendedSchema = BingoSchema.extend({
+  createdAt: zod.number(),
+  discordUser: UserDiscordSchema.shape.username,
   combinations: zod
     .array(
       zod.record(
@@ -179,3 +181,22 @@ export const BingoExtendedSchema = BingoSchema.extend({
     )
     .min(9),
 })
+
+export type BingoExtendedType = zod.infer<typeof BingoExtendedSchema>
+
+export const BingoCreateParamsType = BingoSchema.omit({ id: true }).extend({
+  discordUser: UserDiscordSchema.shape.username,
+})
+
+export type BingoCreateParamsType = zod.infer<typeof BingoCreateParamsType>
+
+export const BingoResponseSchema = zod.object({
+  id: zod.string(),
+  totalCombinations: zod.number(),
+})
+
+export type BingoResponseType = zod.infer<typeof BingoResponseSchema>
+
+export const BingoUserSchema = BingoSchema
+
+export type BingoUserType = zod.infer<typeof BingoUserSchema>

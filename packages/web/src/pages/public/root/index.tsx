@@ -15,7 +15,7 @@ import {
   Paper,
 } from '@mantine/core'
 
-import '../styles.scss'
+import '../../styles.scss'
 
 const CURSOR_CLASS_NAME = 'custom-type-animation-cursor'
 

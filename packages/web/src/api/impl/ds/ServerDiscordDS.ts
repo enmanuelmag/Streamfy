@@ -8,6 +8,9 @@ import type {
   MessageResponseType,
   GetMessagesParamsType,
   GetEmojisParamsType,
+  BingoCreateParamsType,
+  BingoResponseType,
+  BingoUserType,
 } from '@global/types/src/discord'
 import type { ResponseType } from '@global/types/src/response'
 
@@ -137,6 +140,65 @@ export default class ServerDS extends DiscordDS {
       return response.data.data
     } catch (error) {
       Logger.error('Error getting channels', error)
+      throw error
+    }
+  }
+
+  async createBingo(data: BingoCreateParamsType) {
+    try {
+      const response = await axios.post<ResponseType<BingoResponseType>>(
+        this.getURL('bingoCreate'),
+        data,
+      )
+
+      if (response.data.status !== 200) {
+        Logger.error('Error from server creating bingo', response.data.message)
+        throw new ErrorService(response.data.code, response.data.message)
+      }
+
+      Logger.info('Bingo created', response.data.data)
+
+      return response.data.data
+    } catch (error) {
+      Logger.error('Error creating bingo', error)
+      throw error
+    }
+  }
+
+  async getBingoTables(discordUser: string): Promise<BingoResponseType[]> {
+    try {
+      const response = await axios.post<ResponseType<BingoResponseType[]>>(
+        this.getURL('bingoTables'),
+        { discordUser },
+      )
+
+      if (response.data.status !== 200) {
+        Logger.error('Error from server getting bingo tables', response.data.message)
+        throw new ErrorService(response.data.code, response.data.message)
+      }
+
+      return response.data.data
+    } catch (error) {
+      Logger.error('Error getting bingo tables', error)
+      throw error
+    }
+  }
+
+  async getBingo(bingoId: string, userName: string): Promise<BingoUserType> {
+    try {
+      const response = await axios.post<ResponseType<BingoUserType>>(this.getURL('bingoPlay'), {
+        bingoId,
+        userName,
+      })
+
+      if (response.data.status !== 200) {
+        Logger.error('Error from server getting bingo', response.data.message)
+        throw new ErrorService(response.data.code, response.data.message)
+      }
+
+      return response.data.data
+    } catch (error) {
+      Logger.error('Error getting bingo', error)
       throw error
     }
   }

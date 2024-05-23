@@ -6,6 +6,9 @@ import type {
   MessageResponseType,
   GetMessagesParamsType,
   GetEmojisParamsType,
+  BingoCreateParamsType,
+  BingoResponseType,
+  BingoUserType,
 } from '@global/types/src/discord'
 
 export default abstract class DiscordRepo {
@@ -18,4 +21,10 @@ export default abstract class DiscordRepo {
   abstract loginWithCode(code: string): Promise<UserDiscordType>
 
   abstract getUser(): Promise<UserDiscordType>
+
+  abstract createBingo(data: BingoCreateParamsType): Promise<BingoResponseType>
+
+  abstract getBingoTables(discordUser: string): Promise<BingoResponseType[]>
+
+  abstract getBingo(bingoId: string, userName: string): Promise<BingoUserType>
 }

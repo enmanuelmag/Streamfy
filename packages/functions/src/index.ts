@@ -9,6 +9,7 @@ import {
   GetEmojisParamsSchema,
   GetChannelsParamsSchema,
   GetMessagesParamsSchema,
+  BingoCreateParamsType,
 } from '@global/types/dist/discord'
 import { ErrorService, Response } from '@global/utils'
 
@@ -122,5 +123,65 @@ export const channels = onRequest({ cors: true }, async (req, res) => {
       return
     }
     res.json(Response(500, 'Error retrieving channels', null))
+  }
+})
+
+export const bingoCreate = onRequest({ cors: true, timeoutSeconds: 60 * 5 }, async (req, res) => {
+  try {
+    const isValid = validateCloud({
+      target: 'body',
+      schema: BingoCreateParamsType,
+    })
+
+    if (!isValid) {
+      res.json(Response(400, 'Invalid request', null))
+      return
+    }
+
+    const bingo = await Discord.createBingo(req.body)
+
+    res.json(Response(200, 'Bingo created', bingo))
+  } catch (error) {
+    Logger.error('Error creating bingo', error)
+
+    if (error instanceof ErrorService) {
+      res.json(Response(400, error.message, null, error.code))
+      return
+    }
+    res.json(Response(500, 'Error creating bingo', null))
+  }
+})
+
+export const bingoTables = onRequest({ cors: true }, async (req, res) => {
+  try {
+    const bingoTables = await Discord.getBingoTables(req.body.discordUser)
+    res.json(Response(200, 'Bingo tables retrieved', bingoTables))
+  } catch (error) {
+    Logger.error('Error retrieving bingo tables', error)
+
+    if (error instanceof ErrorService) {
+      res.json(Response(400, error.message, null, error.code))
+      return
+    }
+    res.json(Response(500, 'Error retrieving bingo tables', null))
+  }
+})
+
+export const bingoPlay = onRequest({ cors: true }, async (req, res) => {
+  try {
+    const bingo = await Discord.getBingo(
+      req.body.bingoId,
+      req.body.userName,
+      String(req.ip || req.headers['x-forwarded-for']?.toString() || 'no-ip-found'),
+    )
+    res.json(Response(200, 'Bingo retrieved', bingo))
+  } catch (error) {
+    Logger.error('Error retrieving bingo', error)
+
+    if (error instanceof ErrorService) {
+      res.json(Response(400, error.message, null, error.code))
+      return
+    }
+    res.json(Response(500, 'Error retrieving bingo', null))
   }
 })
