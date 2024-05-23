@@ -10,14 +10,17 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   sizeMantine?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   type?: string
   hidden?: boolean
+  required?: boolean
   placeholder?: string
   display?: 'block' | 'none'
+  allowDeselect?: boolean
   inputsProps?: any
   formatter?: (value: string | number) => string | number
-  options?: Array<{ value: string; label: string }>
+  options?: Array<{ value: string; label: string }> | string[]
   error?: React.ReactNode
   leftSection?: React.ReactNode
   rightSection?: React.ReactNode
+  defaultValue?: string
   component?: 'textInput' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'switch' | 'datePicker'
 }
 
@@ -46,16 +49,20 @@ export default function Input({ name, label, component, ...rest }: InputProps) {
     rightSection: rest.rightSection,
     ...rest.inputsProps,
     defaultValue: rest.defaultValue,
+    withAsterisk: rest.required,
   }
 
   let input = null
   if (component === 'select') {
     input = (
       <Select
+        allowDeselect={rest.allowDeselect}
         data={rest.options}
+        defaultValue={rest.defaultValue}
         hidden={rest.hidden}
         label={label}
         placeholder={rest.placeholder}
+        withAsterisk={rest.required}
       />
     )
   }

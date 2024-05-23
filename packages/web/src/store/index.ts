@@ -9,8 +9,9 @@ import type {
   MessageResponseType,
 } from '@global/types/src/discord'
 
-const VERSION_STORAGE = 3
+const VERSION_STORAGE = 4
 
+// BASE STORE
 type StoreState = {
   volume: number
   user?: UserDiscordType | null
@@ -23,6 +24,7 @@ type Action = {
   setSelectedGuild: (guild: StoreState['selectedGuild'] | null) => void
   reset: () => void
 }
+
 export const useStoreBase = create(
   persist<StoreState & Action>(
     (set) => ({
@@ -41,6 +43,7 @@ export const useStoreBase = create(
   ),
 )
 
+// LAUGH LOSS STORE
 type LaughLossState = {
   emoji?: EmojiType | null
   discordChannel?: ChannelResponseType | null
@@ -77,6 +80,7 @@ export const useStoreLaughLoss = create(
   ),
 )
 
+// CONSULTORIO STORE
 type ConsultorioState = {
   emoji?: EmojiType | null
   publicChannel?: ChannelResponseType | null
@@ -124,3 +128,5 @@ export const useStoreConsultorio = create(
     },
   ),
 )
+
+// BINGO STORE

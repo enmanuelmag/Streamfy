@@ -2,6 +2,8 @@ name: Deploy Firebase Functions
 
 on:
   push:
+    branches:
+      - main
     paths:
       - 'packages/functions/**'
       - '.github/workflows/cloud_functions.yml'

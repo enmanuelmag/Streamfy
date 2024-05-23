@@ -4,13 +4,16 @@ import { QueryClient, QueryCache, MutationCache, QueryClientProvider } from '@ta
 
 import { ROUTES } from '@constants/routes'
 
-import Root from './public/root'
+import Root from '@pages/public/root'
+import BingoPlay from '@pages/public/bingoPlay'
+
 import Login from '@pages/auth/login'
 import Drawer from '@components/drawer'
 import LoginCallback from '@pages/auth/loginCallback'
 
 //Private
 import Home from '@pages/private/home'
+import Bingo from '@pages/private/bingo'
 import LaughLoss from '@pages/private/laughLoss'
 import Consultorio from '@pages/private/consultorio'
 
@@ -34,10 +37,13 @@ const App = () => {
           <Route element={<LoginCallback />} path={ROUTES.LOGIN_CALLBACK} />
           <Route element={<Drawer />}>
             <Route element={<Home />} path={ROUTES.HOME} />
+            <Route element={<Bingo />} path={ROUTES.BINGO} />
             <Route element={<LaughLoss />} path={ROUTES.LAUGH_LOSS} />
+            <Route element={<Consultorio />} path={ROUTES.BAITY_CONSULTORIO} />
             <Route element={<Consultorio />} path={ROUTES.BAITY_CONSULTORIO} />
           </Route>
           <Route element={<Root />} path="/" />
+          <Route element={<BingoPlay />} path={ROUTES.BINGO_PLAY} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

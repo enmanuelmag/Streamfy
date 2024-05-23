@@ -12,8 +12,13 @@ import type {
   GetEmojisParamsType,
   UserAccessType,
   UserAccessFirebaseType,
+  BingoCreateParamsType,
+  BingoExtendedType,
+  BingoResponseType,
+  BingoUserType,
 } from '@global/types/dist/discord'
 
+import { v4 as uuidv4 } from 'uuid'
 import { initializeApp } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
 import { shuffle as shuffleArray } from 'shuffle-seed'
@@ -29,6 +34,8 @@ const db = getFirestore(initializeApp())
 const RANDOM_SEED = Number(process.env.VITE_RANDOM_SEED) || 42
 
 const USER_ACCESS_COLLECTION = 'user-access'
+
+const BINGO_COLLECTION = 'bingo-v1'
 
 const CONTACT_EMAIL = 'enmanuelmag@cardor.dev'
 
@@ -248,6 +255,124 @@ export const getChannels = async (
   }
 }
 
+export const createBingo = async (params: BingoCreateParamsType): Promise<BingoResponseType> => {
+  Logger.info('Creating bingo', JSON.stringify(params))
+
+  try {
+    const bingoCollection = db.collection(BINGO_COLLECTION)
+
+    const bingoExtended: BingoExtendedType = {
+      id: uuidv4(),
+      createdAt: new Date().valueOf(),
+      combinations: createCombinationsBingo(params.sentences, params.layout),
+      ...params,
+    }
+
+    await bingoCollection.doc(bingoExtended.id).set(bingoExtended)
+
+    return {
+      id: bingoExtended.id,
+      totalCombinations: bingoExtended.combinations.length,
+    }
+  } catch (error) {
+    Logger.error('Error creating bingo', error)
+    const { code, message } = ErrorCodes.ERROR_CREATING_BINGO_TABLE
+    throw new ErrorService(code, message)
+  }
+}
+
+export const getBingo = async (
+  id: string,
+  username: string,
+  ip: string,
+): Promise<BingoUserType> => {
+  Logger.info('Getting bingo', id, username, ip)
+
+  try {
+    const bingoCollection = db.collection(BINGO_COLLECTION)
+
+    const bingo = await bingoCollection.doc(id).get()
+
+    if (!bingo.exists) {
+      Logger.info(`Bingo with id ${id} not found`)
+      const { code, message } = ErrorCodes.ERROR_REQUESTING_BINGO_TABLE
+      throw new ErrorService(code, message)
+    }
+
+    Logger.info(`Bingo with id ${id} found`)
+
+    const bingoData = bingo.data() as BingoExtendedType
+
+    //first find if the user already has a bingo assigned
+    const assignedBingo = bingoData.combinations.find((combination) => {
+      const assignList = combination[Object.keys(combination)[0]].assignedTo
+      return assignList.some((assignedIp) => assignedIp.includes(ip))
+    })
+
+    let combination: string
+
+    const idUser = `${ip}=${username}`
+    if (assignedBingo) {
+      Logger.info('User already has a bingo assigned', idUser)
+      combination = Object.keys(assignedBingo)[0]
+    } else {
+      Logger.info('User does not have a bingo assigned yet', idUser)
+      //choose a random combination
+      const randomIndex = Math.floor(Math.random() * bingoData.combinations.length)
+
+      //assign the bingo to the user
+      combination = Object.keys(bingoData.combinations[randomIndex])[0]
+
+      bingoData.combinations[randomIndex][combination].assignedTo.push(idUser)
+    }
+
+    //get sentences from the combination
+    const sentences = combination.split('-').map((index) => bingoData.sentences[Number(index)])
+
+    const bingoUser: BingoUserType = {
+      id: bingoData.id,
+      title: bingoData.title,
+      layout: bingoData.layout,
+      sentences,
+      description: bingoData.description,
+    }
+
+    //update the bingo with the new assigned user
+    await bingoCollection.doc(id).set(bingoData)
+
+    return bingoUser
+  } catch (error) {
+    Logger.error('Error getting bingo', error)
+    const { code, message } = ErrorCodes.ERROR_REQUESTING_BINGO_TABLE
+    throw new ErrorService(code, message)
+  }
+}
+
+export const getBingoTables = async (discordUser: string): Promise<BingoResponseType[]> => {
+  Logger.info('Getting bingo tables', discordUser)
+
+  try {
+    const bingoCollection = db.collection(BINGO_COLLECTION)
+
+    const bingoTables = await bingoCollection.where('discordUser', '==', discordUser).get()
+
+    const tables = bingoTables.docs.map((doc) => {
+      const data = doc.data() as BingoExtendedType
+
+      return {
+        id: data.id,
+        totalCombinations: data.combinations.length,
+      }
+    })
+
+    return tables
+  } catch (error) {
+    Logger.error('Error retrieving bingo tables', error)
+    const { code, message } = ErrorCodes.ERROR_REQUESTING_BINGO_TABLE
+    throw new ErrorService(code, message)
+  }
+}
+
 /*
   Internal methods
 */
@@ -276,6 +401,86 @@ async function getUserAccess(username: string): Promise<UserAccessType> {
     const { code, message } = ErrorCodes.ERROR_GETTING_ACCESS
     throw new ErrorService(code, message)
   }
+}
+
+function createCombinationsBingo(
+  sentences: string[],
+  layout: string,
+): BingoExtendedType['combinations'] {
+  Logger.info('Creating bingo combinations')
+  // The parameter sentences is an array of strings with the sentences to use in each bingo cell
+  // The parameter layout is a string with the layout of the bingo card, it can be '3' or '5'
+
+  //Implement the logic to create the bingo card combinations based on the sentences and layout
+  //Create all combinations needed to use all sentences in the bingo card
+  //Create a array of strings with the combinations, where each string is a combination of numbers separated by '-'
+  //Each number represents the index of the sentence in the sentences array
+
+  const combinations: string[] = []
+
+  const numbers = sentences.length
+
+  //Create a array with all the numbers from 0 to the number of sentences
+  const allNumbers = Array.from({ length: numbers }, (_, i) => i)
+
+  console.log('All numbers', allNumbers)
+
+  //Create a array with the layout numbers
+  const layoutNumbers = Array.from({ length: Number(layout) }, (_, i) => i)
+
+  console.log('Layout numbers', layoutNumbers)
+
+  //Create a array with the rest of the numbers
+  const restNumbers = allNumbers.filter((n) => !layoutNumbers.includes(n))
+
+  console.log('Rest numbers', restNumbers)
+
+  //Create a array with the layout numbers permutations
+  const layoutPermutations = permutations(layoutNumbers)
+
+  console.log('Layout permutations', layoutPermutations[0])
+
+  //Create a array with the rest numbers permutations
+  const restPermutations = permutations(restNumbers)
+
+  console.log('Rest permutations', restPermutations[0])
+
+  //Create the combinations
+  for (const layoutPermutation of layoutPermutations) {
+    for (const restPermutation of restPermutations) {
+      combinations.push([...layoutPermutation, ...restPermutation].join('-'))
+    }
+  }
+
+  Logger.info('Bingo combinations created', combinations.length)
+
+  //Shuffle the combinations
+  const shuffledCombinations = shuffleArray(combinations, RANDOM_SEED)
+
+  //Return the combinations
+  return shuffledCombinations.map((combination) => ({
+    [combination]: {
+      assignedTo: [],
+    },
+  }))
+}
+
+function permutations(numbers: number[]): number[][] {
+  if (numbers.length === 1) return [numbers]
+
+  const result: number[][] = []
+
+  for (const number of numbers) {
+    const rest = numbers.filter((n) => n !== number)
+
+    const restPermutations = permutations(rest)
+
+    for (const restPermutation of restPermutations) {
+      result.push([number, ...restPermutation])
+    }
+  }
+
+  return result
 }
 
 function encodeParams(obj: Record<string, unknown>) {

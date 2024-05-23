@@ -109,6 +109,7 @@ export const DiscordTokenSchema = zod.object({
 
 export type DiscordTokenType = zod.infer<typeof DiscordTokenSchema>
 
+// Discord Guilds
 export const DiscordGuildsSchema = zod.object({
   id: zod.string(),
   name: zod.string(),
@@ -119,6 +120,7 @@ export const DiscordGuildsSchema = zod.object({
 
 export type DiscordGuildsType = zod.infer<typeof DiscordGuildsSchema>
 
+// Access Firebase
 export type UserAccessFirebaseType = {
   lastPayment: Timestamp
   dueDate: Timestamp
@@ -131,6 +133,7 @@ export const UserAccessSchema = zod.object({
 
 export type UserAccessType = zod.infer<typeof UserAccessSchema>
 
+// User Discord
 export const UserDiscordSchema = zod.object({
   id: zod.string(),
   username: zod.string(),
@@ -151,3 +154,49 @@ export const UserDiscordSchema = zod.object({
 })
 
 export type UserDiscordType = zod.infer<typeof UserDiscordSchema>
+
+// Bingo
+export const BingoSchema = zod.object({
+  id: zod.string(), //id will be public or receive from the client but hashed
+  // one fetch to request a table, the the IP is save and assigned to a table combination, the return the table data with the id same as the IP hash
+  title: zod.string().min(1).max(100),
+  description: zod.string().min(1).max(1000).nullable().optional(),
+  sentences: zod.array(zod.string()).min(9),
+  layout: zod.enum(['3', '4', '5', '6']),
+})
+
+export type BingoType = zod.infer<typeof BingoSchema>
+
+export const BingoExtendedSchema = BingoSchema.extend({
+  createdAt: zod.number(),
+  discordUser: UserDiscordSchema.shape.username,
+  combinations: zod
+    .array(
+      zod.record(
+        zod.string(), //combinations (number from 1 to 9 separated by -) example: 1-2-3-4-5-6-7-8-9, 7-8-9-4-5-6-3-2-1
+        zod.object({
+          assignedTo: zod.array(zod.string()),
+        }),
+      ),
+    )
+    .min(9),
+})
+
+export type BingoExtendedType = zod.infer<typeof BingoExtendedSchema>
+
+export const BingoCreateParamsType = BingoSchema.omit({ id: true }).extend({
+  discordUser: UserDiscordSchema.shape.username,
+})
+
+export type BingoCreateParamsType = zod.infer<typeof BingoCreateParamsType>
+
+export const BingoResponseSchema = zod.object({
+  id: zod.string(),
+  totalCombinations: zod.number(),
+})
+
+export type BingoResponseType = zod.infer<typeof BingoResponseSchema>
+
+export const BingoUserSchema = BingoSchema
+
+export type BingoUserType = zod.infer<typeof BingoUserSchema>
