@@ -5,6 +5,8 @@ import { Container, Center, Button, Stack, Title, Tabs, Grid, Textarea } from '@
 import { type Step1Type, Step1Schema } from '@global/types/src/bingo'
 
 import { ROUTES } from '@src/constants/routes'
+import { LayoutTable } from '@src/constants/bingo'
+
 import { useStoreConsultorio } from '@src/store'
 
 import { transitionView } from '@src/utils/viewTransition'
@@ -13,13 +15,19 @@ import { IconChevronLeft, IconList, IconSquarePlus } from '@tabler/icons-react'
 
 import Input from '@src/components/shared/Input'
 
+import TableBingo from './table'
+
 const SENTENCES_PLACEHOLDER = `
 Monográfico de Pokémon parte 3
 La pesca en los videojuegos
 Es CumSmart una estafa?
 Imagina que tienes 2 vacas
 Nomura cabrón
-Silk Song cuando?`.trim()
+Silk Song cuando?
+El mejor juego de la historia
+VHS maldito
+Roleo con los panas
+`.trim()
 
 const Consultorio = () => {
   const { messages, currentMessage } = useStoreConsultorio((state) => state)
@@ -29,12 +37,14 @@ const Consultorio = () => {
   const form = useForm<Step1Type>({
     validate: zodResolver(Step1Schema),
     initialValues: {
-      title: '',
-      description: '',
-      sentences: '',
-      layout: '3x3',
+      title: 'Bingo no-E3',
+      description: 'Cartilla de bingo para el evento no-E3',
+      sentences: SENTENCES_PLACEHOLDER.split('\n'),
+      layout: '3',
     },
   })
+
+  console.log(form.values)
 
   return (
     <Container fluid className="cd-w-full cd-h-full cd-relative" p={0}>
@@ -70,23 +80,23 @@ const Consultorio = () => {
                 </Tabs.Tab>
               </Tabs.List>
 
-              <Tabs.Panel value="create">
-                <Grid className="cd-mt-[2rem]">
-                  <Grid.Col span={{ md: 12, lg: 6 }}>
-                    <form
-                      className="lg:cd-basis-1/2"
-                      onSubmit={form.onSubmit((values) => console.log(values))}
-                    >
+              <Tabs.Panel className="cd-mt-[2rem]" value="create">
+                <Grid>
+                  <Grid.Col span={{ md: 12, lg: 4 }}>
+                    <form onSubmit={form.onSubmit((values) => console.log(values))}>
                       <Input
+                        inputsProps={form.getInputProps('title')}
                         label="Título"
                         name="title"
                         placeholder="Escriba el título"
-                        {...form.getInputProps('title')}
+                        value={form.values.title}
                       />
                       <Input
+                        inputsProps={form.getInputProps('description')}
                         label="Descripción"
                         name="description"
                         placeholder="Escriba la descripción"
+                        value={form.values.description}
                         {...form.getInputProps('description')}
                       />
                       <Input
@@ -94,11 +104,11 @@ const Consultorio = () => {
                         className="cd-pb-4"
                         component="select"
                         defaultValue={form.values.layout}
+                        inputsProps={form.getInputProps('layout')}
                         label="Layout"
                         name="layout"
-                        options={['3x3', '4x4', '5x5', '6x6']}
+                        options={LayoutTable}
                         placeholder="Selecciona el layout de la tabla"
-                        {...form.getInputProps('layout')}
                       />
                       <Textarea
                         autosize
@@ -107,11 +117,15 @@ const Consultorio = () => {
                         name="sentences"
                         placeholder={SENTENCES_PLACEHOLDER}
                         {...form.getInputProps('sentences')}
+                        value={form.values.sentences.join('\n')}
+                        onChange={(event) =>
+                          form.setFieldValue('sentences', event.currentTarget.value.split('\n'))
+                        }
                       />
                     </form>
                   </Grid.Col>
-                  <Grid.Col span={{ md: 12, lg: 6 }}>
-                    <div className="lg:cd-basis-1/2">Aqui la preview</div>
+                  <Grid.Col span={{ md: 12, lg: 8 }}>
+                    <TableBingo generated table={form.values} />
                   </Grid.Col>
                 </Grid>
               </Tabs.Panel>
