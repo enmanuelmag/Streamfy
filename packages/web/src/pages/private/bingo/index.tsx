@@ -1,7 +1,15 @@
+import { format } from '@formkit/tempo'
 import { useNavigate } from 'react-router-dom'
 import { useForm, zodResolver } from '@mantine/form'
-import { useMutation } from '@tanstack/react-query'
-import { IconCheck, IconChevronLeft, IconCopy, IconList, IconSquarePlus } from '@tabler/icons-react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import {
+  IconCheck,
+  IconChevronLeft,
+  IconCopy,
+  IconList,
+  IconShare,
+  IconSquarePlus,
+} from '@tabler/icons-react'
 import {
   Container,
   Center,
@@ -15,6 +23,11 @@ import {
   CopyButton,
   ActionIcon,
   Paper,
+  ScrollArea,
+  AccordionControlProps,
+  Accordion,
+  List,
+  Tooltip,
 } from '@mantine/core'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/bingo'
@@ -32,6 +45,7 @@ import { ErrorService, Logger } from '@global/utils'
 import { DiscordRepo } from '@src/db'
 import { notifications } from '@mantine/notifications'
 import { BingoCreateParamsType, BingoResponseType } from '@global/types/src/discord'
+import Loading from '@src/components/shared/Loading'
 
 const SENTENCES_PLACEHOLDER = `
 Monográfico de Pokémon parte 3
@@ -83,6 +97,22 @@ const Bingo = () => {
         title: 'Error creando bingo',
         message: error.message || 'Hubo un error creando el bingo, por favor intenta de nuevo',
       })
+    },
+  })
+
+  const tablesBingoQuery = useQuery<BingoResponseType[], ErrorService>({
+    queryKey: ['tablesBingo'],
+    queryFn: async () => {
+      if (!user?.username) {
+        Logger.error('User not found')
+        notifications.show({
+          color: 'red',
+          title: 'Error',
+          message: 'No se encontró el usuario, por favor intenta de nuevo',
+        })
+        navigate(ROUTES.ROOT)
+      }
+      return await DiscordRepo.getBingoTables(user!.username)
     },
   })
 
@@ -222,7 +252,37 @@ const Bingo = () => {
                 </Grid>
               </Tabs.Panel>
               <Tabs.Panel className="cd-mt-[2rem]" value="view">
-                Messages tab content
+                <Text>Lista de Bingo creadas</Text>
+                <Loading show={tablesBingoQuery.isLoading} text="Cargando tablas creadas" />
+                {tablesBingoQuery.data && tablesBingoQuery.data.length > 0 && (
+                  <ScrollArea.Autosize className="cd-mt-[1rem] cd-w-full">
+                    <Accordion chevronPosition="left">
+                      {tablesBingoQuery.data.map((table) => (
+                        <Accordion.Item key={table.id} value={table.id}>
+                          <AccordionControl table={table}>
+                            <div>
+                              <Text>{table.title}</Text>
+                              <Text c="dimmed" fz="sm">
+                                {table.description}
+                              </Text>
+                              <Text className="!cd-mt-[0.5rem]" fz="sm">
+                                Creada: {format(new Date(table.createdAt), 'DD-MM-YYYY', 'en')}
+                              </Text>
+                            </div>
+                          </AccordionControl>
+                          <Accordion.Panel>
+                            <Text className="cd-mt-[1rem]">Oraciones:</Text>
+                            <List withPadding type="unordered">
+                              {table.sentences.map((sentence, index) => (
+                                <List.Item key={index}>- {sentence}</List.Item>
+                              ))}
+                            </List>
+                          </Accordion.Panel>
+                        </Accordion.Item>
+                      ))}
+                    </Accordion>
+                  </ScrollArea.Autosize>
+                )}
               </Tabs.Panel>
             </Tabs>
           </Stack>
@@ -233,6 +293,23 @@ const Bingo = () => {
 
   function buildUrl(id: string) {
     return `${window.location.origin}${ROUTES.BINGO_PLAY.replace(':id', id)}`
+  }
+
+  function AccordionControl(props: AccordionControlProps & { table: BingoResponseType }) {
+    return (
+      <Center>
+        <Accordion.Control {...props} />
+        <CopyButton timeout={400} value={buildUrl(props.table.id)}>
+          {({ copied, copy }) => (
+            <Tooltip withArrow label={copied ? 'Link copiado' : 'Copiar link'} position="right">
+              <ActionIcon color={copied ? 'teal' : 'gray'} variant="subtle" onClick={copy}>
+                {copied ? <IconCheck /> : <IconShare />}
+              </ActionIcon>
+            </Tooltip>
+          )}
+        </CopyButton>
+      </Center>
+    )
   }
 }
 

@@ -272,6 +272,11 @@ export const createBingo = async (params: BingoCreateParamsType): Promise<BingoR
 
     return {
       id: bingoExtended.id,
+      title: bingoExtended.title,
+      layout: bingoExtended.layout,
+      createdAt: bingoExtended.createdAt,
+      sentences: bingoExtended.sentences,
+      description: bingoExtended.description,
       totalCombinations: bingoExtended.combinations.length,
     }
   } catch (error) {
@@ -361,8 +366,13 @@ export const getBingoTables = async (discordUser: string): Promise<BingoResponse
 
       return {
         id: data.id,
+        title: data.title,
+        layout: data.layout,
+        createdAt: data.createdAt,
+        sentences: data.sentences,
+        description: data.description,
         totalCombinations: data.combinations.length,
-      }
+      } as BingoResponseType
     })
 
     return tables

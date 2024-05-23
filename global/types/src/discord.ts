@@ -190,8 +190,14 @@ export const BingoCreateParamsType = BingoSchema.omit({ id: true }).extend({
 
 export type BingoCreateParamsType = zod.infer<typeof BingoCreateParamsType>
 
-export const BingoResponseSchema = zod.object({
-  id: zod.string(),
+export const BingoResponseSchema = BingoSchema.pick({
+  description: true,
+  layout: true,
+  id: true,
+  title: true,
+  sentences: true,
+}).extend({
+  createdAt: zod.number(),
   totalCombinations: zod.number(),
 })
 
