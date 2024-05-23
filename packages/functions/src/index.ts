@@ -126,7 +126,7 @@ export const channels = onRequest({ cors: true }, async (req, res) => {
   }
 })
 
-export const bingoCreate = onRequest({ cors: true, timeoutSeconds: 60 * 5 }, async (req, res) => {
+export const bingoCreate = onRequest({ cors: true, timeoutSeconds: 60 * 6 }, async (req, res) => {
   try {
     const isValid = validateCloud({
       target: 'body',
