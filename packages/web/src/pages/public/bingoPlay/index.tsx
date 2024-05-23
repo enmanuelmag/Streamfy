@@ -43,7 +43,7 @@ const BingoPlay = () => {
   }, [bingoMutation.data])
 
   return (
-    <Container className="cd-h-full cd-w-full">
+    <Container className="cd-h-full cd-w-full" size="xl">
       <Center className="cd-w-full cd-h-full">
         <Loading
           loadingSize="lg"
