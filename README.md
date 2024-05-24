@@ -1,7 +1,7 @@
 # Streamfy
 
 [![Build & Test](https://github.com/enmanuelmag/Streamfy/actions/workflows/ci.yml/badge.svg)](https://github.com/enmanuelmag/Streamfy/actions/workflows/ci.yml)
-[![Firebase Functions](https://github.com/enmanuelmag/Streamfy/actions/workflows/cloud_functions.yml/badge.svg)](https://github.com/enmanuelmag/Streamfy/actions/workflows/cloud_functions.yml)
+[![Firebase Cloud Functions](https://github.com/enmanuelmag/Streamfy/actions/workflows/cloud_functions.yml/badge.svg)](https://github.com/enmanuelmag/Streamfy/actions/workflows/cloud_functions.yml)
 
 ## 🚨🚨 IMPORTANT 🚨🚨
 
