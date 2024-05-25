@@ -359,7 +359,10 @@ export const getBingoTables = async (discordUser: string): Promise<BingoResponse
   try {
     const bingoCollection = db.collection(BINGO_COLLECTION)
 
-    const bingoTables = await bingoCollection.where('discordUser', '==', discordUser).get()
+    const bingoTables = await bingoCollection
+      .where('discordUser', '==', discordUser)
+      .orderBy('createdAt', 'desc')
+      .get()
 
     const tables = bingoTables.docs.map((doc) => {
       const data = doc.data() as BingoExtendedType
