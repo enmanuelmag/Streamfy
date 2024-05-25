@@ -197,6 +197,7 @@ const Bingo = () => {
                         autosize
                         className="cd-pb-4"
                         label="Frases"
+                        maxRows={SENTENCES_PLACEHOLDER.split('\n').length}
                         minRows={SENTENCES_PLACEHOLDER.split('\n').length}
                         name="sentences"
                         placeholder={SENTENCES_PLACEHOLDER}
