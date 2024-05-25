@@ -125,32 +125,34 @@ export const channels = onRequest({ cors: true }, async (req, res) => {
     res.json(Response(500, 'Error retrieving channels', null))
   }
 })
+export const bingoCreate = onRequest(
+  { cors: true, timeoutSeconds: 60 * 10, memory: '4GiB' },
+  async (req, res) => {
+    try {
+      const isValid = validateCloud({
+        target: 'body',
+        schema: BingoCreateParamsType,
+      })
 
-export const bingoCreate = onRequest({ cors: true, timeoutSeconds: 60 * 6 }, async (req, res) => {
-  try {
-    const isValid = validateCloud({
-      target: 'body',
-      schema: BingoCreateParamsType,
-    })
+      if (!isValid) {
+        res.json(Response(400, 'Invalid request', null))
+        return
+      }
 
-    if (!isValid) {
-      res.json(Response(400, 'Invalid request', null))
-      return
+      const bingo = await Discord.createBingo(req.body)
+
+      res.json(Response(200, 'Bingo created', bingo))
+    } catch (error) {
+      Logger.error('Error creating bingo', error)
+
+      if (error instanceof ErrorService) {
+        res.json(Response(400, error.message, null, error.code))
+        return
+      }
+      res.json(Response(500, 'Error creating bingo', null))
     }
-
-    const bingo = await Discord.createBingo(req.body)
-
-    res.json(Response(200, 'Bingo created', bingo))
-  } catch (error) {
-    Logger.error('Error creating bingo', error)
-
-    if (error instanceof ErrorService) {
-      res.json(Response(400, error.message, null, error.code))
-      return
-    }
-    res.json(Response(500, 'Error creating bingo', null))
-  }
-})
+  },
+)
 
 export const bingoTables = onRequest({ cors: true }, async (req, res) => {
   try {
