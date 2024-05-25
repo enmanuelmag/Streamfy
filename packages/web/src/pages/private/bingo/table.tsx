@@ -44,7 +44,7 @@ const Table = (props: TableProps) => {
                 onClick={handleMarker.bind(null, index)}
               >
                 <div className="cd-relative cd-flex cd-items-center cd-justify-center cd-h-full cd-w-ful cd-border-gray-500 cd-border-solid cd-border-[1px] cd-rounded-lg">
-                  <Text className="cd-text-center" fz={generated ? 'xl' : 'sm'}>
+                  <Text className="cd-text-center" fz={generated ? 'lg' : 'sm'}>
                     {sentences[index]}
                   </Text>
                   <Transition
