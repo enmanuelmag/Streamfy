@@ -62,10 +62,10 @@ const Table = (props: TableProps) => {
                         <Image
                           alt="Kojima"
                           className="cd-absolute cd-right-[0.5rem] cd-bottom-[0.5rem]"
-                          h={32}
+                          h={generated ? 64 : 32}
                           src={Kojima}
                           style={{ zIndex: 2 }}
-                          w={32}
+                          w={generated ? 64 : 32}
                         />
                       </div>
                     )}
