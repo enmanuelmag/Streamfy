@@ -53,7 +53,7 @@ const BingoPlay = () => {
           show={bingoMutation.isPending && !bingoMutation.isIdle}
           text="Cargando bingo"
         />
-        x{bingoMutation.data && <Table generated table={bingoMutation.data} />}
+        {bingoMutation.data && <Table generated table={bingoMutation.data} />}
         <Modal
           centered
           opened={!bingoMutation.data && !bingoMutation.isPending && bingoMutation.isIdle}
