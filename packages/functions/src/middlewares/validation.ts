@@ -1,5 +1,8 @@
 import { NextFunction, Response, Request } from 'express'
 import { AnyZodObject } from 'zod'
+import jwt from 'jsonwebtoken'
+
+import { ErrorCodes, ErrorService, Logger } from '@global/utils'
 
 type ValidateParams = {
   schema: AnyZodObject
@@ -26,5 +29,17 @@ export const validateCloud = (params: ValidateParams) => async (data: boolean) =
     return true
   } catch (error) {
     return false
+  }
+}
+
+export const validateToken = async (token?: string) => {
+  try {
+    const decoded = jwt.verify(token || '', process.env.VITE_SECRET_TOKEN || '')
+
+    Logger.info('DECODED TOKEN', Boolean(decoded))
+  } catch (error) {
+    Logger.error('Error validating token', error)
+    const { code, message } = ErrorCodes.ERROR_TOKEN_USER
+    throw new ErrorService(code, message)
   }
 }

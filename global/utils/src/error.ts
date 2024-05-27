@@ -50,6 +50,10 @@ export const ErrorCodes = {
     code: 'ERROR_REQUESTING_TABLE',
     message: 'Error requesting bingo table',
   },
+  ERROR_TOKEN_USER: {
+    code: 'ERROR_TOKEN_USER',
+    message: 'Error getting user from token',
+  },
 }
 
 export class ErrorService extends Error {

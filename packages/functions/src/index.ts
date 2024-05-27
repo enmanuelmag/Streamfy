@@ -15,12 +15,14 @@ import { ErrorService, Response } from '@global/utils'
 
 import * as Discord from './models/v1/discord'
 
-import { validateCloud } from './middlewares/validation'
+import { validateCloud, validateToken } from './middlewares/validation'
 
 setGlobalOptions({
   maxInstances: 1,
   timeoutSeconds: 300,
 })
+
+const HEADER_TOKEN = 'Streamfy-Token'
 
 export const login = onRequest({ cors: true }, async (req, res) => {
   try {
@@ -38,6 +40,8 @@ export const login = onRequest({ cors: true }, async (req, res) => {
 
 export const emojis = onRequest({ cors: true }, async (req, res) => {
   try {
+    validateToken(req.get(HEADER_TOKEN))
+
     const isValid = validateCloud({
       target: 'body',
       schema: GetEmojisParamsSchema,
@@ -63,6 +67,8 @@ export const emojis = onRequest({ cors: true }, async (req, res) => {
 
 export const user = onRequest({ cors: true }, async (req, res) => {
   try {
+    validateToken(req.get(HEADER_TOKEN))
+
     const user = await Discord.getUser(req.body)
     res.json(Response(200, 'User retrieved', user))
   } catch (error) {
@@ -78,6 +84,8 @@ export const user = onRequest({ cors: true }, async (req, res) => {
 
 export const messages = onRequest({ cors: true }, async (req, res) => {
   try {
+    validateToken(req.get(HEADER_TOKEN))
+
     const isValid = validateCloud({
       target: 'body',
       schema: GetMessagesParamsSchema,
@@ -103,6 +111,8 @@ export const messages = onRequest({ cors: true }, async (req, res) => {
 
 export const channels = onRequest({ cors: true }, async (req, res) => {
   try {
+    validateToken(req.get(HEADER_TOKEN))
+
     const isValid = validateCloud({
       target: 'body',
       schema: GetChannelsParamsSchema,
@@ -129,6 +139,8 @@ export const bingoCreate = onRequest(
   { cors: true, timeoutSeconds: 60 * 10, memory: '4GiB' },
   async (req, res) => {
     try {
+      validateToken(req.get(HEADER_TOKEN))
+
       const isValid = validateCloud({
         target: 'body',
         schema: BingoCreateParamsType,
@@ -156,6 +168,8 @@ export const bingoCreate = onRequest(
 
 export const bingoTables = onRequest({ cors: true }, async (req, res) => {
   try {
+    validateToken(req.get(HEADER_TOKEN))
+
     const bingoTables = await Discord.getBingoTables(req.body.discordUser)
     res.json(Response(200, 'Bingo tables retrieved', bingoTables))
   } catch (error) {

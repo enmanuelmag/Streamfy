@@ -22,6 +22,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { initializeApp } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
 import { shuffle as shuffleArray } from 'shuffle-seed'
+import jwt from 'jsonwebtoken'
 
 import { ErrorService, ErrorCodes } from '@global/utils'
 
@@ -158,9 +159,20 @@ export const loginWithCode = async (code: string, isDev?: boolean): Promise<User
     tokenType: credentials.tokenType,
   })
 
+  const streamfyToken = jwt.sign(
+    {
+      id: discordUser.id,
+      email: discordUser.email,
+      username: discordUser.username,
+    },
+    process.env.VITE_SECRET_TOKEN || '',
+    { expiresIn: 60 * 60 * 24 * 7 },
+  )
+
   return {
     ...discordUser,
     credentials,
+    streamfyToken,
   } as UserDiscordType
 }
 

@@ -20,16 +20,13 @@ import DiscordDS from '@api/domain/ds/DiscordDS'
 
 const KEY_CREDENTIALS = 'credentials'
 
+const STREAMFY_TOKEN = 'Streamfy-Token'
+
 const REPLACE_TOKEN = '{{functions}}'
 
 export default class ServerDS extends DiscordDS {
-  //private axiosInstance: AxiosInstance
-
   constructor() {
     super()
-    // this.axiosInstance = axios.create({
-    //   baseURL: import.meta.env.VITE_SERVER_API_URL,
-    // })
   }
 
   getURL(endpoint: string) {
@@ -52,6 +49,8 @@ export default class ServerDS extends DiscordDS {
 
       localStorage.setItem(KEY_CREDENTIALS, JSON.stringify(response.data.data.credentials))
 
+      localStorage.setItem(STREAMFY_TOKEN, String(response.data.data.streamfyToken || ''))
+
       return response.data.data
     } catch (error) {
       Logger.error('Error login with code', error)
@@ -67,12 +66,19 @@ export default class ServerDS extends DiscordDS {
       throw new ErrorService(code, message)
     }
 
+    const streamfyToken = localStorage.getItem(STREAMFY_TOKEN) || ''
+
     try {
-      const parsedCredentials = JSON.parse(credentials)
+      const parsedCredentials: UserDiscordType['credentials'] = JSON.parse(credentials)
 
       const response = await axios.post<ResponseType<UserDiscordType>>(
         this.getURL('user'),
         parsedCredentials,
+        {
+          headers: {
+            [STREAMFY_TOKEN]: streamfyToken,
+          },
+        },
       )
 
       if (response.data.status !== 200) {
@@ -93,10 +99,18 @@ export default class ServerDS extends DiscordDS {
 
   async getEmojis(params: GetEmojisParamsType) {
     try {
-      const response = await axios.post<ResponseType<EmojiType[]>>(this.getURL('emojis'), params)
+      const streamfyToken = localStorage.getItem(STREAMFY_TOKEN) || ''
+
+      const response = await axios.post<ResponseType<EmojiType[]>>(this.getURL('emojis'), params, {
+        headers: {
+          [STREAMFY_TOKEN]: streamfyToken,
+        },
+      })
 
       if (response.data.status !== 200) {
         Logger.error('Error from server getting emojis', response.data.message)
+        //put here clean local storage and redirect to login, not here, put on every useQuery
+
         throw new ErrorService(response.data.code, response.data.message)
       }
 
@@ -109,9 +123,16 @@ export default class ServerDS extends DiscordDS {
 
   async getMessages(params: GetMessagesParamsType): Promise<MessageResponseType[]> {
     try {
+      const streamfyToken = localStorage.getItem(STREAMFY_TOKEN) || ''
+
       const response = await axios.post<ResponseType<MessageResponseType[]>>(
         this.getURL('messages'),
         params,
+        {
+          headers: {
+            [STREAMFY_TOKEN]: streamfyToken,
+          },
+        },
       )
 
       if (response.data.status !== 200) {
@@ -127,9 +148,16 @@ export default class ServerDS extends DiscordDS {
 
   async getChannels(params: GetChannelsParamsType): Promise<ChannelResponseType[]> {
     try {
+      const streamfyToken = localStorage.getItem(STREAMFY_TOKEN) || ''
+
       const response = await axios.post<ResponseType<ChannelResponseType[]>>(
         this.getURL('channels'),
         params,
+        {
+          headers: {
+            [STREAMFY_TOKEN]: streamfyToken,
+          },
+        },
       )
 
       if (response.data.status !== 200) {
@@ -146,9 +174,16 @@ export default class ServerDS extends DiscordDS {
 
   async createBingo(data: BingoCreateParamsType) {
     try {
+      const streamfyToken = localStorage.getItem(STREAMFY_TOKEN) || ''
+
       const response = await axios.post<ResponseType<BingoResponseType>>(
         this.getURL('bingoCreate'),
         data,
+        {
+          headers: {
+            [STREAMFY_TOKEN]: streamfyToken,
+          },
+        },
       )
 
       if (response.data.status !== 200) {
@@ -167,9 +202,16 @@ export default class ServerDS extends DiscordDS {
 
   async getBingoTables(discordUser: string): Promise<BingoResponseType[]> {
     try {
+      const streamfyToken = localStorage.getItem(STREAMFY_TOKEN) || ''
+
       const response = await axios.post<ResponseType<BingoResponseType[]>>(
         this.getURL('bingoTables'),
         { discordUser },
+        {
+          headers: {
+            [STREAMFY_TOKEN]: streamfyToken,
+          },
+        },
       )
 
       if (response.data.status !== 200) {

@@ -77,12 +77,14 @@ const Consultorio = () => {
     queryKey: ['discordEmojis'],
     queryFn: async () => DiscordRepo.getEmojis({ guildId: selectedGuild!.id }),
     enabled: !messages,
+    retry: false,
   })
 
   const channelQuery = useQuery<ChannelResponseType[] | null, ErrorService>({
     queryKey: ['discordChannels'],
     enabled: !messages,
     queryFn: () => DiscordRepo.getChannels({ guildId: selectedGuild!.id, channelType: 0 }),
+    retry: false,
   })
 
   const messagesMutation = useMutation<

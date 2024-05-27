@@ -45,6 +45,7 @@ jobs:
       - name: Deploy
         env:
           VITE_RANDOM_SEED: ${{ secrets.VITE_RANDOM_SEED }}
+          VITE_SECRET_TOKEN: ${{ secrets.VITE_SECRET_TOKEN }}
           VITE_DISCORD_API_URL: ${{ secrets.VITE_DISCORD_API_URL }}
           VITE_DISCORD_CLIENT_ID: ${{ secrets.VITE_DISCORD_CLIENT_ID }}
           VITE_DISCORD_BOT_TOKEN: ${{ secrets.VITE_DISCORD_BOT_TOKEN }}
@@ -56,6 +57,7 @@ jobs:
           npm install -g firebase-tools
 
           echo "VITE_RANDOM_SEED=$VITE_RANDOM_SEED" > packages/functions/.env
+          echo "VITE_SECRET_TOKEN=$VITE_SECRET_TOKEN" >> packages/functions/.env
           echo "VITE_DISCORD_API_URL=$VITE_DISCORD_API_URL" >> packages/functions/.env
           echo "VITE_DISCORD_CLIENT_ID=$VITE_DISCORD_CLIENT_ID" >> packages/functions/.env
           echo "VITE_DISCORD_BOT_TOKEN=$VITE_DISCORD_BOT_TOKEN" >> packages/functions/.env

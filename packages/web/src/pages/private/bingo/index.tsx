@@ -1,7 +1,7 @@
 import { format } from '@formkit/tempo'
 import { useNavigate } from 'react-router-dom'
 import { useForm, zodResolver } from '@mantine/form'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   IconCheck,
   IconChevronLeft,
@@ -64,6 +64,8 @@ const Bingo = () => {
 
   const { user } = useStoreBase()
 
+  const queryClient = useQueryClient()
+
   const form = useForm<Step1Type>({
     validate: zodResolver(Step1Schema),
     initialValues: {
@@ -88,6 +90,9 @@ const Bingo = () => {
         color: 'blue',
         title: 'Bingo creado',
         message: 'Se ha creado la tabla de bingo con éxito',
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['tablesBingo'],
       })
     },
     onError: (error) => {
@@ -115,8 +120,6 @@ const Bingo = () => {
       return await DiscordRepo.getBingoTables(user!.username)
     },
   })
-
-  Logger.info('Bingo page', form.values)
 
   return (
     <Container fluid className="cd-w-full cd-h-full cd-relative" p={0}>

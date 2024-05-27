@@ -150,6 +150,7 @@ export const UserDiscordSchema = zod.object({
     })
     .optional()
     .nullable(),
+  streamfyToken: zod.string().optional().nullable(),
   access: UserAccessSchema,
 })
 
