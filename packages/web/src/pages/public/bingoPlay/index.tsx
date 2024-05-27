@@ -57,7 +57,7 @@ const BingoPlay = () => {
         <Modal
           centered
           opened={!bingoMutation.data && !bingoMutation.isPending && bingoMutation.isIdle}
-          title="Ingresa tu nombre"
+          title="Nombre"
           onClose={() => {
             notifications.show({
               color: 'red',
@@ -69,7 +69,7 @@ const BingoPlay = () => {
           <form onSubmit={form.onSubmit((data) => bingoMutation.mutate(data))}>
             <TextInput
               name="userName"
-              placeholder="Nombre"
+              placeholder="Ingresa tu nombre"
               value={form.values.userName}
               {...form.getInputProps('userName')}
             />
