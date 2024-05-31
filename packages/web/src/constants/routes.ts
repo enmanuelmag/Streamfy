@@ -10,6 +10,7 @@ export const ROUTES = {
   REDDIT: '/reddit',
   BINGO: '/bingo',
   BINGO_UNIQUE: '/bingo-unique',
+  BINGO_UNIQUE_PLAY: '/bingo-unique-play/:id',
   //Public
   ROOT: '/',
   BINGO_PLAY: '/bingoPlay/:id',

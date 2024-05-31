@@ -11,6 +11,9 @@ import type {
   BingoCreateParamsType,
   BingoResponseType,
   BingoUserType,
+  BingoUniqueCreateParamsType,
+  BingoUniqueResponseType,
+  BingoUniqueExtendedType,
 } from '@global/types/src/discord'
 import type { ResponseType } from '@global/types/src/response'
 
@@ -241,6 +244,89 @@ export default class ServerDS extends DiscordDS {
       return response.data.data
     } catch (error) {
       Logger.error('Error getting bingo', error)
+      throw error
+    }
+  }
+
+  async createBingoUnique(data: BingoUniqueCreateParamsType): Promise<BingoUniqueResponseType> {
+    try {
+      const streamfyToken = localStorage.getItem(STREAMFY_TOKEN) || ''
+
+      const response = await axios.post<ResponseType<BingoUniqueResponseType>>(
+        this.getURL('bingoUniqueCreate'),
+        data,
+        {
+          headers: {
+            [STREAMFY_TOKEN]: streamfyToken,
+          },
+        },
+      )
+
+      if (response.data.status !== 200) {
+        Logger.error('Error from server creating bingo unique', response.data.message)
+        throw new ErrorService(response.data.code, response.data.message)
+      }
+
+      Logger.info('Bingo unique created', response.data.data)
+
+      return response.data.data
+    } catch (error) {
+      Logger.error('Error creating bingo unique', error)
+      throw error
+    }
+  }
+
+  async getBingoUniqueTables(discordUser: string) {
+    try {
+      const streamfyToken = localStorage.getItem(STREAMFY_TOKEN) || ''
+
+      const response = await axios.post<ResponseType<BingoUniqueExtendedType[]>>(
+        this.getURL('bingoUniqueTables'),
+        { discordUser },
+        {
+          headers: {
+            [STREAMFY_TOKEN]: streamfyToken,
+          },
+        },
+      )
+
+      if (response.data.status !== 200) {
+        Logger.error('Error from server getting bingo unique tables', response.data.message)
+        throw new ErrorService(response.data.code, response.data.message)
+      }
+
+      return response.data.data
+    } catch (error) {
+      Logger.error('Error getting bingo unique tables', error)
+      throw error
+    }
+  }
+
+  async getBingoUnique(bingoId: string, userName: string) {
+    try {
+      const streamfyToken = localStorage.getItem(STREAMFY_TOKEN) || ''
+
+      const response = await axios.post<ResponseType<BingoUniqueExtendedType>>(
+        this.getURL('bingoUniquePlay'),
+        {
+          bingoId,
+          userName,
+        },
+        {
+          headers: {
+            [STREAMFY_TOKEN]: streamfyToken,
+          },
+        },
+      )
+
+      if (response.data.status !== 200) {
+        Logger.error('Error from server getting bingo unique', response.data.message)
+        throw new ErrorService(response.data.code, response.data.message)
+      }
+
+      return response.data.data
+    } catch (error) {
+      Logger.error('Error getting bingo unique', error)
       throw error
     }
   }

@@ -1,5 +1,6 @@
 import {
   BingoCreateParamsType,
+  BingoUniqueCreateParamsType,
   GetChannelsParamsType,
   GetEmojisParamsType,
   GetMessagesParamsType,
@@ -45,5 +46,17 @@ export default class DiscordRepoImpl extends DiscordRepo {
 
   getBingo(bingoId: string, userName: string) {
     return this.ds.getBingo(bingoId, userName)
+  }
+
+  createBingoUnique(data: BingoUniqueCreateParamsType) {
+    return this.ds.createBingoUnique(data)
+  }
+
+  getBingoUniqueTables(discordUser: string) {
+    return this.ds.getBingoUniqueTables(discordUser)
+  }
+
+  getBingoUnique(bingoId: string, userName: string) {
+    return this.ds.getBingoUnique(bingoId, userName)
   }
 }

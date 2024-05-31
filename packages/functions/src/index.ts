@@ -201,3 +201,66 @@ export const bingoPlay = onRequest({ cors: true }, async (req, res) => {
     res.json(Response(500, 'Error retrieving bingo', null))
   }
 })
+
+export const bingoUniqueCreate = onRequest({ cors: true }, async (req, res) => {
+  try {
+    validateToken(req.get(HEADER_TOKEN))
+
+    const isValid = validateCloud({
+      target: 'body',
+      schema: BingoCreateParamsType,
+    })
+
+    if (!isValid) {
+      res.json(Response(400, 'Invalid request', null))
+      return
+    }
+
+    const bingo = await Discord.createBingoUnique(req.body)
+
+    res.json(Response(200, 'Bingo created', bingo))
+  } catch (error) {
+    Logger.error('Error creating bingo', error)
+
+    if (error instanceof ErrorService) {
+      res.json(Response(400, error.message, null, error.code))
+      return
+    }
+    res.json(Response(500, 'Error creating bingo', null))
+  }
+})
+
+export const bingoUniqueTables = onRequest({ cors: true }, async (req, res) => {
+  try {
+    validateToken(req.get(HEADER_TOKEN))
+
+    const bingoTables = await Discord.getBingoUniqueTables(req.body.discordUser)
+    res.json(Response(200, 'Bingo tables retrieved', bingoTables))
+  } catch (error) {
+    Logger.error('Error retrieving bingo tables', error)
+
+    if (error instanceof ErrorService) {
+      res.json(Response(400, error.message, null, error.code))
+      return
+    }
+    res.json(Response(500, 'Error retrieving bingo tables', null))
+  }
+})
+
+export const bingoUniquePlay = onRequest({ cors: true }, async (req, res) => {
+  try {
+    validateToken(req.get(HEADER_TOKEN))
+
+    const bingo = await Discord.getBingoUnique(req.body.bingoId, req.body.userName)
+
+    res.json(Response(200, 'Bingo retrieved', bingo))
+  } catch (error) {
+    Logger.error('Error retrieving bingo', error)
+
+    if (error instanceof ErrorService) {
+      res.json(Response(400, error.message, null, error.code))
+      return
+    }
+    res.json(Response(500, 'Error retrieving bingo', null))
+  }
+})

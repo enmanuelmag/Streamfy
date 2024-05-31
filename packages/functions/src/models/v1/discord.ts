@@ -16,11 +16,13 @@ import type {
   BingoExtendedType,
   BingoResponseType,
   BingoUserType,
+  BingoUniqueResponseType,
 } from '@global/types/dist/discord'
 
 import { v4 as uuidv4 } from 'uuid'
 import { initializeApp } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
+import { getStorage, getDownloadURL } from 'firebase-admin/storage'
 import { shuffle as shuffleArray } from 'shuffle-seed'
 import jwt from 'jsonwebtoken'
 
@@ -29,6 +31,7 @@ import { ErrorService, ErrorCodes } from '@global/utils'
 import DiscordClient from '../../services/discord'
 
 import * as Logger from 'firebase-functions/logger'
+import { BingoUniqueCreateParamsType, BingoUniqueExtendedType } from 'global/types/src/discord'
 
 const db = getFirestore(initializeApp())
 
@@ -37,6 +40,10 @@ const RANDOM_SEED = Number(process.env.VITE_RANDOM_SEED) || 42
 const USER_ACCESS_COLLECTION = 'user-access'
 
 const BINGO_COLLECTION = 'bingo-v1'
+
+const BINGO_UNIQUE_COLLECTION = 'bingo-unique-v1'
+
+const BINGO_UNIQUE_STORAGE = 'bingo-unique'
 
 const CONTACT_EMAIL = 'enmanuelmag@cardor.dev'
 
@@ -398,6 +405,113 @@ export const getBingoTables = async (discordUser: string): Promise<BingoResponse
   }
 }
 
+export const getBingoUnique = async (
+  id: string,
+  discordUser: string,
+): Promise<BingoUniqueExtendedType> => {
+  Logger.info('Getting bingo unique', id, discordUser)
+
+  try {
+    const bingoCollection = db.collection(BINGO_UNIQUE_COLLECTION)
+
+    const bingo = await bingoCollection.doc(id).get()
+
+    if (!bingo.exists) {
+      Logger.info(`Bingo unique with id ${id} not found`)
+      const { code, message } = ErrorCodes.ERROR_REQUESTING_BINGO_TABLE_UNIQUE
+      throw new ErrorService(code, message)
+    }
+
+    Logger.info(`Bingo unique with id ${id} found`)
+
+    const bingoData = bingo.data() as BingoUniqueExtendedType
+
+    return bingoData
+  } catch (error) {
+    Logger.error('Error getting bingo unique', error)
+    const { code, message } = ErrorCodes.ERROR_REQUESTING_BINGO_TABLE_UNIQUE
+    throw new ErrorService(code, message)
+  }
+}
+
+export const createBingoUnique = async (
+  params: BingoUniqueCreateParamsType,
+): Promise<BingoUniqueResponseType> => {
+  Logger.info('Creating unique bingo', params.title, params.predictions.length)
+
+  try {
+    const bingoId = uuidv4()
+    const bingoCollection = db.collection(BINGO_UNIQUE_COLLECTION)
+
+    const storage = getStorage()
+
+    const bucket = storage.bucket(BINGO_UNIQUE_STORAGE)
+
+    const uploadPromises = params.predictions.map(async (prediction, index) => {
+      if (!prediction.image) return prediction
+
+      const { data, dataType } = parseFieldsBase64(prediction.image)
+      const file = bucket.file(`${bingoId}/${index}${dataType.replace('image/', '.')}`)
+
+      const imageBuffer = Buffer.from(data, 'base64')
+
+      await file.save(imageBuffer, {
+        contentType: dataType,
+        public: true,
+      })
+
+      const url = await getDownloadURL(file)
+
+      return { ...prediction, image: url }
+    })
+
+    const predictionsWithURL = await Promise.all(uploadPromises)
+
+    const bingoExtended: BingoUniqueExtendedType = {
+      id: bingoId,
+      createdAt: new Date().valueOf(),
+      ...params,
+      predictions: predictionsWithURL,
+    }
+
+    await bingoCollection.doc(bingoExtended.id).set(bingoExtended)
+
+    return {
+      id: bingoExtended.id,
+      title: bingoExtended.title,
+      createdAt: bingoExtended.createdAt,
+      description: bingoExtended.description,
+    }
+  } catch (error) {
+    Logger.error('Error creating unique bingo', error)
+    const { code, message } = ErrorCodes.ERROR_CREATING_BINGO_TABLE_UNIQUE
+    throw new ErrorService(code, message)
+  }
+}
+
+export const getBingoUniqueTables = async (
+  discordUser: string,
+): Promise<BingoUniqueExtendedType[]> => {
+  Logger.info('Getting bingo unique tables', discordUser)
+
+  try {
+    const bingoCollection = db.collection(BINGO_UNIQUE_COLLECTION)
+
+    const bingoTables = await bingoCollection
+      .where('discordUser', '==', discordUser)
+      .orderBy('createdAt', 'desc')
+      .get()
+
+    const tables = bingoTables.docs.map((doc) => doc.data() as BingoUniqueExtendedType)
+
+    return tables
+  } catch (error) {
+    Logger.error('Error retrieving bingo unique tables', error)
+    const { code, message } = ErrorCodes.ERROR_REQUESTING_BINGO_UNIQUE_TABLES
+    throw new ErrorService(code, message)
+  }
+}
+
 /*
   Internal methods
 */
@@ -568,4 +682,16 @@ function filterMessages(messages: Message[], filters?: MessageFiltersType | null
 
     return true
   })
+}
+
+function parseFieldsBase64(base64: string) {
+  const fields = base64.split(';')
+
+  const dataType = fields[0].split(':')[1]
+
+  const data = fields[1].split(',')[1]
+
+  console.log('Data type', dataType, 'Data', data.length)
+
+  return { dataType, data }
 }

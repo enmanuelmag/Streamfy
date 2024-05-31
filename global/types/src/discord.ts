@@ -210,12 +210,19 @@ export type BingoUserType = zod.infer<typeof BingoUserSchema>
 
 // Bingo Unique
 export const PredictionBingoSchema = zod.object({
-  title: zod.string().min(5).max(100),
+  title: zod.string().min(5, 'Debe tener al menos 5 caracteres'),
   description: zod.string().optional().nullable(),
   image: zod.string().optional().nullable(),
+  marked: zod.boolean().optional().nullable(),
   condition: zod
     .object({
-      targetCounter: zod.number().optional().nullable(),
+      targetCounter: zod
+        .object({
+          target: zod.number(),
+          counter: zod.number(),
+        })
+        .optional()
+        .nullable(),
     })
     .optional()
     .nullable(),
@@ -225,9 +232,17 @@ export type PredictionBingoType = zod.infer<typeof PredictionBingoSchema>
 
 export const BingoUniqueSchema = zod.object({
   id: zod.string(),
-  title: zod.string().min(1).max(100),
-  description: zod.string().min(1).max(1000).nullable().optional(),
-  predictions: zod.array(PredictionBingoSchema).length(25),
+  title: zod
+    .string()
+    .min(1, 'Debe tener al menos 1 caracter')
+    .max(100, 'No puede tener más de 100 caracteres'),
+  description: zod
+    .string()
+    .min(1, 'Debe tener al menos 1 caracter')
+    .max(1000, 'No puede tener más de 1000 caracteres')
+    .optional()
+    .nullable(),
+  predictions: zod.array(PredictionBingoSchema), //.length(25, 'Deben ser 25 predicciones'),
 })
 
 export type BingoUniqueType = zod.infer<typeof BingoUniqueSchema>
@@ -252,3 +267,5 @@ export const BingoUniqueResponseSchema = BingoUniqueSchema.pick({
 }).extend({
   createdAt: zod.number(),
 })
+
+export type BingoUniqueResponseType = zod.infer<typeof BingoUniqueResponseSchema>

@@ -54,6 +54,18 @@ export const ErrorCodes = {
     code: 'ERROR_TOKEN_USER',
     message: 'Error getting user from token',
   },
+  ERROR_CREATING_BINGO_TABLE_UNIQUE: {
+    code: 'ERROR_CREATING_TABLE_UNIQUE',
+    message: 'Error creating bingo table unique',
+  },
+  ERROR_REQUESTING_BINGO_TABLE_UNIQUE: {
+    code: 'ERROR_REQUESTING_TABLE_UNIQUE',
+    message: 'Error requesting bingo table unique',
+  },
+  ERROR_REQUESTING_BINGO_UNIQUE_TABLES: {
+    code: 'ERROR_REQUESTING_TABLES_UNIQUE',
+    message: 'Error requesting bingo unique tables',
+  },
 }
 
 export class ErrorService extends Error {

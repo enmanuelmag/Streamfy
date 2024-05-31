@@ -31,7 +31,6 @@ import {
   Tooltip,
   Flex,
   Group,
-  Image,
 } from '@mantine/core'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/bingoUnique'
@@ -48,8 +47,9 @@ import { ErrorService, Logger } from '@global/utils'
 import { DiscordRepo } from '@src/db'
 import { notifications } from '@mantine/notifications'
 import {
-  BingoCreateParamsType,
   BingoResponseType,
+  BingoUniqueCreateParamsType,
+  BingoUniqueResponseType,
   PredictionBingoType,
 } from '@global/types/src/discord'
 import Loading from '@src/components/shared/Loading'
@@ -80,13 +80,13 @@ const Bingo = () => {
   })
 
   const bingoCreateMutation = useMutation<
-    BingoResponseType,
+    BingoUniqueResponseType,
     ErrorService,
-    BingoCreateParamsType,
-    BingoCreateParamsType
+    BingoUniqueCreateParamsType,
+    BingoUniqueCreateParamsType
   >({
-    mutationKey: ['createBingo'],
-    mutationFn: async (data) => await DiscordRepo.createBingo(data),
+    mutationKey: ['createBingoUnique'],
+    mutationFn: async (data) => await DiscordRepo.createBingoUnique(data),
     onSuccess: (data) => {
       Logger.info('Bingo created', data)
       notifications.show({
@@ -95,7 +95,7 @@ const Bingo = () => {
         message: 'Se ha creado la tabla de bingo con éxito',
       })
       queryClient.invalidateQueries({
-        queryKey: ['tablesBingo'],
+        queryKey: ['tablesBingoUnique'],
       })
     },
     onError: (error) => {
@@ -109,7 +109,8 @@ const Bingo = () => {
   })
 
   const tablesBingoQuery = useQuery<BingoResponseType[], ErrorService>({
-    queryKey: ['tablesBingo'],
+    enabled: false,
+    queryKey: ['tablesBingoUnique'],
     queryFn: async () => {
       if (!user?.username) {
         Logger.error('User not found')
@@ -156,7 +157,7 @@ const Bingo = () => {
                 <Grid>
                   <Grid.Col span={{ md: 12, lg: 4 }}>
                     <form
-                      onSubmit={form.onSubmit(() => {
+                      onSubmit={form.onSubmit((data) => {
                         if (!user) {
                           Logger.error('User not found')
                           notifications.show({
@@ -167,10 +168,10 @@ const Bingo = () => {
                           return navigate(ROUTES.ROOT)
                         }
 
-                        // bingoCreateMutation.mutate({
-                        //   discordUser: user.username,
-                        //   ...data,
-                        // })
+                        bingoCreateMutation.mutate({
+                          discordUser: user.username,
+                          ...data,
+                        })
                       })}
                     >
                       <Input
@@ -200,21 +201,11 @@ const Bingo = () => {
                         {form.values.predictions.map((prediction, index) => (
                           <Paper withBorder className="cd-w-full" key={index} p="sm" shadow="md">
                             <Flex className="cd-w-full" justify="space-between">
-                              <Flex gap="xl" justify="flex-start">
-                                <Flex direction="column">
-                                  <Text>{prediction.title}</Text>
-                                  <Text c="dimmed" size="sm">
-                                    {prediction.description}
-                                  </Text>
-                                </Flex>
-                                <Image
-                                  alt={prediction.title}
-                                  flex={1}
-                                  h={50}
-                                  src={prediction.image}
-                                  style={{ objectFit: 'cover' }}
-                                  w={50}
-                                />
+                              <Flex direction="column">
+                                <Text>{prediction.title}</Text>
+                                <Text c="dimmed" lineClamp={2} size="sm" truncate="end">
+                                  {prediction.description}
+                                </Text>
                               </Flex>
                               <Group gap="xs">
                                 <ActionIcon
@@ -247,6 +238,7 @@ const Bingo = () => {
                       <Button
                         fullWidth
                         className="cd-mt-8"
+                        //disabled={!form.isValid()}
                         loaderProps={{ type: 'dots' }}
                         loading={bingoCreateMutation.isPending && !bingoCreateMutation.isIdle}
                         type="submit"
@@ -256,7 +248,7 @@ const Bingo = () => {
                       {bingoCreateMutation.data && (
                         <Paper withBorder className="!cd-mt-[1.5rem] cd-h-full" p="md">
                           <Text>
-                            Copia el link para compartir la tabla de bingo
+                            El bingo ha sido creado, puedes verlo en el siguiente enlace:
                             <Center className="cd-w-full cd-mt-[0.5rem]">
                               <CopyButton
                                 timeout={3500}
@@ -351,7 +343,7 @@ const Bingo = () => {
   )
 
   function buildUrl(id: string) {
-    return `${window.location.origin}${ROUTES.BINGO_PLAY.replace(':id', id)}`
+    return `${window.location.origin}${ROUTES.BINGO_UNIQUE_PLAY.replace(':id', id)}`
   }
 
   function AccordionControl(props: AccordionControlProps & { table: BingoResponseType }) {

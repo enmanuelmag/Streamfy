@@ -29,6 +29,7 @@ const PredictionModal = (props: PredictionModalProps) => {
   const form = useForm<PredictionBingoType>({
     validate: zodResolver(PredictionBingoSchema),
     initialValues: {
+      marked: false,
       title: predEdit?.title || '',
       description: predEdit?.description || '',
       image: predEdit?.image || '',
@@ -165,7 +166,14 @@ const PredictionModal = (props: PredictionModalProps) => {
           label="Contador objetivo"
           min={1}
           placeholder="1"
-          onChange={(value) => form.setFieldValue('condition', { targetCounter: Number(value) })}
+          onChange={(value) =>
+            form.setFieldValue('condition', {
+              targetCounter: {
+                counter: 0,
+                target: Number(value),
+              },
+            })
+          }
         />
 
         <Button

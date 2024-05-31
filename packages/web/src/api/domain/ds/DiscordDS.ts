@@ -9,6 +9,9 @@ import type {
   BingoCreateParamsType,
   BingoResponseType,
   BingoUserType,
+  BingoUniqueCreateParamsType,
+  BingoUniqueResponseType,
+  BingoUniqueExtendedType,
 } from '@global/types/src/discord'
 
 export default abstract class DiscordDS {
@@ -27,4 +30,10 @@ export default abstract class DiscordDS {
   abstract getBingoTables(discordUser: string): Promise<BingoResponseType[]>
 
   abstract getBingo(bingoId: string, userName: string): Promise<BingoUserType>
+
+  abstract createBingoUnique(data: BingoUniqueCreateParamsType): Promise<BingoUniqueResponseType>
+
+  abstract getBingoUniqueTables(discordUser: string): Promise<BingoUniqueExtendedType[]>
+
+  abstract getBingoUnique(bingoId: string, userName: string): Promise<BingoUniqueExtendedType>
 }
