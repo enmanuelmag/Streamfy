@@ -8,6 +8,7 @@ import { App } from '@pages/App'
 import './index.css'
 import '@mantine/core/styles.css'
 import '@mantine/dates/styles.css'
+import '@mantine/dropzone/styles.css'
 import '@mantine/notifications/styles.css'
 
 const theme = createTheme({

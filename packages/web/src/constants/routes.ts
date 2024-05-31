@@ -9,6 +9,7 @@ export const ROUTES = {
   BAITY_CONSULTORIO: '/baity-consultorio',
   REDDIT: '/reddit',
   BINGO: '/bingo',
+  BINGO_UNIQUE: '/bingo-unique',
   //Public
   ROOT: '/',
   BINGO_PLAY: '/bingoPlay/:id',

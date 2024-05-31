@@ -14,6 +14,10 @@
   view-transition-name: bingo;
 }
 
+.bingo-transition-unique {
+  view-transition-name: bingo-unique;
+}
+
 .text-animation-transition::last-word {
   color: rgb(150, 29, 255);
 }

@@ -4,7 +4,7 @@ import { Card, Center, Container, Flex, Image, Modal, Overlay, Text } from '@man
 import { ROUTES } from '@src/constants/routes'
 
 import Bingo from '@assets/images/bingo.png'
-import Reddit from '@assets/images/reddit.png'
+//import Reddit from '@assets/images/reddit.png'
 import Doctor from '@assets/images/consultorio.png'
 import LaughLoss from '@assets/images/si_ries_pierdes.jpg'
 import { useNavigate } from 'react-router-dom'
@@ -49,29 +49,41 @@ const Cards: CardProps[] = [
   },
   {
     image: Bingo,
-    title: 'Bingo',
-    transitionClass: 'bingo-transition',
-    href: ROUTES.BINGO,
+    title: 'Bingo único',
+    transitionClass: 'bingo-transition-unique',
+    href: ROUTES.BINGO_UNIQUE,
     description: (
       <Text c="dimmed" size="sm">
-        Creación de cartillas de bingo para eventos especiales{' '}
+        Crea una tabilla de bingo con imágenes, texto, descripciones, contadores y más!{' '}
         <Image alt="Reddit" className="!cd-inline" h={20} src={EMOJIS.BAITY_DORITOS} w={20} />
       </Text>
     ),
   },
   {
-    image: Reddit,
-    title: 'Reddit',
-    transitionClass: 'reddit-transition',
-    comingSoon: true,
-    href: ROUTES.REDDIT,
+    image: Bingo,
+    title: 'Bingo',
+    transitionClass: 'bingo-transition',
+    href: ROUTES.BINGO,
     description: (
       <Text c="dimmed" size="sm">
-        Actividad donde el Baity revisa memes del Reddit{' '}
-        <Image alt="Reddit" className="!cd-inline" h={20} src={EMOJIS.BAITY_MEME} w={20} />
+        Creación de cartillas de bingo aleatorias a partir de una lista de frases y repártelas{' '}
+        <Image alt="Reddit" className="!cd-inline" h={20} src={EMOJIS.BAITY_DORITOS} w={20} />
       </Text>
     ),
   },
+  // {
+  //   image: Reddit,
+  //   title: 'Reddit',
+  //   transitionClass: 'reddit-transition',
+  //   comingSoon: true,
+  //   href: ROUTES.REDDIT,
+  //   description: (
+  //     <Text c="dimmed" size="sm">
+  //       Actividad donde el Baity revisa memes del Reddit{' '}
+  //       <Image alt="Reddit" className="!cd-inline" h={20} src={EMOJIS.BAITY_MEME} w={20} />
+  //     </Text>
+  //   ),
+  // },
 ]
 
 const Home = () => {
