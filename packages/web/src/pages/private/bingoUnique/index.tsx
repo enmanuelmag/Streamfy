@@ -9,6 +9,8 @@ import {
   IconList,
   IconShare,
   IconSquarePlus,
+  IconTrash,
+  IconEdit,
 } from '@tabler/icons-react'
 import {
   Container,
@@ -27,6 +29,9 @@ import {
   Accordion,
   List,
   Tooltip,
+  Flex,
+  Group,
+  Image,
 } from '@mantine/core'
 
 import { type Step1Type, Step1Schema } from '@global/types/src/bingoUnique'
@@ -38,14 +43,19 @@ import { useStoreBase } from '@src/store'
 import { transitionView } from '@src/utils/viewTransition'
 
 import Input from '@src/components/shared/Input'
-//import TableBingo from './table'
+import TableUniqueBingo from './tableUnique'
 import { ErrorService, Logger } from '@global/utils'
 import { DiscordRepo } from '@src/db'
 import { notifications } from '@mantine/notifications'
-import { BingoCreateParamsType, BingoResponseType } from '@global/types/src/discord'
+import {
+  BingoCreateParamsType,
+  BingoResponseType,
+  PredictionBingoType,
+} from '@global/types/src/discord'
 import Loading from '@src/components/shared/Loading'
 import PredictionModal from './predictionModal'
 import { useDisclosure } from '@mantine/hooks'
+import React from 'react'
 
 const Bingo = () => {
   const navigate = useNavigate()
@@ -55,6 +65,10 @@ const Bingo = () => {
   const queryClient = useQueryClient()
 
   const [openModal, handleModal] = useDisclosure()
+
+  const [predEdit, setPredEdit] = React.useState<(PredictionBingoType & { index: number }) | null>(
+    null,
+  )
 
   const form = useForm<Step1Type>({
     validate: zodResolver(Step1Schema),
@@ -182,12 +196,57 @@ const Bingo = () => {
                       >
                         Añadir predicción
                       </Button>
+                      <ScrollArea.Autosize mah={300} mx="auto">
+                        {form.values.predictions.map((prediction, index) => (
+                          <Paper withBorder className="cd-w-full" key={index} p="sm" shadow="md">
+                            <Flex className="cd-w-full" justify="space-between">
+                              <Flex gap="xl" justify="flex-start">
+                                <Flex direction="column">
+                                  <Text>{prediction.title}</Text>
+                                  <Text c="dimmed" size="sm">
+                                    {prediction.description}
+                                  </Text>
+                                </Flex>
+                                <Image
+                                  alt={prediction.title}
+                                  flex={1}
+                                  h={50}
+                                  src={prediction.image}
+                                  style={{ objectFit: 'cover' }}
+                                  w={50}
+                                />
+                              </Flex>
+                              <Group gap="xs">
+                                <ActionIcon
+                                  c="gray"
+                                  variant="transparent"
+                                  onClick={() => {
+                                    setPredEdit({ ...prediction, index })
+                                    handleModal.open()
+                                  }}
+                                >
+                                  <IconEdit />
+                                </ActionIcon>
+                                <ActionIcon
+                                  c="red"
+                                  variant="transparent"
+                                  onClick={() => {
+                                    const newPreds = form.values.predictions
+                                    newPreds.splice(index, 1)
+                                    form.setFieldValue('predictions', newPreds)
+                                  }}
+                                >
+                                  <IconTrash />
+                                </ActionIcon>
+                              </Group>
+                            </Flex>
+                          </Paper>
+                        ))}
+                      </ScrollArea.Autosize>
 
-                      {form.values.predictions.map((prediction, index) => (
-                        <Text key={index}>{prediction.title}</Text>
-                      ))}
                       <Button
                         fullWidth
+                        className="cd-mt-8"
                         loaderProps={{ type: 'dots' }}
                         loading={bingoCreateMutation.isPending && !bingoCreateMutation.isIdle}
                         type="submit"
@@ -227,9 +286,9 @@ const Bingo = () => {
                       )}
                     </form>
                   </Grid.Col>
-                  {/* <Grid.Col span={{ md: 12, lg: 8 }}>
-                    <TableBingo table={form.values} />
-                  </Grid.Col> */}
+                  <Grid.Col span={{ md: 12, lg: 8 }}>
+                    <TableUniqueBingo table={form.values} />
+                  </Grid.Col>
                 </Grid>
               </Tabs.Panel>
               <Tabs.Panel className="cd-mt-[2rem]" value="view">
@@ -271,8 +330,22 @@ const Bingo = () => {
       </Container>
       <PredictionModal
         opened={openModal}
-        onClose={() => handleModal.close()}
-        onSave={(d) => console.log('Save', d)}
+        predEdit={predEdit}
+        onClose={() => {
+          handleModal.close()
+          setPredEdit(null)
+        }}
+        onCreate={(pred) => {
+          if (predEdit) {
+            const newPreds = form.values.predictions
+            newPreds[predEdit.index] = pred
+            form.setFieldValue('predictions', newPreds)
+          } else {
+            form.setFieldValue('predictions', [...form.values.predictions, pred])
+          }
+          handleModal.close()
+          setPredEdit(null)
+        }}
       />
     </Container>
   )
