@@ -17,6 +17,8 @@ import type {
   BingoResponseType,
   BingoUserType,
   BingoUniqueResponseType,
+  BingoUniqueCreateParamsType,
+  BingoUniqueExtendedType,
 } from '@global/types/dist/discord'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -31,7 +33,6 @@ import { ErrorService, ErrorCodes } from '@global/utils'
 import DiscordClient from '../../services/discord'
 
 import * as Logger from 'firebase-functions/logger'
-import { BingoUniqueCreateParamsType, BingoUniqueExtendedType } from '@global/types/src/discord'
 
 const db = getFirestore(initializeApp())
 
