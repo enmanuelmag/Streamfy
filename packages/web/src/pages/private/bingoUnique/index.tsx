@@ -47,7 +47,7 @@ import { ErrorService, Logger } from '@global/utils'
 import { DiscordRepo } from '@src/db'
 import { notifications } from '@mantine/notifications'
 import {
-  BingoResponseType,
+  BingoUniqueExtendedType,
   BingoUniqueCreateParamsType,
   BingoUniqueResponseType,
   PredictionBingoType,
@@ -108,8 +108,8 @@ const Bingo = () => {
     },
   })
 
-  const tablesBingoQuery = useQuery<BingoResponseType[], ErrorService>({
-    enabled: false,
+  const tablesBingoQuery = useQuery<BingoUniqueExtendedType[], ErrorService>({
+    //enabled: false,
     queryKey: ['tablesBingoUnique'],
     queryFn: async () => {
       if (!user?.username) {
@@ -121,7 +121,7 @@ const Bingo = () => {
         })
         navigate(ROUTES.ROOT)
       }
-      return await DiscordRepo.getBingoTables(user!.username)
+      return await DiscordRepo.getBingoUniqueTables(user!.username)
     },
   })
 
@@ -305,8 +305,13 @@ const Bingo = () => {
                           <Accordion.Panel>
                             <Text className="cd-mt-[1rem]">Oraciones:</Text>
                             <List withPadding type="unordered">
-                              {table.sentences.map((sentence, index) => (
-                                <List.Item key={index}>- {sentence}</List.Item>
+                              {table.predictions.map(({ title, description }, index) => (
+                                <List.Item key={index}>
+                                  <Text>
+                                    - {title}
+                                    {description && `: ${description}`}
+                                  </Text>
+                                </List.Item>
                               ))}
                             </List>
                           </Accordion.Panel>
@@ -346,7 +351,7 @@ const Bingo = () => {
     return `${window.location.origin}${ROUTES.BINGO_UNIQUE_PLAY.replace(':id', id)}`
   }
 
-  function AccordionControl(props: AccordionControlProps & { table: BingoResponseType }) {
+  function AccordionControl(props: AccordionControlProps & { table: BingoUniqueExtendedType }) {
     return (
       <Center>
         <Accordion.Control {...props} />
