@@ -31,7 +31,7 @@ import { ErrorService, ErrorCodes } from '@global/utils'
 import DiscordClient from '../../services/discord'
 
 import * as Logger from 'firebase-functions/logger'
-import { BingoUniqueCreateParamsType, BingoUniqueExtendedType } from 'global/types/src/discord'
+import { BingoUniqueCreateParamsType, BingoUniqueExtendedType } from '@global/types/src/discord'
 
 const db = getFirestore(initializeApp())
 
