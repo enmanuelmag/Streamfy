@@ -136,7 +136,7 @@ export const channels = onRequest({ cors: true }, async (req, res) => {
   }
 })
 export const bingoCreate = onRequest(
-  { cors: true, timeoutSeconds: 60 * 10, memory: '4GiB' },
+  { cors: true, timeoutSeconds: 60 * 10, memory: '2GiB', maxInstances: 3 },
   async (req, res) => {
     try {
       validateToken(req.get(HEADER_TOKEN))
