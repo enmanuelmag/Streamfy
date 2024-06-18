@@ -595,10 +595,10 @@ function createCombinationsBingo(
   Logger.info('Bingo combinations created', combinations.length)
 
   //Shuffle the combinations
-  const shuffledCombinations = shuffleArray(combinations, RANDOM_SEED)
+  //const shuffledCombinations = shuffleArray(combinations, RANDOM_SEED)
 
   //Return the combinations
-  return shuffledCombinations.map((combination) => ({
+  return combinations.map((combination) => ({
     [combination]: {
       assignedTo: [],
     },
